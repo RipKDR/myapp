@@ -1,0 +1,53 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle with gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F3F4F6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <circle cx="256" cy="256" r="256" fill="url(#bgGradient)"/>
+  
+  <!-- Main icon - Connected people with accessibility symbol -->
+  <g transform="translate(256, 256)">
+    <!-- Accessibility symbol (wheelchair) -->
+    <g fill="url(#iconGradient)" opacity="0.9">
+      <!-- Wheelchair wheel -->
+      <circle cx="-60" cy="20" r="25" fill="none" stroke="url(#iconGradient)" stroke-width="8"/>
+      <!-- Wheelchair seat -->
+      <rect x="-80" y="-10" width="20" height="30" rx="3"/>
+      <!-- Wheelchair back -->
+      <rect x="-80" y="-10" width="30" height="8" rx="3"/>
+      <!-- Wheelchair handles -->
+      <rect x="-50" y="-15" width="8" height="20" rx="3"/>
+    </g>
+    
+    <!-- Connected people -->
+    <g fill="url(#iconGradient)" opacity="0.8">
+      <!-- Person 1 -->
+      <circle cx="-20" cy="-30" r="15"/>
+      <rect x="-30" y="-10" width="20" height="25" rx="10"/>
+      
+      <!-- Person 2 -->
+      <circle cx="20" cy="-30" r="15"/>
+      <rect x="10" y="-10" width="20" height="25" rx="10"/>
+      
+      <!-- Connection line -->
+      <line x1="-5" y1="-30" x2="5" y2="-30" stroke="url(#iconGradient)" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    
+    <!-- Heart symbol for care -->
+    <g fill="url(#iconGradient)" opacity="0.7">
+      <path d="M-10,40 C-10,35 -5,30 0,30 C5,30 10,35 10,40 C10,45 0,55 0,55 C0,55 -10,45 -10,40 Z"/>
+    </g>
+    
+    <!-- NDIS text -->
+    <text x="0" y="80" text-anchor="middle" fill="url(#iconGradient)" font-family="Arial, sans-serif" font-size="24" font-weight="bold">NDIS</text>
+  </g>
+</svg>
