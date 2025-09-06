@@ -1,0 +1,139 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    function isParticipant() {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'participant';
+    }
+    
+    function isProvider() {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'provider';
+    }
+    
+    function isValidUserData() {
+      return request.resource.data.keys().hasAll(['role', 'email', 'createdAt']) &&
+             request.resource.data.role in ['participant', 'provider'] &&
+             request.resource.data.email is string &&
+             request.resource.data.createdAt is string;
+    }
+
+    // User documents
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && isOwner(userId);
+      allow create: if isAuthenticated() && isOwner(userId) && isValidUserData();
+    }
+
+    // Appointments
+    match /appointments/{appointmentId} {
+      allow read: if isAuthenticated() && 
+                     (resource.data.userId == request.auth.uid || 
+                      resource.data.providerId == request.auth.uid);
+      allow create: if isAuthenticated() && 
+                       (isParticipant() || isProvider()) &&
+                       request.resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() && 
+                       (resource.data.userId == request.auth.uid || 
+                        resource.data.providerId == request.auth.uid);
+      allow delete: if isAuthenticated() && 
+                       (resource.data.userId == request.auth.uid || 
+                        resource.data.providerId == request.auth.uid);
+    }
+
+    // Budgets
+    match /budgets/{userId} {
+      allow read, write: if isAuthenticated() && isOwner(userId);
+      allow create: if isAuthenticated() && isOwner(userId) && isParticipant();
+    }
+
+    // Support circles
+    match /circles/{circleId} {
+      allow read, write: if isAuthenticated() && 
+                            resource.data.members[request.auth.uid] != null;
+      allow create: if isAuthenticated() && 
+                       request.resource.data.members[request.auth.uid] != null;
+    }
+
+    // Circle messages
+    match /circles/{circleId}/messages/{messageId} {
+      allow read, create: if isAuthenticated() && 
+                             exists(/databases/$(database)/documents/circles/$(circleId)) &&
+                             get(/databases/$(database)/documents/circles/$(circleId)).data.members[request.auth.uid] != null;
+      allow update, delete: if false; // Only server functions can modify messages
+    }
+
+    // Tasks/Checklist
+    match /tasks/{taskId} {
+      allow read, write: if isAuthenticated() && 
+                            resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && 
+                       request.resource.data.userId == request.auth.uid;
+    }
+
+    // Shifts (for providers)
+    match /shifts/{shiftId} {
+      allow read, write: if isAuthenticated() && 
+                            isProvider() && 
+                            resource.data.providerId == request.auth.uid;
+      allow create: if isAuthenticated() && 
+                       isProvider() && 
+                       request.resource.data.providerId == request.auth.uid;
+    }
+
+    // Provider locations
+    match /provider_locations/{locationId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && 
+                      isProvider() && 
+                      resource.data.providerId == request.auth.uid;
+      allow create: if isAuthenticated() && 
+                       isProvider() && 
+                       request.resource.data.providerId == request.auth.uid;
+    }
+
+    // Chat messages (if using Firestore for chat)
+    match /chat_rooms/{roomId}/messages/{messageId} {
+      allow read, create: if isAuthenticated() && 
+                             exists(/databases/$(database)/documents/chat_rooms/$(roomId)) &&
+                             get(/databases/$(database)/documents/chat_rooms/$(roomId)).data.participants[request.auth.uid] != null;
+      allow update, delete: if false; // Messages are immutable
+    }
+
+    // Chat rooms
+    match /chat_rooms/{roomId} {
+      allow read, write: if isAuthenticated() && 
+                            resource.data.participants[request.auth.uid] != null;
+      allow create: if isAuthenticated() && 
+                       request.resource.data.participants[request.auth.uid] != null;
+    }
+
+    // Gamification data
+    match /gamification/{userId} {
+      allow read, write: if isAuthenticated() && isOwner(userId);
+    }
+
+    // Settings
+    match /settings/{userId} {
+      allow read, write: if isAuthenticated() && isOwner(userId);
+    }
+
+    // Audit logs (read-only for users)
+    match /audit_logs/{logId} {
+      allow read: if isAuthenticated() && 
+                     resource.data.userId == request.auth.uid;
+      allow write: if false; // Only server functions can write audit logs
+    }
+  }
+}
+
