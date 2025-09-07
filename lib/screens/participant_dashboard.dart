@@ -12,8 +12,6 @@ import '../controllers/gamification_controller.dart';
 import '../controllers/auth_controller.dart';
 import '../widgets/hero_banner.dart';
 import '../widgets/confetti_banner.dart';
-import '../core/feature_flags.dart';
-import '../widgets/feature_guard.dart';
 import '../repositories/appointment_repository.dart';
 import '../repositories/budget_repository.dart';
 
@@ -22,7 +20,7 @@ class ParticipantDashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settings = context.watch<SettingsController>();
+    // final settings = context.watch<SettingsController>();
     final auth = context.watch<AuthController>();
     final dateFmt = DateFormat('EEE d MMM, h:mm a');
 

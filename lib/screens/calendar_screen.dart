@@ -69,7 +69,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
               },
             ),
           ),
-          _LegendBar(),
         ],
       ),
     );
@@ -78,13 +77,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   void initState() {
     super.initState();
-    _sub = AppointmentRepository.stream().listen((list) {
-      if (!mounted) return;
-      setState(() {
-        _items
-          ..clear()
-          ..addAll(list.isEmpty ? _items : list);
-      });
+    // Get user context to determine which stream to use
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final auth = context.read<AuthController>();
+      if (auth.userId != null) {
+        _sub = AppointmentRepository.streamForUser(auth.userId!).listen((list) {
+          if (!mounted) return;
+          setState(() {
+            _items
+              ..clear()
+              ..addAll(list.isEmpty ? _items : list);
+          });
+        });
+      }
     });
   }
 

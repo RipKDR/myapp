@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -13,7 +14,7 @@ class SnapshotScreen extends StatelessWidget {
         title: const Text('Plan Snapshot'),
         actions: [
           IconButton(onPressed: () => _exportPdf(context, milestones), icon: const Icon(Icons.picture_as_pdf)),
-          IconButton(onPressed: () => Printing.sharePdf(bytes: []), icon: const Icon(Icons.share)),
+          IconButton(onPressed: () => Printing.sharePdf(bytes: Uint8List(0)), icon: const Icon(Icons.share)),
         ],
       ),
       body: ListView.builder(

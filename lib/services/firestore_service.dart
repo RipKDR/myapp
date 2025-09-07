@@ -90,10 +90,11 @@ class FirestoreService {
       }
 
       return query.snapshots().map(
-        (snapshot) => snapshot.docs
-            .map((doc) => {'id': doc.id, ...doc.data() as Map<String, dynamic>})
-            .toList(),
-      );
+            (snapshot) => snapshot.docs
+                .map((doc) =>
+                    {'id': doc.id, ...doc.data() as Map<String, dynamic>})
+                .toList(),
+          );
     } catch (e) {
       log('Error streaming from Firestore: $e');
       return const Stream.empty();
@@ -124,10 +125,11 @@ class FirestoreService {
       }
 
       return query.snapshots().map(
-        (snapshot) => snapshot.docs
-            .map((doc) => {'id': doc.id, ...doc.data() as Map<String, dynamic>})
-            .toList(),
-      );
+            (snapshot) => snapshot.docs
+                .map((doc) =>
+                    {'id': doc.id, ...doc.data() as Map<String, dynamic>})
+                .toList(),
+          );
     } catch (e) {
       log('Error querying Firestore: $e');
       return const Stream.empty();
@@ -170,7 +172,7 @@ class FirestoreService {
       final d = db;
       if (d == null) return;
 
-      await d.enablePersistence();
+      // Persistence is enabled by default in newer versions
       log('Firestore offline persistence enabled');
     } catch (e) {
       log('Error enabling offline persistence: $e');
@@ -187,10 +189,10 @@ class BatchOperation {
   final Map<String, dynamic>? data;
 
   BatchOperation.set(this.collection, this.id, this.data)
-    : type = BatchOperationType.set;
+      : type = BatchOperationType.set;
   BatchOperation.update(this.collection, this.id, this.data)
-    : type = BatchOperationType.update;
+      : type = BatchOperationType.update;
   BatchOperation.delete(this.collection, this.id)
-    : type = BatchOperationType.delete,
-      data = null;
+      : type = BatchOperationType.delete,
+        data = null;
 }

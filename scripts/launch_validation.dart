@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ndis_connect/main.dart' as app;
 
 /// Launch Validation Script
 ///

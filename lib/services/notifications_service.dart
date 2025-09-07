@@ -22,7 +22,8 @@ class NotificationsService {
       await _messaging.requestPermission(alert: true, badge: true, sound: true);
 
       // Foreground presentation
-      await _messaging.setForegroundNotificationPresentationOptions(alert: true, badge: true, sound: true);
+      await _messaging.setForegroundNotificationPresentationOptions(
+          alert: true, badge: true, sound: true);
       FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -44,7 +45,8 @@ class NotificationsService {
     }
   }
 
-  static Future<void> scheduleAt(DateTime when, {required int id, required String title, required String body}) async {
+  static Future<void> scheduleAt(DateTime when,
+      {required int id, required String title, required String body}) async {
     final android = AndroidNotificationDetails('reminders', 'Reminders');
     final ios = const DarwinNotificationDetails();
     final details = NotificationDetails(android: android, iOS: ios);
@@ -54,8 +56,7 @@ class NotificationsService {
       body,
       tz.TZDateTime.from(when, tz.local),
       details,
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       matchDateTimeComponents: null,
     );
   }

@@ -1,0 +1,187 @@
+name: NDIS Connect CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  FLUTTER_VERSION: '3.19.0'
+
+jobs:
+  test:
+    name: Test & Analyze
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: 'stable'
+        
+    - name: Install dependencies
+      run: flutter pub get
+      
+    - name: Run tests
+      run: flutter test
+      
+    - name: Run analysis
+      run: flutter analyze
+      
+    - name: Check formatting
+      run: dart format --output=none --set-exit-if-changed .
+
+  build-android:
+    name: Build Android
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: 'stable'
+        
+    - name: Install dependencies
+      run: flutter pub get
+      
+    - name: Build APK (Debug)
+      run: flutter build apk --debug
+      
+    - name: Build APK (Release)
+      run: flutter build apk --release
+      
+    - name: Build App Bundle
+      run: flutter build appbundle --release
+      
+    - name: Upload APK artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-apk
+        path: build/app/outputs/flutter-apk/
+        
+    - name: Upload AAB artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-aab
+        path: build/app/outputs/bundle/release/
+
+  build-ios:
+    name: Build iOS
+    runs-on: macos-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: 'stable'
+        
+    - name: Install dependencies
+      run: flutter pub get
+      
+    - name: Build iOS (Debug)
+      run: flutter build ios --debug --no-codesign
+      
+    - name: Build iOS (Release)
+      run: flutter build ios --release --no-codesign
+      
+    - name: Upload iOS artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ios-build
+        path: build/ios/
+
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [test, build-android]
+    if: github.ref == 'refs/heads/develop'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install Firebase CLI
+      run: npm install -g firebase-tools
+      
+    - name: Deploy to Firebase Staging
+      run: |
+        firebase use staging
+        firebase deploy --only firestore:rules,functions,hosting
+      env:
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [test, build-android, build-ios]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install Firebase CLI
+      run: npm install -g firebase-tools
+      
+    - name: Deploy to Firebase Production
+      run: |
+        firebase use production
+        firebase deploy --only firestore:rules,functions,hosting
+      env:
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        
+    - name: Create Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ github.run_number }}
+        release_name: Release v${{ github.run_number }}
+        draft: false
+        prerelease: false
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run security audit
+      run: |
+        flutter pub audit
+        dart pub global activate security_scanner
+        dart pub global run security_scanner
+        
+    - name: Check for secrets
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: main
+        head: HEAD

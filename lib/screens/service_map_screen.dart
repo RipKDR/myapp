@@ -4,7 +4,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../widgets/feature_guard.dart';
 import '../core/feature_flags.dart';
 import '../services/provider_directory_service.dart';
-import '../models/provider_location.dart';
 
 class ServiceMapScreen extends StatefulWidget {
   const ServiceMapScreen({super.key});

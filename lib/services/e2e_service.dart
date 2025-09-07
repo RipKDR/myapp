@@ -19,7 +19,7 @@ class E2EService {
     var saltB64 = await _storage.read(key: _kSalt);
     List<int> salt;
     if (saltB64 == null) {
-      salt = E2ECrypto._randomBytes(16);
+      salt = E2ECrypto.randomBytes(16);
       await _storage.write(key: _kSalt, value: base64Encode(salt));
     } else {
       salt = base64Decode(saltB64);

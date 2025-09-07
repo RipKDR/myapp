@@ -27,8 +27,9 @@ class E2ECrypto {
     required SecretKey key,
     required String plaintext,
   }) async {
-    final nonce = _randomBytes(12);
-    final secretBox = await _algo.encrypt(utf8.encode(plaintext), secretKey: key, nonce: nonce);
+    final nonce = randomBytes(12);
+    final secretBox = await _algo.encrypt(utf8.encode(plaintext),
+        secretKey: key, nonce: nonce);
     return {
       'n': base64Encode(nonce),
       'c': base64Encode(secretBox.cipherText),
@@ -48,7 +49,7 @@ class E2ECrypto {
     return utf8.decode(data);
   }
 
-  static List<int> _randomBytes(int length) {
+  static List<int> randomBytes(int length) {
     final rnd = Random.secure();
     return List<int>.generate(length, (_) => rnd.nextInt(256));
   }
