@@ -57,7 +57,7 @@
             android:value="true" />
         
         <activity
-            android:name="com.ndisconnect.app.MainActivity"
+            android:name="ndis.connect.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"

@@ -43,12 +43,12 @@ void main(List<String> args) {
     final manifest = androidManifest.readAsStringSync();
     if (!manifest.contains('com.google.android.geo.API_KEY')) {
       warnings.add('AndroidManifest.xml missing Google Maps API_KEY meta-data');
-    } else if (!manifest.contains(r'${GOOGLE_MAPS_API_KEY}')) {
-      warnings.add('AndroidManifest.xml Maps meta-data not using placeholder \\$GOOGLE_MAPS_API_KEY');
+    } else if (!manifest.contains(r'${AIzaSyDwG_imrSuzCYuSBgU1v19XjoTyGfE6yds}')) {
+      warnings.add('AndroidManifest.xml Maps meta-data not using placeholder \${AIzaSyDwG_imrSuzCYuSBgU1v19XjoTyGfE6yds}');
     }
   }
 
-  final mapsEnv = Platform.environment['GOOGLE_MAPS_API_KEY'];
+  final mapsEnv = Platform.environment['AIzaSyDwG_imrSuzCYuSBgU1v19XjoTyGfE6yds'];
   if (mapsEnv == null || mapsEnv.trim().isEmpty) {
     final msg = 'Environment variable GOOGLE_MAPS_API_KEY not set';
     if (soft) {

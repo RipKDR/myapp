@@ -28,7 +28,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.ndisconnect.app"
+    namespace "ndis.connect"
     compileSdkVersion 36
     ndkVersion flutter.ndkVersion
 
@@ -47,7 +47,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.ndisconnect.app"
+        applicationId "ndis.connect"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
@@ -57,33 +57,15 @@ android {
         // NDIS Connect specific configuration
         manifestPlaceholders = [
             appName: "NDIS Connect",
-            applicationName: "io.flutter.app.FlutterApplication",
             appDescription: "Accessible companion for NDIS participants and providers",
-            GOOGLE_MAPS_API_KEY: System.getenv('AIzaSyDwG_imrSuzCYuSBgU1v19XjoTyGfE6yds') ?: ''
+            applicationName: "io.flutter.app.FlutterApplication"
         ]
-    }
-
-    // Load signing config from key.properties if present
-    def keystoreProperties = new Properties()
-    def keystorePropertiesFile = rootProject.file('key.properties')
-    if (keystorePropertiesFile.exists()) {
-        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
     }
 
     signingConfigs {
         release {
-            if (keystorePropertiesFile.exists()) {
-                keyAlias keystoreProperties['keyAlias']
-                keyPassword keystoreProperties['keyPassword']
-                storeFile file(keystoreProperties['storeFile'])
-                storePassword keystoreProperties['storePassword']
-            } else {
-                // Fallback placeholders — replace or create key.properties for real signing
-                keyAlias 'ndis-connect-release'
-                keyPassword 'your-key-password'
-                storeFile file('ndis-connect-release.keystore')
-                storePassword 'your-store-password'
-            }
+            // Signing configuration for release builds
+            // Configure in key.properties file for production
         }
     }
 
@@ -96,16 +78,9 @@ android {
         }
         
         release {
-            signingConfig signingConfigs.release
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            
-            // Production optimizations
-            debuggable false
-            jniDebuggable false
-            renderscriptDebuggable false
-            zipAlignEnabled true
         }
         
         staging {
@@ -136,6 +111,20 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
+    
+    // Import the Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:34.2.0')
+    
+    // TODO: Add the dependencies for Firebase products you want to use
+    // When using the BoM, don't specify versions in Firebase dependencies
+    // https://firebase.google.com/docs/android/setup#available-libraries
+    
+    // Example Firebase dependencies (uncomment as needed):
+    // implementation 'com.google.firebase:firebase-analytics'
+    // implementation 'com.google.firebase:firebase-auth'
+    // implementation 'com.google.firebase:firebase-firestore'
+    // implementation 'com.google.firebase:firebase-messaging'
+    // implementation 'com.google.firebase:firebase-storage'
 }
 
 // Exclude deprecated firebase-iid to fix duplicate class issue

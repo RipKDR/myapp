@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/local_auth_service.dart';
 
@@ -54,10 +55,10 @@ class AuthController extends ChangeNotifier {
   Future<bool> signIn(String email, String password) async {
     _setLoading(true);
     _clearError();
-    
+
     try {
       final result = await _authService.login(email: email, password: password);
-      
+
       if (result['success']) {
         final user = result['user'];
         _userId = user['id'];
@@ -87,7 +88,7 @@ class AuthController extends ChangeNotifier {
   }) async {
     _setLoading(true);
     _clearError();
-    
+
     try {
       final result = await _authService.register(
         email: email,
@@ -95,7 +96,7 @@ class AuthController extends ChangeNotifier {
         name: name,
         role: role.name,
       );
-      
+
       if (result['success']) {
         final user = result['user'];
         _userId = user['id'];
