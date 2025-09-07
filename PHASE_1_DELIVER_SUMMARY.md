@@ -1,3 +1,4 @@
+<!-- markdownlint-disable -->
 # 🎉 Phase 1 - Deliver: COMPLETED
 
 **NDIS Connect Flutter App - Production Launch Preparation**

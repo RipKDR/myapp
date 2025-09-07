@@ -44,7 +44,7 @@ class ProviderDashboardScreen extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Card(
-            color: Colors.green.withOpacity(0.08),
+            color: Colors.green.withValues(alpha: 0.08),
             child: const ListTile(
               leading: Icon(Icons.verified_user, color: Colors.green),
               title: Text('Compliance'),

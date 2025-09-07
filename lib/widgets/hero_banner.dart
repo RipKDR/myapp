@@ -47,7 +47,7 @@ class HeroBanner extends StatelessWidget {
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium
-                      ?.copyWith(color: scheme.onPrimary.withOpacity(0.95)),
+                      ?.copyWith(color: scheme.onPrimary.withValues(alpha: 0.95)),
                 ),
                 const SizedBox(height: 8),
                 Text('Streak $streak • $points pts', style: TextStyle(color: scheme.onPrimary)),
@@ -68,4 +68,3 @@ class HeroBanner extends StatelessWidget {
     );
   }
 }
-

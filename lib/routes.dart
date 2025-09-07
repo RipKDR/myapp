@@ -12,6 +12,7 @@ import 'screens/snapshot_screen.dart';
 import 'screens/support_circle_screen.dart';
 import 'screens/auth_screen.dart';
 import 'screens/provider_roster_screen.dart';
+import 'screens/analytics_dashboard_screen.dart';
 
 class Routes {
   static const bootstrap = '/';
@@ -26,6 +27,7 @@ class Routes {
   static const circle = '/circle';
   static const auth = '/auth';
   static const roster = '/roster';
+  static const analytics = '/analytics';
 
   static Map<String, WidgetBuilder> get routes => {
         bootstrap: (context) => const _BootstrapScreen(),
@@ -40,6 +42,7 @@ class Routes {
         circle: (context) => const SupportCircleScreen(),
         auth: (context) => const AuthScreen(),
         roster: (context) => const ProviderRosterScreen(),
+        analytics: (context) => const AnalyticsDashboardScreen(),
       };
 }
 

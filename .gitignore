@@ -36,6 +36,8 @@ firebase-debug.log
 firebase-debug.*.log
 .firebaserc
 firebase.json
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
 
 # Environment variables
 .env
@@ -124,7 +126,7 @@ local.properties
 android/local.properties
 
 # Generated files
-lib/firebase_options.dart
+# lib/firebase_options.dart is committed so new devs can run the app
 lib/generated_plugin_registrant.dart
 
 # Test files

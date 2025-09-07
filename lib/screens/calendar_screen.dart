@@ -231,7 +231,7 @@ class _DayCell extends StatelessWidget {
                     child: Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: a.confirmed ? Colors.green.withOpacity(0.2) : Colors.orange.withOpacity(0.2),
+                        color: a.confirmed ? Colors.green.withValues(alpha: 0.2) : Colors.orange.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Padding(

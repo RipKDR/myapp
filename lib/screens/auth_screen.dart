@@ -49,8 +49,8 @@ class _AuthScreenState extends State<AuthScreen> {
             Text(
               'Accessible companion for NDIS participants and providers',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),

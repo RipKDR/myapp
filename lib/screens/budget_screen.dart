@@ -18,7 +18,7 @@ class BudgetScreen extends StatelessWidget {
           for (final b in overview.buckets) _BucketTile(bucket: b),
           const SizedBox(height: 12),
           Card(
-            color: Colors.orange.withOpacity(0.08),
+            color: Colors.orange.withValues(alpha: 0.08),
             child: const ListTile(
               leading: Icon(Icons.warning_amber_rounded, color: Colors.orange),
               title: Text('Alert: Core at 80%'),
@@ -90,4 +90,3 @@ BudgetOverview _mockBudget() {
     BudgetBucket(name: 'Capital', allocated: 5000, spent: 1000),
   ]);
 }
-

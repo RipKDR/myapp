@@ -1,0 +1,5 @@
+storePassword=YOUR_STORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=ndis-connect-release
+storeFile=android/app/ndis-connect-release.keystore
+

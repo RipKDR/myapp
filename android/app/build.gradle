@@ -14,7 +14,7 @@ if (localPropertiesFile.exists()) {
 
 def flutterRoot = localProperties.getProperty('flutter.sdk')
 if (flutterRoot == null) {
-    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+    throw new RuntimeException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
 }
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
@@ -29,16 +29,17 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.ndisconnect.app"
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion 36
     ndkVersion flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+        coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
 
     sourceSets {
@@ -47,33 +48,47 @@ android {
 
     defaultConfig {
         applicationId "com.ndisconnect.app"
-        minSdkVersion 21
-        targetSdkVersion flutter.targetSdkVersion
+        minSdkVersion flutter.minSdkVersion
+        targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
-        
+
         // NDIS Connect specific configuration
         manifestPlaceholders = [
             appName: "NDIS Connect",
-            appDescription: "Accessible companion for NDIS participants and providers"
+            applicationName: "io.flutter.app.FlutterApplication",
+            appDescription: "Accessible companion for NDIS participants and providers",
+            GOOGLE_MAPS_API_KEY: System.getenv('AIzaSyDwG_imrSuzCYuSBgU1v19XjoTyGfE6yds') ?: ''
         ]
+    }
+
+    // Load signing config from key.properties if present
+    def keystoreProperties = new Properties()
+    def keystorePropertiesFile = rootProject.file('key.properties')
+    if (keystorePropertiesFile.exists()) {
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
     }
 
     signingConfigs {
         release {
-            // Production signing configuration
-            // Note: Replace with actual keystore configuration
-            keyAlias 'ndis-connect-release'
-            keyPassword 'your-key-password'
-            storeFile file('ndis-connect-release.keystore')
-            storePassword 'your-store-password'
+            if (keystorePropertiesFile.exists()) {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            } else {
+                // Fallback placeholders — replace or create key.properties for real signing
+                keyAlias 'ndis-connect-release'
+                keyPassword 'your-key-password'
+                storeFile file('ndis-connect-release.keystore')
+                storePassword 'your-store-password'
+            }
         }
     }
 
     buildTypes {
         debug {
-            applicationIdSuffix ".debug"
             versionNameSuffix "-debug"
             debuggable true
             minifyEnabled false
@@ -94,8 +109,7 @@ android {
         }
         
         staging {
-            initWith release
-            applicationIdSuffix ".staging"
+            initWith debug
             versionNameSuffix "-staging"
             debuggable true
             minifyEnabled false
@@ -120,5 +134,19 @@ flutter {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
+}
+
+// Exclude deprecated firebase-iid to fix duplicate class issue
+configurations.all {
+    exclude group: 'com.google.firebase', module: 'firebase-iid'
+}
+
+// Apply Google Services plugin only if configuration file exists
+if (file('google-services.json').exists()) {
+    apply plugin: 'com.google.gms.google-services'
+    println 'Google Services plugin applied (google-services.json found).'
+} else {
+    println 'WARNING: google-services.json not found. Skipping Google Services plugin.\nAdd android/app/google-services.json via FlutterFire to enable Firebase.'
 }

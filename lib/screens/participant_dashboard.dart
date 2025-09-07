@@ -285,7 +285,7 @@ class ParticipantDashboardScreen extends StatelessWidget {
             ),
           const SizedBox(height: 8),
           Card(
-            color: Colors.indigo.withOpacity(0.08),
+            color: Colors.indigo.withValues(alpha: 0.08),
             child: const ListTile(
               leading: Icon(Icons.emoji_events_outlined),
               title: Text('NDIS Champion'),

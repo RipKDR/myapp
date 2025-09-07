@@ -1,0 +1,126 @@
+warning: in the working copy of 'android/app/build.gradle', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/android/app/build.gradle b/android/app/build.gradle[m
+[1mindex 2303e82..c0f5500 100644[m
+[1m--- a/android/app/build.gradle[m
+[1m+++ b/android/app/build.gradle[m
+[36m@@ -14,7 +14,7 @@[m [mif (localPropertiesFile.exists()) {[m
+ [m
+ def flutterRoot = localProperties.getProperty('flutter.sdk')[m
+ if (flutterRoot == null) {[m
+[31m-    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")[m
+[32m+[m[32m    throw new RuntimeException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")[m
+ }[m
+ [m
+ def flutterVersionCode = localProperties.getProperty('flutter.versionCode')[m
+[36m@@ -29,16 +29,17 @@[m [mif (flutterVersionName == null) {[m
+ [m
+ android {[m
+     namespace "com.ndisconnect.app"[m
+[31m-    compileSdkVersion flutter.compileSdkVersion[m
+[32m+[m[32m    compileSdkVersion 36[m
+     ndkVersion flutter.ndkVersion[m
+ [m
+     compileOptions {[m
+[31m-        sourceCompatibility JavaVersion.VERSION_1_8[m
+[31m-        targetCompatibility JavaVersion.VERSION_1_8[m
+[32m+[m[32m        sourceCompatibility JavaVersion.VERSION_11[m
+[32m+[m[32m        targetCompatibility JavaVersion.VERSION_11[m
+[32m+[m[32m        coreLibraryDesugaringEnabled true[m
+     }[m
+ [m
+     kotlinOptions {[m
+[31m-        jvmTarget = '1.8'[m
+[32m+[m[32m        jvmTarget = '11'[m
+     }[m
+ [m
+     sourceSets {[m
+[36m@@ -47,33 +48,47 @@[m [mandroid {[m
+ [m
+     defaultConfig {[m
+         applicationId "com.ndisconnect.app"[m
+[31m-        minSdkVersion 21[m
+[31m-        targetSdkVersion flutter.targetSdkVersion[m
+[32m+[m[32m        minSdkVersion flutter.minSdkVersion[m
+[32m+[m[32m        targetSdkVersion 34[m
+         versionCode flutterVersionCode.toInteger()[m
+         versionName flutterVersionName[m
+         multiDexEnabled true[m
+[31m-        [m
+[32m+[m
+         // NDIS Connect specific configuration[m
+         manifestPlaceholders = [[m
+             appName: "NDIS Connect",[m
+[31m-            appDescription: "Accessible companion for NDIS participants and providers"[m
+[32m+[m[32m            applicationName: "io.flutter.app.FlutterApplication",[m
+[32m+[m[32m            appDescription: "Accessible companion for NDIS participants and providers",[m
+[32m+[m[32m            GOOGLE_MAPS_API_KEY: System.getenv('AIzaSyDwG_imrSuzCYuSBgU1v19XjoTyGfE6yds') ?: ''[m
+         ][m
+     }[m
+ [m
+[32m+[m[32m    // Load signing config from key.properties if present[m
+[32m+[m[32m    def keystoreProperties = new Properties()[m
+[32m+[m[32m    def keystorePropertiesFile = rootProject.file('key.properties')[m
+[32m+[m[32m    if (keystorePropertiesFile.exists()) {[m
+[32m+[m[32m        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))[m
+[32m+[m[32m    }[m
+[32m+[m
+     signingConfigs {[m
+         release {[m
+[31m-            // Production signing configuration[m
+[31m-            // Note: Replace with actual keystore configuration[m
+[31m-            keyAlias 'ndis-connect-release'[m
+[31m-            keyPassword 'your-key-password'[m
+[31m-            storeFile file('ndis-connect-release.keystore')[m
+[31m-            storePassword 'your-store-password'[m
+[32m+[m[32m            if (keystorePropertiesFile.exists()) {[m
+[32m+[m[32m                keyAlias keystoreProperties['keyAlias'][m
+[32m+[m[32m                keyPassword keystoreProperties['keyPassword'][m
+[32m+[m[32m                storeFile file(keystoreProperties['storeFile'])[m
+[32m+[m[32m                storePassword keystoreProperties['storePassword'][m
+[32m+[m[32m            } else {[m
+[32m+[m[32m                // Fallback placeholders — replace or create key.properties for real signing[m
+[32m+[m[32m                keyAlias 'ndis-connect-release'[m
+[32m+[m[32m                keyPassword 'your-key-password'[m
+[32m+[m[32m                storeFile file('ndis-connect-release.keystore')[m
+[32m+[m[32m                storePassword 'your-store-password'[m
+[32m+[m[32m            }[m
+         }[m
+     }[m
+ [m
+     buildTypes {[m
+         debug {[m
+[31m-            applicationIdSuffix ".debug"[m
+             versionNameSuffix "-debug"[m
+             debuggable true[m
+             minifyEnabled false[m
+[36m@@ -94,8 +109,7 @@[m [mandroid {[m
+         }[m
+         [m
+         staging {[m
+[31m-            initWith release[m
+[31m-            applicationIdSuffix ".staging"[m
+[32m+[m[32m            initWith debug[m
+             versionNameSuffix "-staging"[m
+             debuggable true[m
+             minifyEnabled false[m
+[36m@@ -120,5 +134,19 @@[m [mflutter {[m
+ }[m
+ [m
+ dependencies {[m
+[31m-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"[m
+[32m+[m[32m    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"[m
+[32m+[m[32m    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// Exclude deprecated firebase-iid to fix duplicate class issue[m
+[32m+[m[32mconfigurations.all {[m
+[32m+[m[32m    exclude group: 'com.google.firebase', module: 'firebase-iid'[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// Apply Google Services plugin only if configuration file exists[m
+[32m+[m[32mif (file('google-services.json').exists()) {[m
+[32m+[m[32m    apply plugin: 'com.google.gms.google-services'[m
+[32m+[m[32m    println 'Google Services plugin applied (google-services.json found).'[m
+[32m+[m[32m} else {[m
+[32m+[m[32m    println 'WARNING: google-services.json not found. Skipping Google Services plugin.\nAdd android/app/google-services.json via FlutterFire to enable Firebase.'[m
+ }[m

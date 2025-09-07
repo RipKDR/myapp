@@ -1,0 +1,23 @@
+name: Verify Mobile Config
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+      - name: Dart version
+        run: dart --version
+      - name: Verify mobile configuration
+        env:
+          # Optionally set this in repo/environment secrets for stricter checks
+          # GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+        run: dart scripts/verify_mobile_config.dart --soft
+
