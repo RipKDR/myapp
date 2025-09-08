@@ -1,0 +1,127 @@
+workflows:
+  android_internal:
+    name: Android → Google Play (internal) + Firebase testers
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      android_signing:
+        # Upload a keystore in Codemagic UI > Code signing identities, then put its reference name here
+        - keystore_reference
+      groups:
+        - firebase_credentials   # contains FIREBASE_SERVICE_ACCOUNT and GOOGLE_APPLICATION_CREDENTIALS
+        - google_play_credentials # contains GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
+      vars:
+        PACKAGE_NAME: "TODO_ANDROID_PACKAGE_NAME"  # e.g. com.yourorg.ndisconnect
+        GOOGLE_PLAY_TRACK: "internal"             # change to beta/production when ready
+    triggering:
+      events:
+        - push
+        - tag
+      branch_patterns:
+        - pattern: "main"
+          include: true
+          source: true
+    scripts:
+      - name: Set up local.properties (Flutter SDK path)
+        script: echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
+      - name: Flutter pub get
+        script: flutter pub get
+      - name: Lint & unit tests (non-blocking)
+        script: |
+          flutter analyze
+          flutter test || true
+      - name: Bump Android build number from Google Play
+        script: |
+          BUILD_NUMBER=$(($(google-play get-latest-build-number --package-name "$PACKAGE_NAME" --tracks="$GOOGLE_PLAY_TRACK") + 1))
+          echo "PROJECT_BUILD_NUMBER=$BUILD_NUMBER" >> $CM_ENV
+      - name: Build Android App Bundle
+        script: |
+          flutter build appbundle --release \
+            --build-name=1.0.$PROJECT_BUILD_NUMBER \
+            --build-number=$PROJECT_BUILD_NUMBER
+    artifacts:
+      - build/**/outputs/**/*.aab
+      - build/**/outputs/**/mapping.txt
+    publishing:
+      google_play:               # Play Console service account JSON in env var
+        credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
+        track: $GOOGLE_PLAY_TRACK
+        submit_as_draft: true
+      firebase:                  # Firebase App Distribution (optional)
+        firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
+        android:
+          app_id: "TODO_FIREBASE_ANDROID_APP_ID"  # form: x:xxxxxxxxxxxx:android:xxxxxxxx
+          groups:
+            - androidTesters
+      email:
+        recipients:
+          - you@example.com
+        notify:
+          success: true
+          failure: true
+
+  ios_testflight:
+    name: iOS → TestFlight + Firebase testers
+    instance_type: mac_mini_m2
+    max_build_duration: 90
+    integrations:
+      app_store_connect: TODO_YOUR_ASC_KEY_NAME   # set in Codemagic Team Integrations (Developer Portal)
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: "TODO_IOS_BUNDLE_ID"   # e.g. com.yourorg.ndisconnect
+      groups:
+        - appstore_credentials    # if you prefer var-based auth instead of 'auth: integration' below
+        - firebase_credentials
+      vars:
+        APP_STORE_APPLE_ID: "TODO_APP_STORE_APP_ID" # numeric app id from App Store Connect
+    triggering:
+      events:
+        - push
+        - tag
+      branch_patterns:
+        - pattern: "main"
+          include: true
+          source: true
+    scripts:
+      - name: Prepare CocoaPods
+        script: find . -name "Podfile" -execdir pod install \;
+      - name: Set up code signing settings
+        script: xcode-project use-profiles
+      - name: Flutter pub get
+        script: flutter pub get
+      - name: Bump iOS build number from App Store Connect
+        script: |
+          BUILD_NUMBER=$(($(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID") + 1))
+          echo "PROJECT_BUILD_NUMBER=$BUILD_NUMBER" >> $CM_ENV
+      - name: Build iOS IPA
+        script: |
+          flutter build ipa --release \
+            --build-name=1.0.$PROJECT_BUILD_NUMBER \
+            --build-number=$PROJECT_BUILD_NUMBER \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration                 # uses the integration set above
+        submit_to_testflight: true
+        beta_groups:
+          - Internal Testers
+        submit_to_app_store: false
+      firebase:                           # Firebase App Distribution (optional)
+        firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
+        ios:
+          app_id: "TODO_FIREBASE_IOS_APP_ID"  # form: x:xxxxxxxxxxxx:ios:xxxxxxxx
+          groups:
+            - iosTesters
+      email:
+        recipients:
+          - you@example.com
+        notify:
+          success: true
+          failure: true
