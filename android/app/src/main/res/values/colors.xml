@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Notification accent color (used by FCM) -->
+    <color name="notification_color">#2196F3</color>
+
+    <!-- Splash/launch background color -->
+    <color name="launch_background">#FFFFFF</color>
+</resources>
+

@@ -209,7 +209,7 @@ class _SupportCircleScreenState extends State<SupportCircleScreen> {
                         margin: const EdgeInsets.symmetric(vertical: 4),
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: m.authorId == 'p' ? Colors.teal.withOpacity(0.15) : Colors.grey.withOpacity(0.2),
+                          color: m.authorId == 'p' ? Colors.teal.withValues(alpha: 0.15) : Colors.grey.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(m.text),

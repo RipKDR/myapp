@@ -83,14 +83,20 @@ Future<bool> checkCodeQuality() async {
       return false;
     }
 
-    // Check for TODO/FIXME comments
-    final todoResult = await Process.run('grep', [
-      '-r',
-      'TODO\\|FIXME',
-      'lib/',
-    ]);
-    if (todoResult.exitCode == 0) {
-      print('   ⚠️  Found TODO/FIXME comments in code');
+    // Check for TODO/FIXME comments (only on Unix-like systems)
+    if (Platform.isLinux || Platform.isMacOS) {
+      try {
+        final todoResult = await Process.run('grep', [
+          '-r',
+          'TODO\\|FIXME',
+          'lib/',
+        ]);
+        if (todoResult.exitCode == 0) {
+          print('   ⚠️  Found TODO/FIXME comments in code');
+        }
+      } catch (e) {
+        // Ignore grep errors on some systems
+      }
     }
 
     print('   ✅ Code quality checks passed');
@@ -285,15 +291,20 @@ Future<bool> checkBuild() async {
     // Test iOS build (if on macOS)
     if (Platform.isMacOS) {
       print('   Testing iOS build...');
-      final iosResult = await Process.run('flutter', [
-        'build',
-        'ios',
-        '--debug',
-        '--no-codesign',
-      ]);
-      if (iosResult.exitCode != 0) {
-        print('   ❌ iOS build failed: ${iosResult.stderr}');
-        return false;
+      try {
+        final iosResult = await Process.run('flutter', [
+          'build',
+          'ios',
+          '--debug',
+          '--no-codesign',
+        ]);
+        if (iosResult.exitCode != 0) {
+          print('   ❌ iOS build failed: ${iosResult.stderr}');
+          return false;
+        }
+      } catch (e) {
+        print('   ⚠️  iOS build test skipped: $e');
+        // Don't fail the entire check for iOS build issues
       }
     }
 

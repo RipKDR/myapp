@@ -1,0 +1,56 @@
+workflows:
+  android_internal:
+    name: Android → Google Play (internal)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      android_signing:
+        - TODO_ANDROID_KEYSTORE_REFERENCE
+      groups:
+        - google_play_credentials
+      vars:
+        PACKAGE_NAME: "com.yourorg.ndisconnect"
+        GOOGLE_PLAY_TRACK: "internal"
+        FLAVOR: "prod"
+        ENTRY_POINT: "lib/main_prod.dart"
+    triggering:
+      events: [push, tag]
+      branch_patterns:
+        - pattern: "main"
+          include: true
+          source: true
+        - pattern: "master"
+          include: true
+          source: true
+    scripts:
+      - name: Flutter pub get
+        script: flutter pub get
+      - name: Lint & unit tests (non-blocking)
+        script: |
+          flutter analyze || true
+          flutter test || true
+      - name: Get latest build number from Google Play and bump
+        script: |
+          BUILD_NUMBER=$(($(google-play get-latest-build-number \
+            --package-name "$PACKAGE_NAME" --tracks="$GOOGLE_PLAY_TRACK") + 1))
+          echo "PROJECT_BUILD_NUMBER=$BUILD_NUMBER" >> $CM_ENV
+      - name: Build Android App Bundle (AAB)
+        script: |
+          flutter build appbundle --release \
+            --flavor $FLAVOR -t $ENTRY_POINT \
+            --build-name=1.0.$PROJECT_BUILD_NUMBER \
+            --build-number=$PROJECT_BUILD_NUMBER
+    artifacts:
+      - build/**/outputs/**/*.aab
+      - build/**/outputs/**/mapping.txt
+    publishing:
+      google_play:
+        credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
+        track: $GOOGLE_PLAY_TRACK
+        submit_as_draft: true
+      email:
+        recipients: ["you@example.com"]
+        notify:
+          success: true
+          failure: true

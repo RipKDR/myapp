@@ -22,6 +22,11 @@ class AuthController extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
+  // Backward-compatible getters expected by tests
+  bool get isAuthenticated => signedIn;
+  fb.User? get currentUser => _firebaseUser;
+  UserRole? get userRole => _role == UserRole.unknown ? null : _role;
+
   static AuthController of(BuildContext context) =>
       context.read<AuthController>();
 

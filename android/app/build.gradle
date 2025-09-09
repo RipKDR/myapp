@@ -1,0 +1,141 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw new RuntimeException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+android {
+    namespace "ndis.connect"
+    compileSdkVersion 36
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+        coreLibraryDesugaringEnabled true
+    }
+
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        applicationId "ndis.connect"
+        minSdkVersion flutter.minSdkVersion
+        targetSdkVersion 34
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+        multiDexEnabled true
+
+        // NDIS Connect specific configuration
+        manifestPlaceholders = [
+            appName: "NDIS Connect",
+            appDescription: "Accessible companion for NDIS participants and providers",
+            applicationName: "io.flutter.app.FlutterApplication"
+        ]
+    }
+
+    signingConfigs {
+        release {
+            // Signing configuration for release builds
+            // Configure in key.properties file for production
+        }
+    }
+
+    buildTypes {
+        debug {
+            versionNameSuffix "-debug"
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+        }
+        
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        
+        staging {
+            initWith debug
+            versionNameSuffix "-staging"
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+        }
+    }
+
+    // Enable view binding
+    buildFeatures {
+        viewBinding true
+    }
+
+    // Packaging options
+    packagingOptions {
+        pickFirst '**/libc++_shared.so'
+        pickFirst '**/libjsc.so'
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
+    
+    // Import the Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:34.2.0')
+    
+    // TODO: Add the dependencies for Firebase products you want to use
+    // When using the BoM, don't specify versions in Firebase dependencies
+    // https://firebase.google.com/docs/android/setup#available-libraries
+    
+    // Example Firebase dependencies (uncomment as needed):
+    // implementation 'com.google.firebase:firebase-analytics'
+    // implementation 'com.google.firebase:firebase-auth'
+    // implementation 'com.google.firebase:firebase-firestore'
+    // implementation 'com.google.firebase:firebase-messaging'
+    // implementation 'com.google.firebase:firebase-storage'
+}
+
+// Exclude deprecated firebase-iid to fix duplicate class issue
+configurations.all {
+    exclude group: 'com.google.firebase', module: 'firebase-iid'
+}
+
+// Apply Google Services plugin only if configuration file exists
+if (file('google-services.json').exists()) {
+    apply plugin: 'com.google.gms.google-services'
+    println 'Google Services plugin applied (google-services.json found).'
+} else {
+    println 'WARNING: google-services.json not found. Skipping Google Services plugin.\nAdd android/app/google-services.json via FlutterFire to enable Firebase.'
+}

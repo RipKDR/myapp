@@ -1,3 +1,4 @@
+<!-- markdownlint-disable -->
 NDIS Connect (Flutter)
 ======================
 
@@ -28,16 +29,14 @@ New in this iteration
 - Plan Snapshot timeline with PDF export (printing/pdf packages).
 - Smart Plan Checklist with priorities and reward toasts.
 - Gamification controller: points, streaks, and badges state persisted locally.
- - Notifications: Firebase Messaging + local notifications for foreground.
+- Notifications: Firebase Messaging + local notifications for foreground.
 
-Prerequisites
--------------
+## Prerequisites
 - Flutter SDK installed
 - Xcode (iOS) and Android SDKs
 - Firebase project and FlutterFire CLI
 
-Setup
------
+## Setup
 1) Create missing platform folders (since this repo was scaffolded without `flutter create`):
    flutter create .
 

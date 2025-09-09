@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../Downloads/functions"
+		},
+		{
+			"path": "../Downloads/pathfinder"
+		},
+		{
+			"path": "../Downloads/dataconnect"
+		}
+	],
+	"settings": {}
+}

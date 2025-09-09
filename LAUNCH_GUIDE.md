@@ -1,3 +1,4 @@
+<!-- markdownlint-disable -->
 # 🚀 NDIS Connect - Launch Ready Guide
 
 ## 📋 Pre-Launch Checklist

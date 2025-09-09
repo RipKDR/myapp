@@ -71,7 +71,7 @@ class _PiePainter extends CustomPainter {
     for (int i = 0; i < data.buckets.length; i++) {
       final b = data.buckets[i];
       final sweep = (b.allocated / total) * 2 * math.pi;
-      paint.color = colors[i % colors.length].withOpacity(0.85);
+      paint.color = colors[i % colors.length].withValues(alpha: 0.85);
       canvas.drawArc(Rect.fromCircle(center: center, radius: radius/2), start, sweep, false, paint);
       start += sweep;
     }
@@ -80,4 +80,3 @@ class _PiePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _PiePainter oldDelegate) => oldDelegate.data != data;
 }
-
