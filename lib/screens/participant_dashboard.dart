@@ -3,385 +3,373 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../routes.dart';
-import '../widgets/icon_card.dart';
 import '../widgets/budget_pie.dart';
+import '../widgets/modern_dashboard_card.dart';
+import '../widgets/modern_dashboard_layout.dart';
+import '../widgets/google_dashboard_header.dart';
 import '../models/budget.dart';
 import '../models/appointment.dart';
-import '../controllers/settings_controller.dart';
-import '../controllers/gamification_controller.dart';
 import '../controllers/auth_controller.dart';
-import '../widgets/hero_banner.dart';
 import '../widgets/confetti_banner.dart';
-import '../core/feature_flags.dart';
-import '../widgets/feature_guard.dart';
 import '../repositories/appointment_repository.dart';
 import '../repositories/budget_repository.dart';
+import '../theme/google_theme.dart';
+import '../widgets/enhanced_settings_sheet.dart';
+import '../services/enhanced_voice_service.dart';
+import '../utils/haptic_utils.dart';
+import '../theme/app_theme.dart';
+import '../widgets/compact_infographics.dart';
 
 class ParticipantDashboardScreen extends StatelessWidget {
   const ParticipantDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final settings = context.watch<SettingsController>();
     final auth = context.watch<AuthController>();
     final dateFmt = DateFormat('EEE d MMM, h:mm a');
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('NDIS Connect'),
-        actions: [
-          IconButton(
-            tooltip: 'Settings & Accessibility',
-            onPressed: () => _openSettings(context),
-            icon: const Icon(Icons.settings_accessibility),
-          ),
-        ],
+    return ModernDashboardLayout(
+      title: 'Welcome back',
+      subtitle: 'Your NDIS journey at a glance',
+      actions: [
+        IconButton(
+          tooltip: 'Settings & Accessibility',
+          onPressed: () => _openSettings(context),
+          icon: const Icon(Icons.settings_accessibility),
+        ),
+      ],
+      floatingActionButton: VoiceCommandButton(
+        onCommand: (command) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Voice command: $command')),
+          );
+        },
+        prompt: 'How can I help you with your NDIS plan today?',
+        tooltip: 'Voice Commands',
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
+      header: Column(
         children: [
           const ConfettiBanner(),
-          const HeroBanner(
-            title: 'Welcome back',
-            subtitle: 'Your week at a glance',
-          ),
-          const SizedBox(height: 12),
-          IconCard(
-            icon: Icons.event_available,
-            label: 'Book or view sessions',
-            onTap: () => Navigator.pushNamed(context, Routes.calendar),
-          ),
-          IconCard(
-            icon: Icons.account_balance_wallet,
-            label: 'Track your budget',
-            onTap: () => Navigator.pushNamed(context, Routes.budget),
-          ),
-          IconCard(
-            icon: Icons.chat_bubble_outline,
-            label: 'Ask NDIS Assistant',
-            onTap: () => Navigator.pushNamed(context, '/chat'),
-          ),
-          IconCard(
-            icon: Icons.map_outlined,
-            label: 'Find services near you',
-            onTap: () => Navigator.pushNamed(context, '/map'),
-          ),
-          IconCard(
-            icon: Icons.checklist_rtl,
-            label: 'Smart Plan Checklist',
-            onTap: () => Navigator.pushNamed(context, '/checklist'),
-          ),
-          IconCard(
-            icon: Icons.timeline,
-            label: 'Plan Progress Snapshot',
-            onTap: () => Navigator.pushNamed(context, '/snapshot'),
-          ),
-          IconCard(
-            icon: Icons.people_outline,
-            label: 'Support Circle',
-            onTap: () => Navigator.pushNamed(context, '/circle'),
-          ),
-          const SizedBox(height: 8),
-          // Budget snapshot
-          if (auth.userId != null)
-            StreamBuilder<BudgetOverview?>(
-              stream: BudgetRepository.streamForUser(auth.userId!),
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data != null) {
-                  final budget = snapshot.data!;
-                  return Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Budget snapshot',
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                          const SizedBox(height: 8),
-                          BudgetPieChart(data: budget),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Total allocated: \$${budget.totalAllocated.toStringAsFixed(0)}',
-                          ),
-                          Text(
-                            'Total spent: \$${budget.totalSpent.toStringAsFixed(0)}',
-                          ),
-                          Text(
-                            'Remaining: \$${(budget.totalAllocated - budget.totalSpent).toStringAsFixed(0)}',
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                } else {
-                  return Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Budget snapshot',
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                          const SizedBox(height: 8),
-                          const Text('No budget data available'),
-                          TextButton(
-                            onPressed: () =>
-                                Navigator.pushNamed(context, Routes.budget),
-                            child: const Text('Set up your budget'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-              },
-            )
-          else
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Budget snapshot',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 8),
-                    BudgetPieChart(data: _mockBudget()),
-                    const SizedBox(height: 8),
-                    const Text('Demo budget data'),
-                  ],
-                ),
-              ),
-            ),
-          const SizedBox(height: 8),
-          // Upcoming appointments
-          if (auth.userId != null)
-            StreamBuilder<List<Appointment>>(
-              stream: AppointmentRepository.getUpcoming(auth.userId!, limit: 3),
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  final appointments = snapshot.data!;
-                  return Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(Icons.schedule),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Upcoming sessions',
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          for (final a in appointments)
-                            ListTile(
-                              leading: const Icon(Icons.event),
-                              title: Text(a.title),
-                              subtitle: Text(
-                                '${a.providerName} • ${dateFmt.format(a.start)}',
-                              ),
-                              trailing: a.confirmed
-                                  ? const Icon(
-                                      Icons.check_circle,
-                                      color: Colors.green,
-                                    )
-                                  : const Icon(
-                                      Icons.hourglass_bottom,
-                                      color: Colors.orange,
-                                    ),
-                            ),
-                          TextButton(
-                            onPressed: () =>
-                                Navigator.pushNamed(context, Routes.calendar),
-                            child: const Text('View calendar'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                } else {
-                  return Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(Icons.schedule),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Upcoming sessions',
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          const Text('No upcoming appointments'),
-                          TextButton(
-                            onPressed: () =>
-                                Navigator.pushNamed(context, Routes.calendar),
-                            child: const Text('Book a session'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-              },
-            )
-          else
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.schedule),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Upcoming sessions',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    for (final a in _mockAppointments().take(3))
-                      ListTile(
-                        leading: const Icon(Icons.event),
-                        title: Text(a.title),
-                        subtitle: Text(
-                          '${a.providerName} • ${dateFmt.format(a.start)}',
-                        ),
-                        trailing: a.confirmed
-                            ? const Icon(
-                                Icons.check_circle,
-                                color: Colors.green,
-                              )
-                            : const Icon(
-                                Icons.hourglass_bottom,
-                                color: Colors.orange,
-                              ),
-                      ),
-                    TextButton(
-                      onPressed: () =>
-                          Navigator.pushNamed(context, Routes.calendar),
-                      child: const Text('View calendar'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          const SizedBox(height: 8),
-          Card(
-            color: Colors.indigo.withOpacity(0.08),
-            child: const ListTile(
-              leading: Icon(Icons.emoji_events_outlined),
-              title: Text('NDIS Champion'),
-              subtitle: _GamiSummary(),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _openSettings(BuildContext context) {
-    final settings = context.read<SettingsController>();
-    showModalBottomSheet(
-      context: context,
-      showDragHandle: true,
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Accessibility & Appearance',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  const Text('Theme: '),
-                  const SizedBox(width: 8),
-                  DropdownButton<ThemeMode>(
-                    value: settings.themeMode,
-                    items: const [
-                      DropdownMenuItem(
-                        value: ThemeMode.system,
-                        child: Text('System'),
-                      ),
-                      DropdownMenuItem(
-                        value: ThemeMode.light,
-                        child: Text('Light'),
-                      ),
-                      DropdownMenuItem(
-                        value: ThemeMode.dark,
-                        child: Text('Dark'),
-                      ),
-                    ],
-                    onChanged: (m) =>
-                        m != null ? settings.setThemeMode(m) : null,
-                  ),
-                ],
-              ),
-              SwitchListTile(
-                value: settings.highContrast,
-                onChanged: settings.setHighContrast,
-                title: const Text('High contrast'),
-              ),
-              SwitchListTile(
-                value: settings.reduceMotion,
-                onChanged: settings.setReduceMotion,
-                title: const Text('Reduce motion (limit animations)'),
-              ),
-              Row(
-                children: [
-                  const Text('Text size'),
-                  Expanded(
-                    child: Slider(
-                      min: 0.8,
-                      max: 1.8,
-                      value: settings.textScale,
-                      onChanged: (v) => settings.setTextScale(v),
-                    ),
-                  ),
-                  Text('${(settings.textScale * 100).round()}%'),
-                ],
+          GoogleDashboardHeader(
+            greeting: 'there',
+            subtitle: 'Your NDIS journey continues',
+            showStats: true,
+            onProfileTap: () => _openSettings(context),
+            actions: [
+              IconButton(
+                onPressed: () => _openSettings(context),
+                icon: const Icon(Icons.settings_outlined),
+                tooltip: 'Settings',
               ),
             ],
           ),
-        );
-      },
+          const SizedBox(height: 16),
+        ],
+      ),
+      children: [
+        // Core Services
+        InteractiveCard(
+          onTap: () => Navigator.pushNamed(context, Routes.calendar),
+          child: ModernDashboardCard(
+            icon: Icons.event_available,
+            title: 'Book Sessions',
+            subtitle: 'Schedule appointments and manage your calendar',
+            value: 'Next: Tomorrow 2PM',
+            iconColor: AppTheme.calmingBlue,
+            onTap: () => Navigator.pushNamed(context, Routes.calendar),
+            actions: [
+              QuickActionButton(
+                icon: Icons.add,
+                label: 'Book Now',
+                onPressed: () => Navigator.pushNamed(context, Routes.calendar),
+              ),
+            ],
+          ),
+        ),
+
+        ModernDashboardCard(
+          icon: Icons.account_balance_wallet,
+          title: 'Budget Tracker',
+          subtitle: 'Monitor spending and plan your NDIS funds',
+          value: auth.userId != null ? null : '\$18,400 remaining',
+          iconColor: GoogleTheme.ndisGreen,
+          showTrend: true,
+          trend: '12% left',
+          trendDirection: TrendDirection.down,
+          onTap: () => Navigator.pushNamed(context, Routes.budget),
+          actions: [
+            QuickActionButton(
+              icon: Icons.receipt,
+              label: 'Add Receipt',
+              onPressed: () => Navigator.pushNamed(context, Routes.budget),
+            ),
+          ],
+        ),
+
+        ModernDashboardCard(
+          icon: Icons.chat_bubble_outline,
+          title: 'NDIS Assistant',
+          subtitle: 'Get instant help with NDIS questions',
+          value: 'AI Powered',
+          iconColor: GoogleTheme.ndisTeal,
+          onTap: () => Navigator.pushNamed(context, '/chat'),
+          actions: [
+            QuickActionButton(
+              icon: Icons.mic,
+              label: 'Voice Chat',
+              onPressed: () => Navigator.pushNamed(context, '/chat'),
+            ),
+          ],
+        ),
+
+        ModernDashboardCard(
+          icon: Icons.checklist_rtl,
+          title: 'Plan Checklist',
+          subtitle: 'Track your goals and milestones',
+          value: '8/12 Complete',
+          iconColor: GoogleTheme.ndisOrange,
+          showTrend: true,
+          trend: '67%',
+          trendDirection: TrendDirection.up,
+          onTap: () => Navigator.pushNamed(context, '/checklist'),
+          actions: [
+            QuickActionButton(
+              icon: Icons.check,
+              label: 'Mark Done',
+              onPressed: () => Navigator.pushNamed(context, '/checklist'),
+            ),
+          ],
+        ),
+
+        ModernDashboardCard(
+          icon: Icons.timeline,
+          title: 'Progress Report',
+          subtitle: 'View your progress and export reports',
+          value: 'Last updated today',
+          iconColor: GoogleTheme.ndisPurple,
+          onTap: () => Navigator.pushNamed(context, '/snapshot'),
+          actions: [
+            QuickActionButton(
+              icon: Icons.download,
+              label: 'Export PDF',
+              onPressed: () => Navigator.pushNamed(context, '/snapshot'),
+            ),
+          ],
+        ),
+
+        ModernDashboardCard(
+          icon: Icons.people_outline,
+          title: 'Support Circle',
+          subtitle: 'Connect with your support team',
+          value: '5 Members',
+          iconColor: GoogleTheme.ndisTeal,
+          onTap: () => Navigator.pushNamed(context, '/circle'),
+          actions: [
+            QuickActionButton(
+              icon: Icons.message,
+              label: 'Message',
+              onPressed: () => Navigator.pushNamed(context, '/circle'),
+            ),
+          ],
+        ),
+
+        ModernDashboardCard(
+          icon: Icons.map_outlined,
+          title: 'Find Services',
+          subtitle: 'Discover local NDIS providers',
+          value: '24 nearby',
+          iconColor: GoogleTheme.ndisGreen,
+          onTap: () => Navigator.pushNamed(context, '/map'),
+          actions: [
+            QuickActionButton(
+              icon: Icons.search,
+              label: 'Search',
+              onPressed: () => Navigator.pushNamed(context, '/map'),
+            ),
+          ],
+        ),
+
+        // Budget Overview Card
+        _buildBudgetOverviewCard(context, auth),
+
+        // Appointments Card
+        _buildAppointmentsCard(context, auth, dateFmt),
+
+        // Compact professional infographics (minimal, tasteful)
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: CompactTimeline(
+            entries: const [
+              TimelineEntry(
+                title: 'Receipt Uploaded',
+                subtitle: 'Budget • Core Supports',
+                trailing: 'Today',
+                color: AppTheme.ndisGreen,
+              ),
+              TimelineEntry(
+                title: 'Session Confirmed',
+                subtitle: 'Calendar • Physio Tomorrow 2PM',
+                trailing: '1h ago',
+                color: AppTheme.ndisBlue,
+              ),
+              TimelineEntry(
+                title: 'Goal Progress',
+                subtitle: 'Checklist • Mobility 67%',
+                trailing: 'Today',
+                color: AppTheme.ndisPurple,
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
-}
 
-class _GamiSummary extends StatelessWidget {
-  const _GamiSummary();
-  @override
-  Widget build(BuildContext context) {
-    final points = context.select<GamificationController, int>((g) => g.points);
-    final streak = context.select<GamificationController, int>(
-      (g) => g.streakDays,
+  Widget _buildBudgetOverviewCard(BuildContext context, AuthController auth) {
+    if (auth.userId != null) {
+      return StreamBuilder<BudgetOverview?>(
+        stream: BudgetRepository.streamForUser(auth.userId!),
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data != null) {
+            final budget = snapshot.data!;
+            final remaining = budget.totalAllocated - budget.totalSpent;
+            final percentUsed =
+                (budget.totalSpent / budget.totalAllocated * 100);
+
+            return ModernDashboardCard(
+              icon: Icons.pie_chart,
+              title: 'Budget Overview',
+              subtitle: 'Your NDIS funding breakdown',
+              value: '\$${remaining.toStringAsFixed(0)} left',
+              iconColor: GoogleTheme.ndisGreen,
+              showTrend: true,
+              trend: '${(100 - percentUsed).toStringAsFixed(0)}%',
+              trendDirection:
+                  percentUsed > 80 ? TrendDirection.down : TrendDirection.up,
+              onTap: () => Navigator.pushNamed(context, Routes.budget),
+              trailing: SizedBox(
+                width: 60,
+                height: 60,
+                child: BudgetPieChart(data: budget),
+              ),
+            );
+          } else {
+            return ModernDashboardCard(
+              icon: Icons.pie_chart,
+              title: 'Budget Overview',
+              subtitle: 'Set up your NDIS budget tracking',
+              value: 'Not configured',
+              iconColor: GoogleTheme.ndisGreen,
+              onTap: () => Navigator.pushNamed(context, Routes.budget),
+              actions: [
+                QuickActionButton(
+                  icon: Icons.add,
+                  label: 'Set Up',
+                  onPressed: () => Navigator.pushNamed(context, Routes.budget),
+                ),
+              ],
+            );
+          }
+        },
+      );
+    } else {
+      final budget = _mockBudget();
+      final remaining = budget.totalAllocated - budget.totalSpent;
+
+      return ModernDashboardCard(
+        icon: Icons.pie_chart,
+        title: 'Budget Overview',
+        subtitle: 'Demo budget data',
+        value: '\$${remaining.toStringAsFixed(0)} left',
+        iconColor: GoogleTheme.ndisGreen,
+        showTrend: true,
+        trend: '73%',
+        trendDirection: TrendDirection.up,
+        onTap: () => Navigator.pushNamed(context, Routes.budget),
+        trailing: SizedBox(
+          width: 60,
+          height: 60,
+          child: BudgetPieChart(data: budget),
+        ),
+      );
+    }
+  }
+
+  Widget _buildAppointmentsCard(
+      BuildContext context, AuthController auth, DateFormat dateFmt) {
+    if (auth.userId != null) {
+      return StreamBuilder<List<Appointment>>(
+        stream: AppointmentRepository.getUpcoming(auth.userId!, limit: 3),
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+            final appointments = snapshot.data!;
+            final nextAppointment = appointments.first;
+
+            return ModernDashboardCard(
+              icon: Icons.schedule,
+              title: 'Upcoming Sessions',
+              subtitle: '${appointments.length} sessions scheduled',
+              value: 'Next: ${dateFmt.format(nextAppointment.start)}',
+              iconColor: GoogleTheme.ndisBlue,
+              onTap: () => Navigator.pushNamed(context, Routes.calendar),
+              actions: [
+                QuickActionButton(
+                  icon: Icons.calendar_today,
+                  label: 'View All',
+                  onPressed: () =>
+                      Navigator.pushNamed(context, Routes.calendar),
+                ),
+              ],
+            );
+          } else {
+            return ModernDashboardCard(
+              icon: Icons.schedule,
+              title: 'Upcoming Sessions',
+              subtitle: 'No sessions scheduled',
+              value: 'Book your first session',
+              iconColor: GoogleTheme.ndisBlue,
+              onTap: () => Navigator.pushNamed(context, Routes.calendar),
+              actions: [
+                QuickActionButton(
+                  icon: Icons.add,
+                  label: 'Book Now',
+                  onPressed: () =>
+                      Navigator.pushNamed(context, Routes.calendar),
+                ),
+              ],
+            );
+          }
+        },
+      );
+    } else {
+      final appointments = _mockAppointments();
+      final nextAppointment = appointments.first;
+
+      return ModernDashboardCard(
+        icon: Icons.schedule,
+        title: 'Upcoming Sessions',
+        subtitle: '${appointments.length} sessions scheduled',
+        value: 'Next: ${dateFmt.format(nextAppointment.start)}',
+        iconColor: GoogleTheme.ndisBlue,
+        onTap: () => Navigator.pushNamed(context, Routes.calendar),
+        actions: [
+          QuickActionButton(
+            icon: Icons.calendar_today,
+            label: 'View All',
+            onPressed: () => Navigator.pushNamed(context, Routes.calendar),
+          ),
+        ],
+      );
+    }
+  }
+
+  void _openSettings(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const EnhancedSettingsSheet(),
     );
-    return Text('Daily streak: $streak days • Points: $points');
   }
 }
 

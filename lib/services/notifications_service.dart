@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../firebase_bg.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -11,6 +12,11 @@ class NotificationsService {
 
   static Future<void> initialize() async {
     try {
+      if (kIsWeb) {
+        // Web: local notifications plugin and background handlers not applicable.
+        // Firebase messaging will still work for web if configured, but skip native init.
+        return;
+      }
       // Local notifications init
       const android = AndroidInitializationSettings('@mipmap/ic_launcher');
       const ios = DarwinInitializationSettings();
@@ -22,7 +28,8 @@ class NotificationsService {
       await _messaging.requestPermission(alert: true, badge: true, sound: true);
 
       // Foreground presentation
-      await _messaging.setForegroundNotificationPresentationOptions(alert: true, badge: true, sound: true);
+      await _messaging.setForegroundNotificationPresentationOptions(
+          alert: true, badge: true, sound: true);
       FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -44,9 +51,14 @@ class NotificationsService {
     }
   }
 
-  static Future<void> scheduleAt(DateTime when, {required int id, required String title, required String body}) async {
-    final android = AndroidNotificationDetails('reminders', 'Reminders');
-    final ios = const DarwinNotificationDetails();
+  static Future<void> scheduleAt(DateTime when,
+      {required int id, required String title, required String body}) async {
+    if (kIsWeb) {
+      // No-op on web
+      return;
+    }
+    const android = AndroidNotificationDetails('reminders', 'Reminders');
+    const ios = DarwinNotificationDetails();
     final details = NotificationDetails(android: android, iOS: ios);
     await _fln.zonedSchedule(
       id,
@@ -55,7 +67,8 @@ class NotificationsService {
       tz.TZDateTime.from(when, tz.local),
       details,
       androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: null,
     );
   }

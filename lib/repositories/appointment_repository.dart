@@ -44,6 +44,15 @@ class AppointmentRepository {
     ).map((list) => list.map(Appointment.fromMap).toList());
   }
 
+  // Stream all appointments (no filter)
+  static Stream<List<Appointment>> stream() {
+    return FirestoreService.stream(
+      _col,
+      orderBy: 'start',
+      descending: false,
+    ).map((list) => list.map(Appointment.fromMap).toList());
+  }
+
   // Get upcoming appointments
   static Stream<List<Appointment>> getUpcoming(String userId, {int limit = 5}) {
     final now = DateTime.now();
@@ -133,13 +142,11 @@ class AppointmentRepository {
       'upcoming': appointments
           .where((a) => a.start.isAfter(now) && !a.cancelled)
           .length,
-      'completed': appointments
-          .where((a) => a.end.isBefore(now) && !a.cancelled)
-          .length,
+      'completed':
+          appointments.where((a) => a.end.isBefore(now) && !a.cancelled).length,
       'cancelled': appointments.where((a) => a.cancelled).length,
-      'pending_confirmation': appointments
-          .where((a) => !a.confirmed && !a.cancelled)
-          .length,
+      'pending_confirmation':
+          appointments.where((a) => !a.confirmed && !a.cancelled).length,
     };
   }
 }

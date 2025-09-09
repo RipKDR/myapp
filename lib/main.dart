@@ -7,7 +7,7 @@ import 'controllers/gamification_controller.dart';
 import 'services/firebase_service.dart';
 import 'services/purchase_service.dart';
 import 'services/error_service.dart';
-import 'theme/app_theme.dart';
+import 'theme/google_theme.dart';
 import 'routes.dart';
 
 void main() async {
@@ -40,8 +40,8 @@ class NDISConnectApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'NDIS Connect',
-      theme: AppTheme.lightTheme(highContrast: settings.highContrast),
-      darkTheme: AppTheme.darkTheme(highContrast: settings.highContrast),
+      theme: GoogleTheme.lightTheme(highContrast: settings.highContrast),
+      darkTheme: GoogleTheme.darkTheme(highContrast: settings.highContrast),
       themeMode: settings.themeMode,
       builder: (context, child) {
         // Apply user-selected text scale and reduced motion globally.

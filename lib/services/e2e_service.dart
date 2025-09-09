@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:math';
 import 'package:cryptography/cryptography.dart';
 import '../utils/crypto.dart';
 
 class E2EService {
   static const _kSalt = 'circle_salt';
   static const _kCheck = 'circle_check';
-  static final _storage = const FlutterSecureStorage();
+  static const _storage = FlutterSecureStorage();
   static SecretKey? _key;
 
   static Future<bool> hasKey() async {
@@ -19,7 +20,9 @@ class E2EService {
     var saltB64 = await _storage.read(key: _kSalt);
     List<int> salt;
     if (saltB64 == null) {
-      salt = E2ECrypto._randomBytes(16);
+      // Generate salt using a cryptographically secure PRNG
+      final rnd = Random.secure();
+      salt = List<int>.generate(16, (_) => rnd.nextInt(256));
       await _storage.write(key: _kSalt, value: base64Encode(salt));
     } else {
       salt = base64Decode(saltB64);
@@ -34,9 +37,11 @@ class E2EService {
     final saltB64 = await _storage.read(key: _kSalt);
     final check = await _storage.read(key: _kCheck);
     if (saltB64 == null || check == null) return false;
-    final key = await E2ECrypto.deriveKey(passphrase: passphrase, salt: base64Decode(saltB64));
+    final key = await E2ECrypto.deriveKey(
+        passphrase: passphrase, salt: base64Decode(saltB64));
     try {
-      await E2ECrypto.decrypt(key: key, payload: Map<String, String>.from(jsonDecode(check)));
+      await E2ECrypto.decrypt(
+          key: key, payload: Map<String, String>.from(jsonDecode(check)));
       _key = key;
       return true;
     } catch (_) {
@@ -58,4 +63,3 @@ class E2EService {
     }
   }
 }
-

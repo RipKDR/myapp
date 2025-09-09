@@ -131,7 +131,8 @@ class _SupportCircleScreenState extends State<SupportCircleScreen> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: DragTarget<GoalCard>(
-        onAccept: (g) => setState(() {
+        onAcceptWithDetails: (details) => setState(() {
+          final g = details.data;
           _removeFromAll(g);
           items.add(GoalCard(id: g.id, title: g.title, status: title));
         }),

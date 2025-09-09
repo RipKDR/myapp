@@ -193,7 +193,7 @@ class _ComplianceBar extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [const Icon(Icons.verified_user), const SizedBox(width: 8), const Text('Compliance')]),
+            const Row(children: [Icon(Icons.verified_user), SizedBox(width: 8), Text('Compliance')]),
             const SizedBox(height: 8),
             LinearProgressIndicator(value: pct, color: color),
             const SizedBox(height: 6),

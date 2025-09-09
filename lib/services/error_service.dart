@@ -1,12 +1,29 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:ui' as ui;
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 class ErrorService {
-  static final FirebaseCrashlytics _crashlytics = FirebaseCrashlytics.instance;
+  static FirebaseCrashlytics? _crashlytics;
 
   // Initialize error handling
   static Future<void> initialize() async {
+    if (kIsWeb) {
+      // Web: Crashlytics not supported. Log errors to console instead.
+      FlutterError.onError = (FlutterErrorDetails details) {
+        log(
+          'Flutter Error: ${details.exception}',
+          error: details.exception,
+          stackTrace: details.stack,
+        );
+      };
+      return;
+    }
+
+    // Initialize Crashlytics lazily on supported platforms
+    _crashlytics = FirebaseCrashlytics.instance;
+
     // Set up Flutter error handling
     FlutterError.onError = (FlutterErrorDetails details) {
       log(
@@ -14,13 +31,13 @@ class ErrorService {
         error: details.exception,
         stackTrace: details.stack,
       );
-      _crashlytics.recordFlutterFatalError(details);
+      _crashlytics?.recordFlutterFatalError(details);
     };
 
     // Set up async error handling
-    PlatformDispatcher.instance.onError = (error, stack) {
+    ui.PlatformDispatcher.instance.onError = (error, stack) {
       log('Platform Error: $error', error: error, stackTrace: stack);
-      _crashlytics.recordError(error, stack, fatal: true);
+      _crashlytics?.recordError(error, stack, fatal: true);
       return true;
     };
   }
@@ -40,13 +57,13 @@ class ErrorService {
         stackTrace: stackTrace,
       );
 
-      if (customKeys != null) {
+      if (_crashlytics != null && customKeys != null) {
         for (final entry in customKeys.entries) {
-          await _crashlytics.setCustomKey(entry.key, entry.value);
+          await _crashlytics!.setCustomKey(entry.key, entry.value);
         }
       }
 
-      await _crashlytics.recordError(
+      await _crashlytics?.recordError(
         exception,
         stackTrace,
         reason: reason,
@@ -64,9 +81,9 @@ class ErrorService {
     String? email,
   }) async {
     try {
-      await _crashlytics.setUserIdentifier(userId);
-      if (role != null) await _crashlytics.setCustomKey('user_role', role);
-      if (email != null) await _crashlytics.setCustomKey('user_email', email);
+      await _crashlytics?.setUserIdentifier(userId);
+      if (role != null) await _crashlytics?.setCustomKey('user_role', role);
+      if (email != null) await _crashlytics?.setCustomKey('user_email', email);
     } catch (e) {
       log('Failed to set user context: $e');
     }
@@ -79,11 +96,11 @@ class ErrorService {
   }) async {
     try {
       log('Event: $message', error: data);
-      await _crashlytics.log(message);
+      await _crashlytics?.log(message);
 
-      if (data != null) {
+      if (_crashlytics != null && data != null) {
         for (final entry in data.entries) {
-          await _crashlytics.setCustomKey(entry.key, entry.value);
+          await _crashlytics!.setCustomKey(entry.key, entry.value);
         }
       }
     } catch (e) {

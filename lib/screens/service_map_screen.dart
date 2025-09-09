@@ -4,7 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../widgets/feature_guard.dart';
 import '../core/feature_flags.dart';
 import '../services/provider_directory_service.dart';
-import '../models/provider_location.dart';
+import '../services/ai_personalization_service.dart';
 
 class ServiceMapScreen extends StatefulWidget {
   const ServiceMapScreen({super.key});
@@ -19,6 +19,9 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
   double _waitFilter = 60; // minutes
   bool _accessibleOnly = false;
   double _minRating = 3.5;
+  final AIPersonalizationService _ai = AIPersonalizationService();
+  bool _showSuggestion = false;
+  String? _suggestionText;
 
   static const CameraPosition _sydney = CameraPosition(
     target: LatLng(-33.8688, 151.2093),
@@ -29,12 +32,16 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
   void initState() {
     super.initState();
     _loadProviders();
+    _loadSuggestion();
   }
 
   Future<void> _loadProviders() async {
     final list = await ProviderDirectoryService.listProviders();
     final filtered = list.where(
-      (p) => p.waitMinutes <= _waitFilter && (!_accessibleOnly || p.accessible) && p.rating >= _minRating,
+      (p) =>
+          p.waitMinutes <= _waitFilter &&
+          (!_accessibleOnly || p.accessible) &&
+          p.rating >= _minRating,
     );
     setState(() {
       _markers.clear();
@@ -54,6 +61,22 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
     });
   }
 
+  Future<void> _loadSuggestion() async {
+    try {
+      await _ai.initialize();
+      final suggestAccessible =
+          _ai.adaptiveSettings['accessibility_enhanced'] == true;
+      if (mounted && suggestAccessible && !_accessibleOnly) {
+        setState(() {
+          _showSuggestion = true;
+          _suggestionText = 'Tip: Filter accessible providers only';
+        });
+      }
+    } catch (_) {
+      // keep UI clean on failure
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,6 +85,40 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
         tier: FeatureTier.free,
         child: Column(
           children: [
+            if (_showSuggestion && _suggestionText != null) ...[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.blue.withOpacity(0.12)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.tips_and_updates,
+                          size: 16, color: Colors.blue),
+                      const SizedBox(width: 8),
+                      Expanded(
+                          child: Text(_suggestionText!,
+                              style: Theme.of(context).textTheme.bodySmall)),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _accessibleOnly = true;
+                            _showSuggestion = false;
+                          });
+                          _loadProviders();
+                        },
+                        child: const Text('Apply'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
             _Filters(
               wait: _waitFilter,
               accessibleOnly: _accessibleOnly,
@@ -76,16 +133,36 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
               },
             ),
             Expanded(
-              child: GoogleMap(
-                initialCameraPosition: _sydney,
-                myLocationButtonEnabled: true,
-                myLocationEnabled: false,
-                markers: _markers,
-                onMapCreated: (c) => _controller.complete(c),
-              ),
+              child: FeatureFlags.isMapsEnabled
+                  ? GoogleMap(
+                      initialCameraPosition: _sydney,
+                      myLocationButtonEnabled: true,
+                      myLocationEnabled: false,
+                      markers: _markers,
+                      onMapCreated: (c) => _controller.complete(c),
+                    )
+                  : _MapsDisabledFallback(
+                      onEnableHelp: () => _showMapsSetupHelp(context)),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showMapsSetupHelp(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Enable Google Maps'),
+        content: const Text(
+            'Google Maps is disabled. Provide a Maps API key and launch with\n\n'
+            '--dart-define=GOOGLE_MAPS_ENABLED=true\n\n'
+            'Then add your key in AndroidManifest.xml and Info.plist as per README.'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context), child: const Text('OK')),
+        ],
       ),
     );
   }
@@ -95,8 +172,13 @@ class _Filters extends StatelessWidget {
   final double wait;
   final bool accessibleOnly;
   final double minRating;
-  final void Function(double wait, bool accessibleOnly, double rating) onChanged;
-  const _Filters({required this.wait, required this.accessibleOnly, required this.minRating, required this.onChanged});
+  final void Function(double wait, bool accessibleOnly, double rating)
+      onChanged;
+  const _Filters(
+      {required this.wait,
+      required this.accessibleOnly,
+      required this.minRating,
+      required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -160,3 +242,36 @@ class _Filters extends StatelessWidget {
   }
 }
 
+class _MapsDisabledFallback extends StatelessWidget {
+  final VoidCallback onEnableHelp;
+  const _MapsDisabledFallback({required this.onEnableHelp});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.map_outlined, size: 48),
+            const SizedBox(height: 12),
+            const Text('Map unavailable',
+                style: TextStyle(fontWeight: FontWeight.w600)),
+            const SizedBox(height: 8),
+            const Text(
+              'Google Maps is not configured for this build. You can still browse providers using the list below.',
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            TextButton.icon(
+              onPressed: onEnableHelp,
+              icon: const Icon(Icons.help_outline),
+              label: const Text('How to enable'),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}

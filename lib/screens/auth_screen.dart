@@ -3,6 +3,7 @@ import '../services/firebase_service.dart';
 import 'package:provider/provider.dart';
 import '../controllers/auth_controller.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -49,8 +50,8 @@ class _AuthScreenState extends State<AuthScreen> {
             Text(
               'Accessible companion for NDIS participants and providers',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
@@ -267,8 +268,19 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Future<void> _handleBiometricAuth(BuildContext context) async {
+    // Guard: biometrics not supported on web; only enable on mobile/desktop
+    if (kIsWeb) {
+      _showToast(context, 'Biometrics not supported on web');
+      return;
+    }
+    // Some desktop targets may not support biometrics; try/catch around checks
     final auth = LocalAuthentication();
-    final canCheck = await auth.canCheckBiometrics;
+    bool canCheck = false;
+    try {
+      canCheck = await auth.canCheckBiometrics;
+    } catch (_) {
+      canCheck = false;
+    }
 
     if (!canCheck) {
       _showToast(context, 'Biometrics unavailable on this device');

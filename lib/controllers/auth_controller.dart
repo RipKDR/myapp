@@ -64,7 +64,7 @@ class AuthController extends ChangeNotifier {
           .get();
 
       if (userDoc?.exists == true) {
-        final data = userDoc!.data() as Map<String, dynamic>?;
+        final data = userDoc!.data();
         final roleString = data?['role'] as String?;
         _role = switch (roleString) {
           'participant' => UserRole.participant,

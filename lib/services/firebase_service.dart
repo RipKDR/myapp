@@ -16,9 +16,16 @@ class FirebaseService {
   static Future<void> tryInitialize() async {
     if (_initialized) return;
     try {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
+      final options = DefaultFirebaseOptions.currentPlatform;
+      if (options.apiKey.isEmpty ||
+          options.appId.isEmpty ||
+          options.projectId.isEmpty) {
+        // Skip init if not configured to avoid runtime crashes in dev.
+        log('Firebase not configured via --dart-define; running offline mode');
+        return;
+      }
+
+      await Firebase.initializeApp(options: options);
 
       // Enable Firestore offline persistence
       await _enableOfflinePersistence();
@@ -48,9 +55,9 @@ class FirebaseService {
   static bool get isConfigured {
     try {
       final options = DefaultFirebaseOptions.currentPlatform;
-      return options.apiKey != 'REPLACE_ME' &&
-          options.appId != 'REPLACE_ME' &&
-          options.projectId != 'REPLACE_ME';
+      return options.apiKey.isNotEmpty &&
+          options.appId.isNotEmpty &&
+          options.projectId.isNotEmpty;
     } catch (e) {
       return false;
     }

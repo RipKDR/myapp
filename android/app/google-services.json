@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "573485849448",
+    "project_id": "ndis-connect-91f11",
+    "storage_bucket": "ndis-connect-91f11.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:573485849448:android:3ed2dcb376be163dbd94dd",
+        "android_client_info": {
+          "package_name": "ndis.connect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtNI1a4v1ZDdCglW5hNfTnKi59EKK2AYw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

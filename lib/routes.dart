@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'screens/participant_dashboard.dart';
 import 'screens/provider_dashboard.dart';
 import 'screens/calendar_screen.dart';
-import 'screens/budget_screen.dart';
+import 'screens/budget_screen_fixed.dart';
 import 'controllers/auth_controller.dart';
 import 'screens/chat_screen.dart';
 import 'screens/service_map_screen.dart';
@@ -12,6 +12,7 @@ import 'screens/snapshot_screen.dart';
 import 'screens/support_circle_screen.dart';
 import 'screens/auth_screen.dart';
 import 'screens/provider_roster_screen.dart';
+import 'screens/privacy_dashboard_screen.dart';
 
 class Routes {
   static const bootstrap = '/';
@@ -26,6 +27,7 @@ class Routes {
   static const circle = '/circle';
   static const auth = '/auth';
   static const roster = '/roster';
+  static const privacy = '/privacy';
 
   static Map<String, WidgetBuilder> get routes => {
         bootstrap: (context) => const _BootstrapScreen(),
@@ -40,6 +42,7 @@ class Routes {
         circle: (context) => const SupportCircleScreen(),
         auth: (context) => const AuthScreen(),
         roster: (context) => const ProviderRosterScreen(),
+        privacy: (context) => const PrivacyDashboardScreen(),
       };
 }
 
