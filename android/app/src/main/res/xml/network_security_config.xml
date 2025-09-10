@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <domain-config cleartextTrafficPermitted="false">
-        <!-- Firebase domains -->
-        <domain includeSubdomains="true">firebaseapp.com</domain>
+        <domain includeSubdomains="true">ndisconnect.com</domain>
+        <domain includeSubdomains="true">firebase.googleapis.com</domain>
         <domain includeSubdomains="true">googleapis.com</domain>
         <domain includeSubdomains="true">google.com</domain>
-        <domain includeSubdomains="true">gstatic.com</domain>
-        
-        <!-- NDIS Connect production domains -->
-        <domain includeSubdomains="true">ndisconnect.app</domain>
-        <domain includeSubdomains="true">api.ndisconnect.app</domain>
     </domain-config>
+    
+    <!-- Allow cleartext traffic for development only -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system"/>
+            <certificates src="user"/>
+        </trust-anchors>
+    </base-config>
     
     <!-- Debug configuration for development -->
     <debug-overrides>

@@ -4,7 +4,6 @@ import 'dart:async';
 import 'package:provider/provider.dart';
 import '../models/appointment.dart';
 import '../controllers/gamification_controller.dart';
-import '../controllers/auth_controller.dart';
 import '../repositories/appointment_repository.dart';
 import '../services/notifications_service.dart';
 
@@ -21,12 +20,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
   StreamSubscription<List<Appointment>>? _sub;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final days = _daysInMonth(_month);
     final firstWeekday = _month.weekday % 7; // 0=Sun, 6=Sat
     final cells = List<DateTime?>.generate(
       firstWeekday + days,
-      (i) => i < firstWeekday ? null : DateTime(_month.year, _month.month, i - firstWeekday + 1),
+      (final i) => i < firstWeekday
+          ? null
+          : DateTime(_month.year, _month.month, i - firstWeekday + 1),
     );
 
     return Scaffold(
@@ -35,7 +36,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
         actions: [
           IconButton(
             tooltip: 'This month',
-            onPressed: () => setState(() => _month = DateTime(DateTime.now().year, DateTime.now().month)),
+            onPressed: () => setState(() =>
+                _month = DateTime(DateTime.now().year, DateTime.now().month)),
             icon: const Icon(Icons.today),
           )
         ],
@@ -44,8 +46,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
         children: [
           _CalendarHeader(
             month: _month,
-            onPrev: () => setState(() => _month = DateTime(_month.year, _month.month - 1)),
-            onNext: () => setState(() => _month = DateTime(_month.year, _month.month + 1)),
+            onPrev: () => setState(
+                () => _month = DateTime(_month.year, _month.month - 1)),
+            onNext: () => setState(
+                () => _month = DateTime(_month.year, _month.month + 1)),
           ),
           _WeekdayRow(),
           Expanded(
@@ -57,18 +61,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 crossAxisSpacing: 4,
               ),
               itemCount: cells.length,
-              itemBuilder: (context, index) {
+              itemBuilder: (final context, final index) {
                 final date = cells[index];
                 return _DayCell(
                   date: date,
                   items: date == null
                       ? const []
-                      : _items.where((a) => _sameDay(a.start, date)).toList(),
-                  onTap: date == null ? null : () => _showDayActions(context, date),
+                      : _items.where((final a) => _sameDay(a.start, date)).toList(),
+                  onTap: date == null
+                      ? null
+                      : () => _showDayActions(context, date),
                 );
               },
             ),
           ),
+          const _LegendBar(),
         ],
       ),
     );
@@ -77,19 +84,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   void initState() {
     super.initState();
-    // Get user context to determine which stream to use
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final auth = context.read<AuthController>();
-      if (auth.userId != null) {
-        _sub = AppointmentRepository.streamForUser(auth.userId!).listen((list) {
-          if (!mounted) return;
-          setState(() {
-            _items
-              ..clear()
-              ..addAll(list.isEmpty ? _items : list);
-          });
-        });
-      }
+    _sub = AppointmentRepository.stream().listen((final list) {
+      if (!mounted) return;
+      setState(() {
+        _items
+          ..clear()
+          ..addAll(list.isEmpty ? _items : list);
+      });
     });
   }
 
@@ -99,13 +100,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
     super.dispose();
   }
 
-  void _showDayActions(BuildContext context, DateTime date) async {
+  Future<void> _showDayActions(final BuildContext context, final DateTime date) async {
     final timeFmt = DateFormat('h:mm a');
     await showModalBottomSheet(
       context: context,
       showDragHandle: true,
-      builder: (context) {
-        final slots = List.generate(6, (i) => DateTime(date.year, date.month, date.day, 9 + i));
+      builder: (final context) {
+        final slots = List.generate(
+            6, (final i) => DateTime(date.year, date.month, date.day, 9 + i));
         return SafeArea(
           child: ListView(
             padding: const EdgeInsets.all(8),
@@ -126,8 +128,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         start: s,
                         end: s.add(const Duration(hours: 1)),
                         title: 'Session',
-                        providerName: 'TBD',
-                        confirmed: false,
+                        providerName: 'FlexCare Physio',
                       ));
                     });
                     // Attempt to persist online (safe no-op if offline)
@@ -157,56 +158,81 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 }
 
-class _CalendarHeader extends StatelessWidget {
-  final DateTime month;
-  final VoidCallback onPrev;
-  final VoidCallback onNext;
-  const _CalendarHeader({required this.month, required this.onPrev, required this.onNext});
+class _LegendBar extends StatelessWidget {
+  const _LegendBar();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
+    Widget dot(final Color c) => Container(
+        width: 10,
+        height: 10,
+        decoration: BoxDecoration(color: c, shape: BoxShape.circle));
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.all(8),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          IconButton(onPressed: onPrev, icon: const Icon(Icons.chevron_left)),
-          Expanded(
-            child: Center(
-              child: Text(DateFormat.yMMMM().format(month), style: Theme.of(context).textTheme.titleLarge),
-            ),
-          ),
-          IconButton(onPressed: onNext, icon: const Icon(Icons.chevron_right)),
+          dot(Colors.green.withValues(alpha: 0.4)),
+          const SizedBox(width: 6),
+          const Text('Confirmed'),
+          const SizedBox(width: 16),
+          dot(Colors.orange.withValues(alpha: 0.4)),
+          const SizedBox(width: 6),
+          const Text('Tentative'),
         ],
       ),
     );
   }
 }
 
+class _CalendarHeader extends StatelessWidget {
+  const _CalendarHeader(
+      {required this.month, required this.onPrev, required this.onNext});
+  final DateTime month;
+  final VoidCallback onPrev;
+  final VoidCallback onNext;
+
+  @override
+  Widget build(final BuildContext context) => Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Row(
+        children: [
+          IconButton(onPressed: onPrev, icon: const Icon(Icons.chevron_left)),
+          Expanded(
+            child: Center(
+              child: Text(DateFormat.yMMMM().format(month),
+                  style: Theme.of(context).textTheme.titleLarge),
+            ),
+          ),
+          IconButton(onPressed: onNext, icon: const Icon(Icons.chevron_right)),
+        ],
+      ),
+    );
+}
+
 class _WeekdayRow extends StatelessWidget {
   final days = const ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
   @override
-  Widget build(BuildContext context) {
-    return Row(
+  Widget build(final BuildContext context) => Row(
       children: days
-          .map((d) => Expanded(
+          .map((final d) => Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Center(child: Text(d, semanticsLabel: d)),
                 ),
               ))
           .toList(),
     );
-  }
 }
 
 class _DayCell extends StatelessWidget {
+  const _DayCell({required this.date, required this.items, this.onTap});
   final DateTime? date;
   final List<Appointment> items;
   final VoidCallback? onTap;
-  const _DayCell({required this.date, required this.items, this.onTap});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     if (date == null) return const SizedBox.shrink();
     final isToday = _sameDay(date!, DateTime.now());
     final scheme = Theme.of(context).colorScheme;
@@ -218,24 +244,31 @@ class _DayCell extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: Container(
           decoration: BoxDecoration(
-            border: Border.all(color: isToday ? scheme.primary : scheme.outlineVariant),
+            border: Border.all(
+                color: isToday ? scheme.primary : scheme.outlineVariant),
             borderRadius: BorderRadius.circular(8),
           ),
           padding: const EdgeInsets.all(4),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('${date!.day}', style: TextStyle(fontWeight: isToday ? FontWeight.bold : FontWeight.normal)),
-              ...items.take(2).map((a) => Padding(
-                    padding: const EdgeInsets.only(top: 2.0),
+              Text('${date!.day}',
+                  style: TextStyle(
+                      fontWeight:
+                          isToday ? FontWeight.bold : FontWeight.normal)),
+              ...items.take(2).map((final a) => Padding(
+                    padding: const EdgeInsets.only(top: 2),
                     child: Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: a.confirmed ? Colors.green.withValues(alpha: 0.2) : Colors.orange.withValues(alpha: 0.2),
+                        color: a.confirmed
+                            ? Colors.green.withValues(alpha: 0.2)
+                            : Colors.orange.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 1.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 2, vertical: 1),
                         child: Text(
                           a.title,
                           maxLines: 1,
@@ -253,8 +286,10 @@ class _DayCell extends StatelessWidget {
   }
 }
 
-int _daysInMonth(DateTime month) => DateTime(month.year, month.month + 1, 0).day;
-bool _sameDay(DateTime a, DateTime b) => a.year == b.year && a.month == b.month && a.day == b.day;
+int _daysInMonth(final DateTime month) =>
+    DateTime(month.year, month.month + 1, 0).day;
+bool _sameDay(final DateTime a, final DateTime b) =>
+    a.year == b.year && a.month == b.month && a.day == b.day;
 
 List<Appointment> _mockAppointments() {
   final now = DateTime.now();

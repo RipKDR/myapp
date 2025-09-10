@@ -1,0 +1,197 @@
+name: Mobile App Deployment
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+    
+    - name: Install dependencies
+      run: flutter pub get
+    
+    - name: Run tests
+      run: flutter test --coverage
+    
+    - name: Run integration tests
+      run: flutter test integration_test/
+    
+    - name: Analyze code
+      run: flutter analyze
+    
+    - name: Check formatting
+      run: dart format --set-exit-if-changed .
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: coverage/lcov.info
+
+  build-android:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+    
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+    
+    - name: Install dependencies
+      run: flutter pub get
+    
+    - name: Build Android APK
+      run: flutter build apk --release
+    
+    - name: Build Android App Bundle
+      run: flutter build appbundle --release
+    
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-apk
+        path: build/app/outputs/flutter-apk/app-release.apk
+    
+    - name: Upload App Bundle
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-aab
+        path: build/app/outputs/bundle/release/app-release.aab
+
+  build-ios:
+    needs: test
+    runs-on: macos-latest
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+    
+    - name: Install dependencies
+      run: flutter pub get
+    
+    - name: Build iOS
+      run: flutter build ios --release --no-codesign
+    
+    - name: Build IPA
+      run: flutter build ipa --release --no-codesign
+    
+    - name: Upload IPA
+      uses: actions/upload-artifact@v4
+      with:
+        name: ios-ipa
+        path: build/ios/ipa/ndis_connect.ipa
+
+  deploy-android:
+    needs: build-android
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download App Bundle
+      uses: actions/download-artifact@v4
+      with:
+        name: android-aab
+        path: build/app/outputs/bundle/release/
+    
+    - name: Deploy to Google Play
+      uses: r0adkll/upload-google-play@v1
+      with:
+        serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
+        packageName: com.ndisconnect.app
+        releaseFiles: build/app/outputs/bundle/release/app-release.aab
+        track: production
+        status: completed
+
+  deploy-ios:
+    needs: build-ios
+    runs-on: macos-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download IPA
+      uses: actions/download-artifact@v4
+      with:
+        name: ios-ipa
+        path: build/ios/ipa/
+    
+    - name: Deploy to App Store
+      uses: apple-actions/upload-app-store@v1
+      with:
+        app-path: build/ios/ipa/ndis_connect.ipa
+        issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
+        api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
+        api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
+
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Run security scan
+      run: |
+        # Install security scanning tools
+        npm install -g @snyk/cli
+        
+        # Scan for vulnerabilities
+        snyk test --severity-threshold=high
+    
+    - name: Upload security report
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-report
+        path: snyk-results.json
+
+  performance-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+    
+    - name: Install dependencies
+      run: flutter pub get
+    
+    - name: Run performance tests
+      run: flutter test test/performance_test.dart
+    
+    - name: Generate performance report
+      run: |
+        # Generate performance metrics
+        flutter test --coverage test/performance_test.dart
+        # Process and upload performance data

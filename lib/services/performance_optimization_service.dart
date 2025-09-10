@@ -13,10 +13,10 @@ import 'advanced_cache_service.dart';
 /// Performance Optimization Service with background processing,
 /// intelligent sync, and resource management
 class PerformanceOptimizationService {
-  static final PerformanceOptimizationService _instance =
-      PerformanceOptimizationService._internal();
   factory PerformanceOptimizationService() => _instance;
   PerformanceOptimizationService._internal();
+  static final PerformanceOptimizationService _instance =
+      PerformanceOptimizationService._internal();
 
   final AnalyticsService _analytics = AnalyticsService();
   final AdvancedCacheService _cacheService = AdvancedCacheService();
@@ -131,7 +131,7 @@ class PerformanceOptimizationService {
       final connectivity = Connectivity();
 
       connectivity.onConnectivityChanged
-          .listen((List<ConnectivityResult> results) {
+          .listen((final results) {
         final result =
             results.isNotEmpty ? results.first : ConnectivityResult.none;
         final wasOnline = _isOnline;
@@ -216,7 +216,7 @@ class PerformanceOptimizationService {
   }
 
   /// Execute a sync task
-  Future<void> _executeSyncTask(SyncTask task) async {
+  Future<void> _executeSyncTask(final SyncTask task) async {
     switch (task.type) {
       case SyncTaskType.userData:
         await _syncUserDataTask(task);
@@ -234,27 +234,27 @@ class PerformanceOptimizationService {
   }
 
   /// Sync user data task
-  Future<void> _syncUserDataTask(SyncTask task) async {
+  Future<void> _syncUserDataTask(final SyncTask task) async {
     // Implementation would sync user-specific data
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future<void>.delayed(const Duration(milliseconds: 100));
   }
 
   /// Sync analytics task
-  Future<void> _syncAnalyticsTask(SyncTask task) async {
+  Future<void> _syncAnalyticsTask(final SyncTask task) async {
     // Implementation would sync analytics data
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future<void>.delayed(const Duration(milliseconds: 100));
   }
 
   /// Sync cache task
-  Future<void> _syncCacheTask(SyncTask task) async {
+  Future<void> _syncCacheTask(final SyncTask task) async {
     // Implementation would sync cache data
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future<void>.delayed(const Duration(milliseconds: 100));
   }
 
   /// Sync offline data task
-  Future<void> _syncOfflineDataTask(SyncTask task) async {
+  Future<void> _syncOfflineDataTask(final SyncTask task) async {
     // Implementation would sync offline data
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future<void>.delayed(const Duration(milliseconds: 100));
   }
 
   /// Sync user data
@@ -322,7 +322,7 @@ class PerformanceOptimizationService {
     if (userId == null) return;
 
     // Implementation would sync user profile data
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future<void>.delayed(const Duration(milliseconds: 100));
   }
 
   /// Sync analytics data
@@ -395,7 +395,7 @@ class PerformanceOptimizationService {
   Future<void> _cleanupOldSyncTasks() async {
     final cutoffDate = DateTime.now().subtract(const Duration(days: 1));
     _pendingSyncTasks
-        .removeWhere((task) => task.createdAt.isBefore(cutoffDate));
+        .removeWhere((final task) => task.createdAt.isBefore(cutoffDate));
   }
 
   /// Monitor performance metrics
@@ -445,7 +445,7 @@ class PerformanceOptimizationService {
 
   /// Record performance metric
   Future<void> _recordPerformanceMetric(
-      String name, int value, String unit) async {
+      final String name, final int value, final String unit) async {
     final metric = PerformanceMetric(
       name: name,
       value: value,
@@ -460,7 +460,7 @@ class PerformanceOptimizationService {
   }
 
   /// Update sync metrics
-  Future<void> _updateSyncMetrics(String operation, Duration duration) async {
+  Future<void> _updateSyncMetrics(final String operation, final Duration duration) async {
     _lastSyncTimes[operation] = DateTime.now();
 
     await _recordPerformanceMetric(
@@ -468,7 +468,7 @@ class PerformanceOptimizationService {
   }
 
   /// Add sync task to queue
-  Future<void> addSyncTask(SyncTask task) async {
+  Future<void> addSyncTask(final SyncTask task) async {
     _pendingSyncTasks.add(task);
 
     // If online, try to sync immediately
@@ -478,7 +478,7 @@ class PerformanceOptimizationService {
   }
 
   /// Execute background task in isolate
-  Future<T> executeInIsolate<T>(String taskId, T Function() task) async {
+  Future<T> executeInIsolate<T>(final String taskId, final T Function() task) async {
     try {
       // Create isolate for background processing
       final receivePort = ReceivePort();
@@ -510,14 +510,14 @@ class PerformanceOptimizationService {
   }
 
   /// Isolate entry point
-  static void _isolateEntryPoint(SendPort sendPort) {
+  static void _isolateEntryPoint(final SendPort sendPort) {
     final receivePort = ReceivePort();
     sendPort.send(receivePort.sendPort);
 
-    receivePort.listen((message) {
+    receivePort.listen((final message) {
       // Execute task in isolate
       try {
-        final result = message as Function();
+        final result = message as dynamic Function();
         sendPort.send(result());
       } catch (e) {
         sendPort.send(e);
@@ -529,7 +529,7 @@ class PerformanceOptimizationService {
   Future<void> optimizeDatabaseQueries() async {
     try {
       // Implementation would optimize database queries
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
 
       await _analytics.logEvent('database_optimization_completed');
     } catch (e) {
@@ -544,7 +544,7 @@ class PerformanceOptimizationService {
   Future<void> optimizeMedia() async {
     try {
       // Implementation would optimize images and media
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
 
       await _analytics.logEvent('media_optimization_completed');
     } catch (e) {
@@ -556,15 +556,13 @@ class PerformanceOptimizationService {
   }
 
   /// Get performance statistics
-  Map<String, dynamic> getPerformanceStatistics() {
-    return {
+  Map<String, dynamic> getPerformanceStatistics() => {
       'is_online': _isOnline,
       'pending_sync_tasks': _pendingSyncTasks.length,
       'active_isolates': _activeIsolates.length,
       'performance_metrics': _performanceMetrics.length,
       'last_sync_times': _lastSyncTimes,
     };
-  }
 
   /// Dispose resources
   void dispose() {
@@ -588,21 +586,21 @@ class PerformanceOptimizationService {
 
 /// Background task model
 class BackgroundTask {
-  final String id;
-  final String name;
-  final TaskType type;
-  final Map<String, dynamic> parameters;
-  final DateTime createdAt;
-  final DateTime? scheduledFor;
 
   BackgroundTask({
     required this.id,
     required this.name,
     required this.type,
     this.parameters = const {},
-    DateTime? createdAt,
+    final DateTime? createdAt,
     this.scheduledFor,
   }) : createdAt = createdAt ?? DateTime.now();
+  final String id;
+  final String name;
+  final TaskType type;
+  final Map<String, dynamic> parameters;
+  final DateTime createdAt;
+  final DateTime? scheduledFor;
 }
 
 /// Task type enum
@@ -615,19 +613,19 @@ enum TaskType {
 
 /// Sync task model
 class SyncTask {
-  final String id;
-  final SyncTaskType type;
-  final Map<String, dynamic> data;
-  final DateTime createdAt;
-  final int retryCount;
 
   SyncTask({
     required this.id,
     required this.type,
     required this.data,
-    DateTime? createdAt,
+    final DateTime? createdAt,
     this.retryCount = 0,
   }) : createdAt = createdAt ?? DateTime.now();
+  final String id;
+  final SyncTaskType type;
+  final Map<String, dynamic> data;
+  final DateTime createdAt;
+  final int retryCount;
 }
 
 /// Sync task type enum
@@ -640,10 +638,6 @@ enum SyncTaskType {
 
 /// Performance metric model
 class PerformanceMetric {
-  final String name;
-  final int value;
-  final String unit;
-  final DateTime timestamp;
 
   PerformanceMetric({
     required this.name,
@@ -651,12 +645,16 @@ class PerformanceMetric {
     required this.unit,
     required this.timestamp,
   });
+  final String name;
+  final int value;
+  final String unit;
+  final DateTime timestamp;
 }
 
 /// Callback dispatcher for WorkManager
 @pragma('vm:entry-point')
 void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) async {
+  Workmanager().executeTask((final task, final inputData) async {
     switch (task) {
       case 'data_sync_task':
         await _executeDataSyncTask();
@@ -675,17 +673,17 @@ void callbackDispatcher() {
 /// Execute data sync task
 Future<void> _executeDataSyncTask() async {
   // Implementation would sync data in background
-  await Future.delayed(const Duration(milliseconds: 100));
+  await Future<void>.delayed(const Duration(milliseconds: 100));
 }
 
 /// Execute cache cleanup task
 Future<void> _executeCacheCleanupTask() async {
   // Implementation would clean up cache in background
-  await Future.delayed(const Duration(milliseconds: 100));
+  await Future<void>.delayed(const Duration(milliseconds: 100));
 }
 
 /// Execute analytics sync task
 Future<void> _executeAnalyticsSyncTask() async {
   // Implementation would sync analytics in background
-  await Future.delayed(const Duration(milliseconds: 100));
+  await Future<void>.delayed(const Duration(milliseconds: 100));
 }

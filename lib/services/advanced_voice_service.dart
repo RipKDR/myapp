@@ -9,10 +9,10 @@ import 'ai_chat_service.dart';
 /// Advanced Voice Control Service with comprehensive voice recognition,
 /// text-to-speech, and accessibility features
 class AdvancedVoiceService {
-  static final AdvancedVoiceService _instance =
-      AdvancedVoiceService._internal();
   factory AdvancedVoiceService() => _instance;
   AdvancedVoiceService._internal();
+  static final AdvancedVoiceService _instance =
+      AdvancedVoiceService._internal();
 
   final AnalyticsService _analytics = AnalyticsService();
   final AIChatService _aiChatService = AIChatService();
@@ -29,8 +29,8 @@ class AdvancedVoiceService {
   // Voice settings
   String _currentLanguage = 'en-US';
   double _speechRate = 0.5;
-  double _speechPitch = 1.0;
-  double _speechVolume = 1.0;
+  double _speechPitch = 1;
+  double _speechVolume = 1;
 
   // Voice commands and navigation
   final Map<String, VoiceCommand> _voiceCommands = {};
@@ -147,7 +147,7 @@ class AdvancedVoiceService {
       ));
     });
 
-    _flutterTts.setErrorHandler((msg) {
+    _flutterTts.setErrorHandler((final msg) {
       _isSpeaking = false;
       _logVoiceEvent(VoiceEvent(
         type: VoiceEventType.ttsError,
@@ -297,7 +297,7 @@ class AdvancedVoiceService {
   }
 
   /// Start voice recognition
-  Future<void> startListening({bool continuous = false}) async {
+  Future<void> startListening({final bool continuous = false}) async {
     if (!_isInitialized) await initialize();
     if (_isListening) return;
 
@@ -313,10 +313,8 @@ class AdvancedVoiceService {
             ? const Duration(minutes: 10)
             : const Duration(seconds: 30),
         pauseFor: const Duration(seconds: 3),
-        partialResults: true,
         localeId: _currentLanguage,
         onSoundLevelChange: _onSoundLevelChange,
-        cancelOnError: false,
         listenMode: continuous ? ListenMode.confirmation : ListenMode.dictation,
       );
 
@@ -354,7 +352,7 @@ class AdvancedVoiceService {
   }
 
   /// Speak text using text-to-speech
-  Future<void> speak(String text, {bool interrupt = false}) async {
+  Future<void> speak(final String text, {final bool interrupt = false}) async {
     if (!_isInitialized) await initialize();
 
     if (interrupt && _isSpeaking) {
@@ -391,7 +389,7 @@ class AdvancedVoiceService {
   }
 
   /// Process voice command
-  Future<void> processVoiceCommand(String command) async {
+  Future<void> processVoiceCommand(final String command) async {
     try {
       final normalizedCommand = command.toLowerCase().trim();
 
@@ -444,7 +442,7 @@ class AdvancedVoiceService {
 
   /// Execute voice action
   Future<void> _executeVoiceAction(
-      String action, Map<String, dynamic> parameters) async {
+      final String action, final Map<String, dynamic> parameters) async {
     _logVoiceEvent(VoiceEvent(
       type: VoiceEventType.actionExecuted,
       details: {
@@ -489,7 +487,7 @@ class AdvancedVoiceService {
 
     if (_voiceFeedback) {
       await speak(
-          "Voice control enabled. You can now use voice commands to navigate the app.");
+          'Voice control enabled. You can now use voice commands to navigate the app.');
     }
   }
 
@@ -505,7 +503,7 @@ class AdvancedVoiceService {
   }
 
   /// Set voice language
-  Future<void> setVoiceLanguage(String language) async {
+  Future<void> setVoiceLanguage(final String language) async {
     _currentLanguage = language;
     await _flutterTts.setLanguage(language);
     await _saveVoiceSettings();
@@ -517,28 +515,28 @@ class AdvancedVoiceService {
   }
 
   /// Set speech rate
-  Future<void> setSpeechRate(double rate) async {
+  Future<void> setSpeechRate(final double rate) async {
     _speechRate = rate.clamp(0.1, 2.0);
     await _flutterTts.setSpeechRate(_speechRate);
     await _saveVoiceSettings();
   }
 
   /// Set speech pitch
-  Future<void> setSpeechPitch(double pitch) async {
+  Future<void> setSpeechPitch(final double pitch) async {
     _speechPitch = pitch.clamp(0.5, 2.0);
     await _flutterTts.setPitch(_speechPitch);
     await _saveVoiceSettings();
   }
 
   /// Set speech volume
-  Future<void> setSpeechVolume(double volume) async {
+  Future<void> setSpeechVolume(final double volume) async {
     _speechVolume = volume.clamp(0.0, 1.0);
     await _flutterTts.setVolume(_speechVolume);
     await _saveVoiceSettings();
   }
 
   /// Add custom voice command
-  Future<void> addCustomVoiceCommand(VoiceCommand command) async {
+  Future<void> addCustomVoiceCommand(final VoiceCommand command) async {
     _voiceCommands[command.id] = command;
 
     _logVoiceEvent(VoiceEvent(
@@ -551,7 +549,7 @@ class AdvancedVoiceService {
   }
 
   /// Add custom voice shortcut
-  Future<void> addCustomVoiceShortcut(VoiceShortcut shortcut) async {
+  Future<void> addCustomVoiceShortcut(final VoiceShortcut shortcut) async {
     _voiceShortcuts.add(shortcut);
 
     _logVoiceEvent(VoiceEvent(
@@ -566,21 +564,17 @@ class AdvancedVoiceService {
   /// Get available languages
   Future<List<String>> getAvailableLanguages() async {
     final languages = await _speechToText.locales();
-    return languages.map((locale) => locale.localeId).toList();
+    return languages.map((final locale) => locale.localeId).toList();
   }
 
   /// Get voice metrics
-  Map<String, VoiceMetric> getVoiceMetrics() {
-    return Map.unmodifiable(_voiceMetrics);
-  }
+  Map<String, VoiceMetric> getVoiceMetrics() => Map.unmodifiable(_voiceMetrics);
 
   /// Get voice events
-  List<VoiceEvent> getVoiceEvents() {
-    return List.unmodifiable(_voiceEvents);
-  }
+  List<VoiceEvent> getVoiceEvents() => List.unmodifiable(_voiceEvents);
 
   /// Speech recognition callbacks
-  void _onSpeechResult(dynamic result) {
+  void _onSpeechResult(final dynamic result) {
     try {
       final recognizedText = result.recognizedWords as String? ?? '';
       final confidence = (result.confidence as double?) ?? 0.0;
@@ -605,7 +599,7 @@ class AdvancedVoiceService {
     }
   }
 
-  void _onSpeechError(dynamic error) {
+  void _onSpeechError(final dynamic error) {
     _isListening = false;
 
     _logVoiceEvent(VoiceEvent(
@@ -619,14 +613,14 @@ class AdvancedVoiceService {
     );
   }
 
-  void _onSpeechStatus(dynamic status) {
+  void _onSpeechStatus(final dynamic status) {
     _logVoiceEvent(VoiceEvent(
       type: VoiceEventType.speechStatusChanged,
       details: {'status': status.toString()},
     ));
   }
 
-  void _onSoundLevelChange(dynamic level) {
+  void _onSoundLevelChange(final dynamic level) {
     _logVoiceEvent(VoiceEvent(
       type: VoiceEventType.soundLevelChanged,
       details: {'level': level.toString()},
@@ -634,7 +628,7 @@ class AdvancedVoiceService {
   }
 
   /// Log voice event
-  void _logVoiceEvent(VoiceEvent event) {
+  void _logVoiceEvent(final VoiceEvent event) {
     _voiceEvents.add(event);
 
     // Keep only last 100 events in memory
@@ -647,7 +641,7 @@ class AdvancedVoiceService {
   }
 
   /// Update voice metrics
-  void _updateVoiceMetrics(VoiceEvent event) {
+  void _updateVoiceMetrics(final VoiceEvent event) {
     final metricKey = '${event.type.name}_count';
     final metric = _voiceMetrics.putIfAbsent(
       metricKey,
@@ -680,10 +674,6 @@ class AdvancedVoiceService {
 
 /// Voice command model
 class VoiceCommand {
-  final String id;
-  final List<String> patterns;
-  final VoiceAction action;
-  final String description;
 
   VoiceCommand({
     required this.id,
@@ -691,6 +681,10 @@ class VoiceCommand {
     required this.action,
     required this.description,
   });
+  final String id;
+  final List<String> patterns;
+  final VoiceAction action;
+  final String description;
 }
 
 /// Voice action enum
@@ -707,23 +701,19 @@ enum VoiceAction {
 
 /// Voice navigation rule model
 class VoiceNavigationRule {
-  final String pattern;
-  final String action;
-  final Map<String, dynamic> parameters;
 
   VoiceNavigationRule({
     required this.pattern,
     required this.action,
     required this.parameters,
   });
+  final String pattern;
+  final String action;
+  final Map<String, dynamic> parameters;
 }
 
 /// Voice shortcut model
 class VoiceShortcut {
-  final String id;
-  final String phrase;
-  final String action;
-  final String description;
 
   VoiceShortcut({
     required this.id,
@@ -731,19 +721,23 @@ class VoiceShortcut {
     required this.action,
     required this.description,
   });
+  final String id;
+  final String phrase;
+  final String action;
+  final String description;
 }
 
 /// Voice event model
 class VoiceEvent {
-  final VoiceEventType type;
-  final Map<String, dynamic> details;
-  final DateTime timestamp;
 
   VoiceEvent({
     required this.type,
     required this.details,
-    DateTime? timestamp,
+    final DateTime? timestamp,
   }) : timestamp = timestamp ?? DateTime.now();
+  final VoiceEventType type;
+  final Map<String, dynamic> details;
+  final DateTime timestamp;
 }
 
 /// Voice event type enum
@@ -768,13 +762,13 @@ enum VoiceEventType {
 
 /// Voice metric model
 class VoiceMetric {
-  final String name;
-  int count;
-  DateTime lastUpdated;
 
   VoiceMetric({
     required this.name,
     required this.count,
     required this.lastUpdated,
   });
+  final String name;
+  int count;
+  DateTime lastUpdated;
 }

@@ -3,14 +3,14 @@ import 'package:path/path.dart';
 import 'dart:async';
 
 class LocalDatabaseService {
+  factory LocalDatabaseService() => _instance;
+  LocalDatabaseService._internal();
   static Database? _database;
   static const String _databaseName = 'ndis_connect.db';
   static const int _databaseVersion = 1;
 
   // Singleton pattern
   static final LocalDatabaseService _instance = LocalDatabaseService._internal();
-  factory LocalDatabaseService() => _instance;
-  LocalDatabaseService._internal();
 
   Future<Database> get database async {
     _database ??= await _initDatabase();
@@ -18,15 +18,15 @@ class LocalDatabaseService {
   }
 
   Future<Database> _initDatabase() async {
-    String path = join(await getDatabasesPath(), _databaseName);
-    return await openDatabase(
+    final String path = join(await getDatabasesPath(), _databaseName);
+    return openDatabase(
       path,
       version: _databaseVersion,
       onCreate: _onCreate,
     );
   }
 
-  Future<void> _onCreate(Database db, int version) async {
+  Future<void> _onCreate(final Database db, final int version) async {
     // Users table
     await db.execute('''
       CREATE TABLE users (
@@ -118,22 +118,22 @@ class LocalDatabaseService {
   }
 
   // Generic CRUD operations
-  Future<int> insert(String table, Map<String, dynamic> data) async {
+  Future<int> insert(final String table, final Map<String, dynamic> data) async {
     final db = await database;
     data['created_at'] = DateTime.now().millisecondsSinceEpoch;
     data['updated_at'] = DateTime.now().millisecondsSinceEpoch;
-    return await db.insert(table, data);
+    return db.insert(table, data);
   }
 
   Future<List<Map<String, dynamic>>> query(
-    String table, {
-    String? where,
-    List<dynamic>? whereArgs,
-    String? orderBy,
-    int? limit,
+    final String table, {
+    final String? where,
+    final List<dynamic>? whereArgs,
+    final String? orderBy,
+    final int? limit,
   }) async {
     final db = await database;
-    return await db.query(
+    return db.query(
       table,
       where: where,
       whereArgs: whereArgs,
@@ -143,23 +143,23 @@ class LocalDatabaseService {
   }
 
   Future<int> update(
-    String table,
-    Map<String, dynamic> data, {
-    String? where,
-    List<dynamic>? whereArgs,
+    final String table,
+    final Map<String, dynamic> data, {
+    final String? where,
+    final List<dynamic>? whereArgs,
   }) async {
     final db = await database;
     data['updated_at'] = DateTime.now().millisecondsSinceEpoch;
-    return await db.update(table, data, where: where, whereArgs: whereArgs);
+    return db.update(table, data, where: where, whereArgs: whereArgs);
   }
 
   Future<int> delete(
-    String table, {
-    String? where,
-    List<dynamic>? whereArgs,
+    final String table, {
+    final String? where,
+    final List<dynamic>? whereArgs,
   }) async {
     final db = await database;
-    return await db.delete(table, where: where, whereArgs: whereArgs);
+    return db.delete(table, where: where, whereArgs: whereArgs);
   }
 
   Future<void> close() async {

@@ -11,10 +11,10 @@ class OptimizedAppointmentRepository {
 
   /// Get appointments with pagination and caching
   static Future<List<Appointment>> getAppointments({
-    String? userId,
-    int limit = _defaultPageSize,
-    DocumentSnapshot? startAfter,
-    bool useCache = true,
+    final String? userId,
+    final int limit = _defaultPageSize,
+    final DocumentSnapshot? startAfter,
+    final bool useCache = true,
   }) async {
     final cacheKey =
         'appointments_${userId ?? 'all'}_${limit}_${startAfter?.id ?? 'first'}';
@@ -46,7 +46,7 @@ class OptimizedAppointmentRepository {
 
       // Convert to appointments
       final appointments = snapshot.docs
-          .map((doc) => Appointment.fromMap(doc.data() as Map<String, dynamic>))
+          .map((final doc) => Appointment.fromMap(doc.data() as Map<String, dynamic>))
           .toList();
 
       // Cache result
@@ -64,7 +64,7 @@ class OptimizedAppointmentRepository {
   }
 
   /// Get appointment by ID with caching
-  static Future<Appointment?> getAppointmentById(String id) async {
+  static Future<Appointment?> getAppointmentById(final String id) async {
     const cacheKey = 'appointment_';
 
     // Check cache first
@@ -96,7 +96,7 @@ class OptimizedAppointmentRepository {
   }
 
   /// Create appointment with optimistic updates
-  static Future<Appointment> createAppointment(Appointment appointment) async {
+  static Future<Appointment> createAppointment(final Appointment appointment) async {
     try {
       // Add to Firestore
       final docRef =
@@ -118,7 +118,7 @@ class OptimizedAppointmentRepository {
   }
 
   /// Update appointment with optimistic updates
-  static Future<Appointment> updateAppointment(Appointment appointment) async {
+  static Future<Appointment> updateAppointment(final Appointment appointment) async {
     try {
       // Update Firestore
       await _firestore
@@ -137,7 +137,7 @@ class OptimizedAppointmentRepository {
   }
 
   /// Delete appointment
-  static Future<void> deleteAppointment(String id, String? userId) async {
+  static Future<void> deleteAppointment(final String id, final String? userId) async {
     try {
       // Delete from Firestore
       await _firestore.collection('appointments').doc(id).delete();
@@ -154,8 +154,8 @@ class OptimizedAppointmentRepository {
 
   /// Get upcoming appointments (optimized query)
   static Future<List<Appointment>> getUpcomingAppointments({
-    String? userId,
-    int limit = 10,
+    final String? userId,
+    final int limit = 10,
   }) async {
     final cacheKey = 'upcoming_${userId ?? 'all'}_$limit';
 
@@ -180,7 +180,7 @@ class OptimizedAppointmentRepository {
       final snapshot = await query.get();
 
       final appointments = snapshot.docs
-          .map((doc) => Appointment.fromMap(doc.data() as Map<String, dynamic>))
+          .map((final doc) => Appointment.fromMap(doc.data() as Map<String, dynamic>))
           .toList();
 
       // Cache result
@@ -199,10 +199,10 @@ class OptimizedAppointmentRepository {
 
   /// Get appointments by date range (optimized query)
   static Future<List<Appointment>> getAppointmentsByDateRange({
-    required DateTime startDate,
-    required DateTime endDate,
-    String? userId,
-    int limit = 50,
+    required final DateTime startDate,
+    required final DateTime endDate,
+    final String? userId,
+    final int limit = 50,
   }) async {
     final cacheKey =
         'dateRange_${startDate.millisecondsSinceEpoch}_${endDate.millisecondsSinceEpoch}_${userId ?? 'all'}';
@@ -227,7 +227,7 @@ class OptimizedAppointmentRepository {
       final snapshot = await query.get();
 
       final appointments = snapshot.docs
-          .map((doc) => Appointment.fromMap(doc.data() as Map<String, dynamic>))
+          .map((final doc) => Appointment.fromMap(doc.data() as Map<String, dynamic>))
           .toList();
 
       // Cache result
@@ -246,8 +246,8 @@ class OptimizedAppointmentRepository {
 
   /// Stream appointments with real-time updates
   static Stream<List<Appointment>> streamAppointments({
-    String? userId,
-    int limit = _defaultPageSize,
+    final String? userId,
+    final int limit = _defaultPageSize,
   }) {
     Query query = _firestore
         .collection('appointments')
@@ -258,15 +258,13 @@ class OptimizedAppointmentRepository {
       query = query.where('userId', isEqualTo: userId);
     }
 
-    return query.snapshots().map((snapshot) {
-      return snapshot.docs
-          .map((doc) => Appointment.fromMap(doc.data() as Map<String, dynamic>))
-          .toList();
-    });
+    return query.snapshots().map((final snapshot) => snapshot.docs
+          .map((final doc) => Appointment.fromMap(doc.data() as Map<String, dynamic>))
+          .toList());
   }
 
   /// Check if cache is valid
-  static bool _isCacheValid(String key) {
+  static bool _isCacheValid(final String key) {
     if (!_cache.containsKey(key) || !_cacheTimestamps.containsKey(key)) {
       return false;
     }
@@ -276,11 +274,11 @@ class OptimizedAppointmentRepository {
   }
 
   /// Invalidate cache for a specific user
-  static void _invalidateUserCache(String? userId) {
+  static void _invalidateUserCache(final String? userId) {
     if (userId == null) return;
 
     final keysToRemove = <String>[];
-    for (var key in _cache.keys) {
+    for (final key in _cache.keys) {
       if (key.contains('_${userId}_') || key.contains('_$userId')) {
         keysToRemove.add(key);
       }
@@ -293,9 +291,9 @@ class OptimizedAppointmentRepository {
   }
 
   /// Invalidate cache for a specific appointment
-  static void _invalidateAppointmentCache(String appointmentId) {
+  static void _invalidateAppointmentCache(final String appointmentId) {
     final keysToRemove = <String>[];
-    for (var key in _cache.keys) {
+    for (final key in _cache.keys) {
       if (key.contains('appointment_$appointmentId')) {
         keysToRemove.add(key);
       }
@@ -314,16 +312,14 @@ class OptimizedAppointmentRepository {
   }
 
   /// Get cache statistics
-  static Map<String, dynamic> getCacheStats() {
-    return {
+  static Map<String, dynamic> getCacheStats() => {
       'cacheSize': _cache.length,
       'cacheKeys': _cache.keys.toList(),
       'oldestEntry': _cacheTimestamps.values.isNotEmpty
-          ? _cacheTimestamps.values.reduce((a, b) => a.isBefore(b) ? a : b)
+          ? _cacheTimestamps.values.reduce((final a, final b) => a.isBefore(b) ? a : b)
           : null,
       'newestEntry': _cacheTimestamps.values.isNotEmpty
-          ? _cacheTimestamps.values.reduce((a, b) => a.isAfter(b) ? a : b)
+          ? _cacheTimestamps.values.reduce((final a, final b) => a.isAfter(b) ? a : b)
           : null,
     };
-  }
 }

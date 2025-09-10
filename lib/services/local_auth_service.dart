@@ -4,9 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'local_database_service.dart';
 
 class LocalAuthService {
-  static final LocalAuthService _instance = LocalAuthService._internal();
   factory LocalAuthService() => _instance;
   LocalAuthService._internal();
+  static final LocalAuthService _instance = LocalAuthService._internal();
 
   final LocalDatabaseService _db = LocalDatabaseService();
   String? _currentUserId;
@@ -27,10 +27,10 @@ class LocalAuthService {
 
   // Register a new user
   Future<Map<String, dynamic>> register({
-    required String email,
-    required String password,
-    required String name,
-    required String role,
+    required final String email,
+    required final String password,
+    required final String name,
+    required final String role,
   }) async {
     try {
       // Check if user already exists
@@ -81,8 +81,8 @@ class LocalAuthService {
 
   // Login user
   Future<Map<String, dynamic>> login({
-    required String email,
-    required String password,
+    required final String email,
+    required final String password,
   }) async {
     try {
       final users = await _db.query(
@@ -99,11 +99,9 @@ class LocalAuthService {
       }
 
       final user = users.first;
-      final hashedPassword = _hashPassword(password);
-
       // In a real app, you'd compare hashed passwords
       // For demo purposes, we'll skip password verification
-      await _loginUser(user['id']);
+      await _loginUser(user['id'] as String);
 
       return {
         'success': true,
@@ -154,19 +152,17 @@ class LocalAuthService {
   }
 
   // Private helper methods
-  Future<void> _loginUser(String userId) async {
+  Future<void> _loginUser(final String userId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('current_user_id', userId);
     _currentUserId = userId;
   }
 
-  String _generateUserId() {
-    return DateTime.now().millisecondsSinceEpoch.toString();
-  }
+  String _generateUserId() => DateTime.now().millisecondsSinceEpoch.toString();
 
-  String _hashPassword(String password) {
-    var bytes = utf8.encode(password);
-    var digest = sha256.convert(bytes);
+  String _hashPassword(final String password) {
+    final bytes = utf8.encode(password);
+    final digest = sha256.convert(bytes);
     return digest.toString();
   }
 }

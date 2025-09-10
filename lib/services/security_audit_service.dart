@@ -6,10 +6,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 /// Comprehensive Security Audit Service
 /// Provides security auditing, monitoring, and compliance validation
 class SecurityAuditService {
-  static final SecurityAuditService _instance =
-      SecurityAuditService._internal();
   factory SecurityAuditService() => _instance;
   SecurityAuditService._internal();
+  static final SecurityAuditService _instance =
+      SecurityAuditService._internal();
 
   // Security metrics
   final Map<String, List<SecurityIssue>> _securityIssues = {};
@@ -64,12 +64,10 @@ class SecurityAuditService {
   }
 
   /// Generate a full audit report (wrapper)
-  Future<SecurityAuditResults> generateAuditReport() async {
-    return await performSecurityAudit();
-  }
+  Future<SecurityAuditResults> generateAuditReport() async => performSecurityAudit();
 
   /// Store audit results (stub implementation)
-  Future<void> _storeAuditResult(SecurityAuditResults results) async {
+  Future<void> _storeAuditResult(final SecurityAuditResults results) async {
     // In a real implementation, persist to secure storage or backend
     developer.log('Stored security audit results with score: '
         '${results.overallScore?.toStringAsFixed(1) ?? 'N/A'}');
@@ -77,7 +75,7 @@ class SecurityAuditService {
 
   /// Handle critical security issues detected in an audit (stub)
   Future<void> _handleCriticalSecurityIssues(
-      SecurityAuditResults results) async {
+      final SecurityAuditResults results) async {
     _logSecurityEvent(SecurityEvent(
       type: SecurityEventType.incident,
       severity: SecuritySeverity.critical,
@@ -92,16 +90,14 @@ class SecurityAuditService {
   /// Initialize security monitoring
   Future<void> _initializeSecurityMonitoring() async {
     // Monitor authentication events
-    FirebaseAuth.instance.authStateChanges().listen((user) {
-      _handleAuthEvent(user);
-    });
+    FirebaseAuth.instance.authStateChanges().listen(_handleAuthEvent);
 
     // Monitor Firestore access patterns
     _monitorFirestoreAccess();
   }
 
   /// Handle authentication events
-  void _handleAuthEvent(User? user) {
+  void _handleAuthEvent(final User? user) {
     if (user != null) {
       _logSecurityEvent(SecurityEvent(
         type: SecurityEventType.authentication,
@@ -343,9 +339,9 @@ class SecurityAuditService {
   Future<bool> _testDataExposureVulnerabilities() async => true;
 
   /// Calculate overall security score
-  double _calculateOverallSecurityScore(SecurityAuditResults results) {
-    double weightedScore = 0.0;
-    double totalWeight = 0.0;
+  double _calculateOverallSecurityScore(final SecurityAuditResults results) {
+    double weightedScore = 0;
+    double totalWeight = 0;
 
     // Firestore security (25% weight)
     final firestoreScore = results.firestoreSecurity?.overallScore;
@@ -393,7 +389,7 @@ class SecurityAuditService {
   }
 
   /// Log security event
-  void _logSecurityEvent(SecurityEvent event) {
+  void _logSecurityEvent(final SecurityEvent event) {
     _securityEventController.add(event);
 
     if (kDebugMode) {
@@ -405,9 +401,7 @@ class SecurityAuditService {
   Stream<SecurityEvent> get securityEvents => _securityEventController.stream;
 
   /// Get security metrics
-  Map<String, SecurityMetrics> getSecurityMetrics() {
-    return _securityMetrics;
-  }
+  Map<String, SecurityMetrics> getSecurityMetrics() => _securityMetrics;
 
   /// Clear security issues
   void clearSecurityIssues() {
@@ -493,11 +487,6 @@ class VulnerabilityAssessmentResults {
 }
 
 class SecurityEvent {
-  final SecurityEventType type;
-  final SecuritySeverity severity;
-  final String description;
-  final DateTime timestamp;
-  final Map<String, dynamic>? metadata;
 
   SecurityEvent({
     required this.type,
@@ -506,6 +495,11 @@ class SecurityEvent {
     required this.timestamp,
     this.metadata,
   });
+  final SecurityEventType type;
+  final SecuritySeverity severity;
+  final String description;
+  final DateTime timestamp;
+  final Map<String, dynamic>? metadata;
 }
 
 enum SecurityEventType {
@@ -526,11 +520,6 @@ enum SecuritySeverity {
 }
 
 class SecurityIssue {
-  final String id;
-  final String description;
-  final SecuritySeverity severity;
-  final String category;
-  final String? recommendation;
 
   SecurityIssue({
     required this.id,
@@ -539,13 +528,14 @@ class SecurityIssue {
     required this.category,
     this.recommendation,
   });
+  final String id;
+  final String description;
+  final SecuritySeverity severity;
+  final String category;
+  final String? recommendation;
 }
 
 class SecurityMetrics {
-  final String name;
-  final double value;
-  final String unit;
-  final DateTime timestamp;
 
   SecurityMetrics({
     required this.name,
@@ -553,4 +543,8 @@ class SecurityMetrics {
     required this.unit,
     required this.timestamp,
   });
+  final String name;
+  final double value;
+  final String unit;
+  final DateTime timestamp;
 }

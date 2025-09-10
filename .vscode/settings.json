@@ -1,0 +1,8 @@
+{
+    "cmake.sourceDirectory": "C:/Users/H/NDIS APP/build/windows/x64/firebase_cpp_sdk_windows_12.7.0/firebase_cpp_sdk_windows",
+    "cmake.ignoreCMakeListsMissing": true,
+    "cSpell.words": [
+        "ndisconnect"
+    ],
+    "dart.flutterTrackWidgetCreation": true
+}

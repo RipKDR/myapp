@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 
 // This file will be replaced by FlutterFire's generated options in production.
 // Keep a permissive stub to avoid compile errors before configuration.
@@ -16,9 +16,16 @@ class FirebaseService {
   static Future<void> tryInitialize() async {
     if (_initialized) return;
     try {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
+      final options = DefaultFirebaseOptions.currentPlatform;
+      if (options.apiKey.isEmpty ||
+          options.appId.isEmpty ||
+          options.projectId.isEmpty) {
+        // Skip init if not configured to avoid runtime crashes in dev.
+        log('Firebase not configured via --dart-define; running offline mode');
+        return;
+      }
+
+      await Firebase.initializeApp(options: options);
 
       // Enable Firestore offline persistence
       await _enableOfflinePersistence();
@@ -48,9 +55,9 @@ class FirebaseService {
   static bool get isConfigured {
     try {
       final options = DefaultFirebaseOptions.currentPlatform;
-      return options.apiKey != 'REPLACE_ME' &&
-          options.appId != 'REPLACE_ME' &&
-          options.projectId != 'REPLACE_ME';
+      return options.apiKey.isNotEmpty &&
+          options.appId.isNotEmpty &&
+          options.projectId.isNotEmpty;
     } catch (e) {
       return false;
     }
@@ -59,7 +66,8 @@ class FirebaseService {
   // Get current user ID for debugging
   static String? get currentUserId {
     try {
-      return FirebaseFirestore.instance.app.name;
+      final user = fb_auth.FirebaseAuth.instance.currentUser;
+      return user?.uid;
     } catch (e) {
       return null;
     }

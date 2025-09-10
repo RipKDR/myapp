@@ -1,9 +1,4 @@
 class CircleMember {
-  final String id;
-  final String name;
-  final String role; // e.g., Participant, Provider, Family
-  final String? email;
-  final String? phone;
   const CircleMember({
     required this.id,
     required this.name,
@@ -11,15 +6,14 @@ class CircleMember {
     this.email,
     this.phone,
   });
+  final String id;
+  final String name;
+  final String role; // e.g., Participant, Provider, Family
+  final String? email;
+  final String? phone;
 }
 
-class CircleMessage {
-  final String id;
-  final String authorId;
-  final String text;
-  final DateTime sentAt;
-  final bool encrypted;
-  final Map<String, String>? payload; // if encrypted, holds {n,c,t}
+class CircleMessage { // if encrypted, holds {n,c,t}
   const CircleMessage({
     required this.id,
     required this.authorId,
@@ -28,21 +22,22 @@ class CircleMessage {
     this.encrypted = false,
     this.payload,
   });
+  final String id;
+  final String authorId;
+  final String text;
+  final DateTime sentAt;
+  final bool encrypted;
+  final Map<String, String>? payload;
 }
 
-class GoalCard {
+class GoalCard { // Todo, Doing, Done
+  const GoalCard({required this.id, required this.title, required this.status});
   final String id;
   final String title;
-  final String status; // Todo, Doing, Done
-  const GoalCard({required this.id, required this.title, required this.status});
+  final String status;
 }
 
 class SupportCircle {
-  final String id;
-  final String name;
-  final String participantId;
-  final String? description;
-  final List<CircleMember> members;
 
   const SupportCircle({
     required this.id,
@@ -51,13 +46,18 @@ class SupportCircle {
     this.description,
     this.members = const [],
   });
+  final String id;
+  final String name;
+  final String participantId;
+  final String? description;
+  final List<CircleMember> members;
 
   SupportCircle copyWith({
-    String? id,
-    String? name,
-    String? participantId,
-    String? description,
-    List<CircleMember>? members,
+    final String? id,
+    final String? name,
+    final String? participantId,
+    final String? description,
+    final List<CircleMember>? members,
   }) => SupportCircle(
         id: id ?? this.id,
         name: name ?? this.name,

@@ -84,8 +84,7 @@ class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  Widget build(final BuildContext context) => MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: const Color(0xFF4F46E5),
@@ -139,15 +138,13 @@ class SplashScreen extends StatelessWidget {
         ),
       ),
     );
-  }
 }
 
 class NDISConnectApp extends StatelessWidget {
   const NDISConnectApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
+  Widget build(final BuildContext context) => MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => SettingsController()..load()),
         ChangeNotifierProvider(create: (_) => AuthController()..load()),
@@ -155,14 +152,13 @@ class NDISConnectApp extends StatelessWidget {
       ],
       child: const _NDISConnectAppContent(),
     );
-  }
 }
 
 class _NDISConnectAppContent extends StatelessWidget {
   const _NDISConnectAppContent();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final settings = context.watch<SettingsController>();
 
     return MaterialApp(
@@ -171,7 +167,7 @@ class _NDISConnectAppContent extends StatelessWidget {
       theme: AppTheme.lightTheme(highContrast: settings.highContrast),
       darkTheme: AppTheme.darkTheme(highContrast: settings.highContrast),
       themeMode: settings.themeMode,
-      builder: (context, child) {
+      builder: (final context, final child) {
         // Apply user-selected text scale and reduced motion globally.
         final media = MediaQuery.of(context);
         return MediaQuery(
@@ -195,12 +191,12 @@ class PerformanceMonitor {
   static final Map<String, List<Duration>> _metrics = {};
 
   /// Start timing an operation
-  static void startTimer(String operation) {
+  static void startTimer(final String operation) {
     _startTimes[operation] = DateTime.now();
   }
 
   /// End timing an operation
-  static void endTimer(String operation) {
+  static void endTimer(final String operation) {
     final startTime = _startTimes[operation];
     if (startTime != null) {
       final duration = DateTime.now().difference(startTime);
@@ -213,13 +209,13 @@ class PerformanceMonitor {
   }
 
   /// Get average time for an operation
-  static Duration? getAverageTime(String operation) {
+  static Duration? getAverageTime(final String operation) {
     final times = _metrics[operation];
     if (times == null || times.isEmpty) return null;
 
     final total = times.fold<Duration>(
       Duration.zero,
-      (sum, time) => sum + time,
+      (final sum, final time) => sum + time,
     );
 
     return Duration(
@@ -230,7 +226,7 @@ class PerformanceMonitor {
   /// Get all performance metrics
   static Map<String, Duration> getAllMetrics() {
     final averages = <String, Duration>{};
-    _metrics.forEach((operation, times) {
+    _metrics.forEach((final operation, final times) {
       final average = getAverageTime(operation);
       if (average != null) {
         averages[operation] = average;
@@ -246,19 +242,17 @@ abstract class OptimizedService {
   static final Map<String, Future<dynamic>> _pendingOperations = {};
 
   /// Get cached data
-  static T? getCached<T>(String key) {
-    return _cache[key] as T?;
-  }
+  static T? getCached<T>(final String key) => _cache[key] as T?;
 
   /// Set cached data
-  static void setCached<T>(String key, T data) {
+  static void setCached<T>(final String key, final T data) {
     _cache[key] = data;
   }
 
   /// Execute operation with deduplication
   static Future<T> executeWithDeduplication<T>(
-    String key,
-    Future<T> Function() operation,
+    final String key,
+    final Future<T> Function() operation,
   ) async {
     // Check if operation is already pending
     if (_pendingOperations.containsKey(key)) {

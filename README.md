@@ -1,110 +1,201 @@
-<!-- markdownlint-disable -->
-NDIS Connect (Flutter)
-======================
+# NDIS Connect
 
-Accessible, role-based companion for NDIS participants and providers. WCAG 2.2 AA-minded design with voice-over semantics, high-contrast themes, resizable text, and offline-first patterns. Backend via Firebase; maps via Google Maps; chatbot via Dialogflow.
+A modern, accessible Flutter application for NDIS participants and providers to manage their plans, budgets, and services.
 
-BMAD Delivery Plan
-------------------
-- Blueprint: Define IA, roles, core flows, data model, and a11y targets.
-- Make: Scaffold Flutter app, core dashboards, calendar, budget, settings.
-- Assess: Run a11y checks (contrast, semantics, focus), verify flows offline.
-- Deliver: Wire Firebase, Maps, Dialogflow, harden security, prepare store builds.
+## Features
 
-What’s Included (v0.1)
-----------------------
-- Dual dashboards (participant, provider) with MyChart-style cards.
-- Smart Scheduling (lightweight month grid, quick booking, streak points).
-- Budget Tracker (buckets, alerts at 80%, simple pie).
-- Accessibility toggles (theme, high contrast, text size, reduce motion).
-- Firebase initialization stub + placeholders for Chat (Dialogflow) and Maps.
+- **Role-based Access**: Separate experiences for participants and providers
+- **Budget Management**: Track spending across NDIS plan categories
+- **Claims Processing**: Submit and track reimbursement claims
+- **Service Discovery**: Find and contact NDIS service providers
+- **Secure Messaging**: Communicate with providers and support circle
+- **Calendar Integration**: Manage appointments and schedules
+- **Support Circle**: Manage family, carers, and support network
+- **Accessibility**: WCAG 2.2 AA compliant with high contrast and reduced motion support
 
-New in this iteration
----------------------
-- Freemium feature guard and paywall component.
-- Purchase service scaffolding (in_app_purchase) with demo unlock.
-- Chatbot screen (text + voice input) using placeholder responses.
-- Service Map with wait-time and accessibility filters (Google Map widget).
-- Support Circle: Trello-like board for goals + basic chat.
-- Plan Snapshot timeline with PDF export (printing/pdf packages).
-- Smart Plan Checklist with priorities and reward toasts.
-- Gamification controller: points, streaks, and badges state persisted locally.
-- Notifications: Firebase Messaging + local notifications for foreground.
+## Design & Run
 
-## Prerequisites
-- Flutter SDK installed
-- Xcode (iOS) and Android SDKs
-- Firebase project and FlutterFire CLI
+### Prerequisites
+- Flutter 3.24.0 or higher
+- Android SDK 36
+- Android Studio or VS Code with Flutter extension
 
-## Setup
-1) Create missing platform folders (since this repo was scaffolded without `flutter create`):
-   flutter create .
+### Setup
+```bash
+# Clone the repository
+git clone <repository-url>
+cd ndis-connect
 
-2) Install dependencies:
-   flutter pub get
+# Install dependencies
+flutter pub get
 
-3) Configure Firebase (adds lib/firebase_options.dart):
-   dart pub global activate flutterfire_cli
-   flutterfire configure
+# Run the app
+flutter run
+```
 
-4) Google Maps API keys:
-   - Android: add your key to android/app/src/main/AndroidManifest.xml under <application>
-     <meta-data android:name="com.google.android.geo.API_KEY" android:value="YOUR_KEY"/>
-   - iOS: add to ios/Runner/AppDelegate.swift or Info.plist (GMSApiKey).
+### Development
+```bash
+# Run in debug mode
+flutter run --debug
 
-5) Run the app:
-   flutter run
+# Run on specific device
+flutter run -d <device-id>
 
-6) Optional billing/freemium
-   - Toggle premium features for dev: set `FeatureFlags.isPremiumEnabled = true` in `lib/core/feature_flags.dart`.
-   - For production, add App Store Billing/Google Play Billing and gate via server flags.
+# Hot reload is enabled by default
+```
 
-7) Dialogflow integration (optional)
-   - Host a lightweight HTTPS endpoint (e.g., Cloud Function) that proxies Dialogflow.
-   - Launch with:
-     flutter run --dart-define=DIALOGFLOW_ENDPOINT=https://your-function/ask --dart-define=DIALOGFLOW_AUTH="Bearer XYZ"
+## Build APK
 
-6) Optional: Enable Firestore offline persistence (on by default in mobile). Ensure network rules:
-   - Use Firebase Security Rules to restrict per user/role.
+### Debug Build
+```bash
+flutter build apk --debug
+```
+Output: `build/app/outputs/flutter-apk/app-debug.apk`
 
-Dialogflow (Chatbot)
---------------------
-- Replace lib/services/chat_service.dart with a Dialogflow ES/CX integration via REST or Cloud Functions.
-- Add voice input with speech_to_text and optional TTS. Respect OS-level screen readers.
+### Release Build
+```bash
+flutter build apk --release
+```
+Output: `build/app/outputs/flutter-apk/app-release.apk`
 
-Security & Privacy
-------------------
-- End-to-end encryption for support circle notes is scaffolded (see cryptography dep). Derive keys with PBKDF2 and store key material safely (flutter_secure_storage). Never commit secrets.
+## Signing (Release)
 
-Accessibility (WCAG 2.2 AA)
----------------------------
-- High-contrast theme toggle
-- Resizable text (80%–180%)
-- Minimum tap target sizes (>=48px)
-- Semantic labels and focusable controls
-- Reduce motion option
+### Generate Keystore
+```bash
+keytool -genkeypair -v -keystore release-keystore.jks -alias ndis-connect-key -keyalg RSA -keysize 2048 -validity 10000 -storetype JKS
+```
 
-Next Steps
-----------
-- Wire Firebase Auth (myGov linking strategy), Firestore models, and FCM.
-- Implement Service Map with filters + offline caching.
-- Support Circle (permissions, real-time updates, E2E notes).
-- Plan Snapshot export to PDF and share sheet.
-- Freemium gating (basic vs premium AI features).
+### Configure Signing
+1. Create `android/key.properties` (git-ignored):
+```properties
+storeFile=../release-keystore.jks
+storePassword=CHANGE_ME
+keyAlias=ndis-connect-key
+keyPassword=CHANGE_ME
+```
 
-Security Notes
---------------
-- Replace placeholder Firebase options via `flutterfire configure`.
-- Add Firebase Rules enforcing participant/provider roles and least privilege.
-- Never commit API keys. Use secrets and build-time config for Maps keys.
-- For notifications on iOS, add push entitlements/APNs. On Android 13+, the plugin requests POST_NOTIFICATIONS permission.
+2. The signing configuration is already set up in `android/app/build.gradle`
 
-Folder Structure
-----------------
-- lib/
-  - controllers/ (state: auth, settings)
-  - models/ (budget, appointment)
-  - screens/ (dashboards, calendar, budget)
-  - services/ (firebase, auth, chat, maps)
-  - theme/ (AppTheme)
-  - widgets/ (IconCard, BudgetPie)
+## Design System
+
+### Tokens
+Edit design tokens in `lib/ui/theme/tokens/`:
+- `colors.dart` - Color palette and semantic colors
+- `spacing.dart` - Spacing scale and component spacing
+- `typography.dart` - Font families and text styles
+- `radius.dart` - Border radius values
+- `shadows.dart` - Elevation and shadow definitions
+- `motion.dart` - Animation durations and easing
+
+### Components
+Reusable components in `lib/ui/components/`:
+- `app_scaffold.dart` - Consistent layout structure
+- `buttons.dart` - Primary, secondary, and text buttons
+- `cards.dart` - Budget, appointment, and general cards
+- `forms.dart` - Enhanced form fields
+- `navigation.dart` - Bottom navigation and tab bars
+- `empty_states.dart` - Loading, error, and empty states
+
+## Architecture
+
+### Project Structure
+```
+lib/
+├── app/
+│   └── router.dart                 # Navigation configuration
+├── controllers/                    # State management
+├── features/                       # Feature-based organization
+│   ├── onboarding/
+│   ├── dashboard/
+│   ├── budget/
+│   ├── claims/
+│   ├── services/
+│   ├── messages/
+│   ├── support/
+│   ├── calendar/
+│   ├── settings/
+│   └── dev/
+├── ui/                            # Design system
+│   ├── theme/tokens/              # Design tokens
+│   └── components/                # Reusable components
+├── services/                      # External services
+├── repositories/                  # Data access layer
+├── models/                        # Data models
+└── utils/                         # Utilities
+```
+
+### Navigation
+- **go_router**: Modern declarative routing
+- **Deep Links**: All routes accessible via URL
+- **Route Guards**: Role-based access control
+
+### State Management
+- **Provider**: Global state management
+- **Local State**: StatefulWidget for component state
+
+## Accessibility
+
+### WCAG 2.2 AA Compliance
+- **Color Contrast**: Minimum 4.5:1 contrast ratio
+- **Touch Targets**: 44px minimum touch target size
+- **Text Scaling**: Support for 80%-200% text scaling
+- **Screen Readers**: Semantic labels and descriptions
+- **Keyboard Navigation**: Logical focus order
+- **Reduced Motion**: Respects user motion preferences
+
+### High Contrast Mode
+- Enhanced contrast ratios (7:1)
+- Bolder borders and shadows
+- Increased font weights
+- Alternative color schemes
+
+## Testing
+
+### Unit Tests
+```bash
+flutter test
+```
+
+### Widget Tests
+```bash
+flutter test test/widget_test.dart
+```
+
+### Golden Tests
+```bash
+flutter test --update-goldens
+```
+
+### Integration Tests
+```bash
+flutter test integration_test/
+```
+
+## Troubleshooting
+
+### Build Issues
+- **Gradle Sync**: Run `flutter clean && flutter pub get`
+- **Android SDK**: Ensure Android SDK 36 is installed
+- **Java Version**: Use Java 17 (bundled with Android Studio)
+
+### Runtime Issues
+- **Hot Reload**: Restart the app if hot reload fails
+- **Device Connection**: Check `flutter devices` for connected devices
+- **Permissions**: Ensure required permissions are granted
+
+### Common Errors
+- **Missing Classes**: Check ProGuard rules in `android/app/proguard-rules.pro`
+- **Signing Issues**: Verify keystore configuration in `android/key.properties`
+- **Dependency Conflicts**: Run `flutter pub deps` to check dependency tree
+
+## Contributing
+
+1. Follow the existing code style and architecture
+2. Add tests for new features
+3. Update documentation for API changes
+4. Ensure accessibility compliance
+5. Test on multiple devices and screen sizes
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

@@ -1,6 +1,31 @@
 enum ShiftStatus { available, booked, completed, cancelled }
 
 class Shift {
+
+  Shift({
+    required this.id,
+    final String? staff,
+    final DateTime? start,
+    final DateTime? startTime,
+    final DateTime? end,
+    final DateTime? endTime,
+    final String? participant,
+    this.confirmed = false,
+    this.providerId,
+    this.maxParticipants,
+    final List<String>? participantIds,
+    final ShiftStatus? status,
+    this.location,
+  })  : staff = staff ?? 'Staff',
+        start = startTime ?? start ?? (throw ArgumentError('start/startTime required')),
+        end = endTime ?? end ?? (throw ArgumentError('end/endTime required')),
+        participant = participant ?? 'Participant',
+        status = status ?? ShiftStatus.available,
+        participantIds = participantIds ?? const [] {
+    if (!this.end.isAfter(this.start)) {
+      throw ArgumentError('end must be after start');
+    }
+  }
   final String id;
   // Original fields used in roster UI
   final String staff;
@@ -16,51 +41,26 @@ class Shift {
   final List<String> participantIds;
   final ShiftStatus status;
 
-  Shift({
-    required this.id,
-    String? staff,
-    DateTime? start,
-    DateTime? startTime,
-    DateTime? end,
-    DateTime? endTime,
-    String? participant,
-    this.confirmed = false,
-    this.providerId,
-    this.maxParticipants,
-    List<String>? participantIds,
-    ShiftStatus? status,
-    this.location,
-  })  : staff = staff ?? 'Staff',
-        start = startTime ?? start ?? (throw ArgumentError('start/startTime required')),
-        end = endTime ?? end ?? (throw ArgumentError('end/endTime required')),
-        participant = participant ?? 'Participant',
-        status = status ?? ShiftStatus.available,
-        participantIds = participantIds ?? const [] {
-    if (!this.end.isAfter(this.start)) {
-      throw ArgumentError('end must be after start');
-    }
-  }
-
   Duration get duration => end.difference(start);
   int get availableSpots => (maxParticipants ?? 0) - participantIds.length;
   bool get isFullyBooked => maxParticipants != null && participantIds.length >= maxParticipants!;
 
-  bool overlaps(Shift other) {
+  bool overlaps(final Shift other) {
     if (staff != other.staff) return false;
     return start.isBefore(other.end) && end.isAfter(other.start);
   }
 
   Shift copyWith({
-    String? id,
-    String? staff,
-    DateTime? start,
-    DateTime? end,
-    String? participant,
-    bool? confirmed,
-    String? providerId,
-    int? maxParticipants,
-    List<String>? participantIds,
-    ShiftStatus? status,
+    final String? id,
+    final String? staff,
+    final DateTime? start,
+    final DateTime? end,
+    final String? participant,
+    final bool? confirmed,
+    final String? providerId,
+    final int? maxParticipants,
+    final List<String>? participantIds,
+    final ShiftStatus? status,
   }) => Shift(
         id: id ?? this.id,
         staff: staff ?? this.staff,
@@ -87,7 +87,7 @@ class Shift {
         'status': status.name,
       };
 
-  static Shift fromMap(Map<String, dynamic> m) => Shift(
+  static Shift fromMap(final Map<String, dynamic> m) => Shift(
         id: m['id'] as String,
         staff: (m['staff'] as String?) ?? 'Staff',
         start: DateTime.parse((m['startTime'] ?? m['start']) as String),
@@ -96,12 +96,12 @@ class Shift {
         confirmed: (m['confirmed'] as bool?) ?? false,
         providerId: m['providerId'] as String?,
         maxParticipants: (m['maxParticipants'] as num?)?.toInt(),
-        participantIds: ((m['participantIds'] as List?)?.cast<String>()) ?? const [],
+        participantIds: (m['participantIds'] as List?)?.cast<String>() ?? const [],
         status: _parseStatus(m['status'] as String?),
       );
 }
 
-ShiftStatus _parseStatus(String? s) {
+ShiftStatus _parseStatus(final String? s) {
   switch (s) {
     case 'booked':
       return ShiftStatus.booked;
