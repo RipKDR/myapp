@@ -55,7 +55,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -65,7 +65,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppTheme.ndisTeal.withOpacity(0.1),
+                color: AppTheme.ndisTeal.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
@@ -80,7 +80,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         ),
         actions: [
           PopupMenuButton<String>(
-            itemBuilder: (context) => [
+            itemBuilder: (final context) => [
               const PopupMenuItem(
                 value: 'call',
                 child: Row(
@@ -102,7 +102,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                 ),
               ),
             ],
-            onSelected: (v) => _escalate(v),
+            onSelected: _escalate,
           )
         ],
       ),
@@ -116,7 +116,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
               decoration: BoxDecoration(
                 color: scheme.surfaceContainerHighest,
                 border: Border(
-                  bottom: BorderSide(color: scheme.outline.withOpacity(0.1)),
+                  bottom: BorderSide(color: scheme.outline.withValues(alpha: 0.1)),
                 ),
               ),
               child: SingleChildScrollView(
@@ -154,7 +154,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                 controller: _scrollController,
                 padding: const EdgeInsets.all(16),
                 itemCount: _messages.length + (_isTyping ? 1 : 0),
-                itemBuilder: (context, i) {
+                itemBuilder: (final context, final i) {
                   if (i == _messages.length && _isTyping) {
                     return _TypingIndicator(controller: _typingController);
                   }
@@ -165,11 +165,11 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
             ),
 
             // Input Area
-            Container(
+            DecoratedBox(
               decoration: BoxDecoration(
                 color: scheme.surface,
                 border: Border(
-                  top: BorderSide(color: scheme.outline.withOpacity(0.1)),
+                  top: BorderSide(color: scheme.outline.withValues(alpha: 0.1)),
                 ),
               ),
               child: SafeArea(
@@ -180,12 +180,11 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                       // Voice Input Button
                       AnimatedBuilder(
                         animation: _pulseController,
-                        builder: (context, child) {
-                          return Transform.scale(
+                        builder: (final context, final child) => Transform.scale(
                             scale: _listening
                                 ? 1.0 + (_pulseController.value * 0.1)
                                 : 1.0,
-                            child: Container(
+                            child: DecoratedBox(
                               decoration: BoxDecoration(
                                 color: _listening
                                     ? AppTheme.ndisOrange
@@ -205,19 +204,18 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                                 onPressed: _toggleListening,
                               ),
                             ),
-                          );
-                        },
+                          ),
                       ),
                       const SizedBox(width: 12),
 
                       // Text Input
                       Expanded(
-                        child: Container(
+                        child: DecoratedBox(
                           decoration: BoxDecoration(
                             color: scheme.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(24),
                             border: Border.all(
-                              color: scheme.outline.withOpacity(0.2),
+                              color: scheme.outline.withValues(alpha: 0.2),
                             ),
                           ),
                           child: TextField(
@@ -241,7 +239,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                       const SizedBox(width: 12),
 
                       // Send Button
-                      Container(
+                      DecoratedBox(
                         decoration: BoxDecoration(
                           color: AppTheme.ndisBlue,
                           borderRadius: BorderRadius.circular(12),
@@ -264,7 +262,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     );
   }
 
-  Future<void> _escalate(String v) async {
+  Future<void> _escalate(final String v) async {
     if (v == 'call') {
       await _launch('tel:1800800110');
     } else if (v == 'email') {
@@ -273,14 +271,14 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     }
   }
 
-  Future<void> _launch(String url) async {
+  Future<void> _launch(final String url) async {
     final ok = await canLaunchUrl(Uri.parse(url));
     if (ok) {
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     }
   }
 
-  void _sendQuickMessage(String message) {
+  void _sendQuickMessage(final String message) {
     _controller.text = message;
     _send();
   }
@@ -341,10 +339,10 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     });
 
     _stt.listen(
-      onResult: (r) {
+      onResult: (final r) {
         setState(() => _controller.text = r.recognizedWords);
       },
-      onSoundLevelChange: (level) {
+      onSoundLevelChange: (final level) {
         // Could add visual feedback for sound level
       },
     );
@@ -352,36 +350,35 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 }
 
 class _Msg {
+
+  _Msg(this.text, this.mine, {this.isWelcome = false});
   final String text;
   final bool mine;
   final bool isWelcome;
-
-  _Msg(this.text, this.mine, {this.isWelcome = false});
 }
 
 class _QuickActionChip extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
 
   const _QuickActionChip({
     required this.label,
     required this.icon,
     required this.onTap,
   });
+  final String label;
+  final IconData icon;
+  final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) {
-    return InkWell(
+  Widget build(final BuildContext context) => InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: AppTheme.ndisBlue.withOpacity(0.1),
+          color: AppTheme.ndisBlue.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: AppTheme.ndisBlue.withOpacity(0.3),
+            color: AppTheme.ndisBlue.withValues(alpha: 0.3),
           ),
         ),
         child: Row(
@@ -404,16 +401,15 @@ class _QuickActionChip extends StatelessWidget {
         ),
       ),
     );
-  }
 }
 
 class _MessageBubble extends StatelessWidget {
-  final _Msg message;
 
   const _MessageBubble({required this.message});
+  final _Msg message;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
     return Padding(
@@ -428,7 +424,7 @@ class _MessageBubble extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: AppTheme.ndisTeal.withOpacity(0.1),
+                color: AppTheme.ndisTeal.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: const Icon(
@@ -449,7 +445,7 @@ class _MessageBubble extends StatelessWidget {
                 color: message.mine
                     ? AppTheme.ndisBlue
                     : message.isWelcome
-                        ? AppTheme.ndisTeal.withOpacity(0.1)
+                        ? AppTheme.ndisTeal.withValues(alpha: 0.1)
                         : scheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(16).copyWith(
                   bottomLeft: message.mine
@@ -460,7 +456,7 @@ class _MessageBubble extends StatelessWidget {
                       : const Radius.circular(16),
                 ),
                 border: message.isWelcome
-                    ? Border.all(color: AppTheme.ndisTeal.withOpacity(0.3))
+                    ? Border.all(color: AppTheme.ndisTeal.withValues(alpha: 0.3))
                     : null,
               ),
               child: Column(
@@ -477,7 +473,7 @@ class _MessageBubble extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: AppTheme.ndisTeal.withOpacity(0.1),
+                        color: AppTheme.ndisTeal.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
@@ -514,7 +510,7 @@ class _MessageBubble extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: AppTheme.ndisBlue.withOpacity(0.1),
+                color: AppTheme.ndisBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: const Icon(
@@ -531,9 +527,9 @@ class _MessageBubble extends StatelessWidget {
 }
 
 class _TypingIndicator extends StatefulWidget {
-  final AnimationController controller;
 
   const _TypingIndicator({required this.controller});
+  final AnimationController controller;
 
   @override
   State<_TypingIndicator> createState() => _TypingIndicatorState();
@@ -547,7 +543,7 @@ class _TypingIndicatorState extends State<_TypingIndicator> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
     return Padding(
@@ -558,7 +554,7 @@ class _TypingIndicatorState extends State<_TypingIndicator> {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: AppTheme.ndisTeal.withOpacity(0.1),
+              color: AppTheme.ndisTeal.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Icon(
@@ -578,10 +574,9 @@ class _TypingIndicatorState extends State<_TypingIndicator> {
             ),
             child: AnimatedBuilder(
               animation: widget.controller,
-              builder: (context, child) {
-                return Row(
+              builder: (final context, final child) => Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: List.generate(3, (index) {
+                  children: List.generate(3, (final index) {
                     final delay = index * 0.2;
                     final animationValue =
                         (widget.controller.value - delay).clamp(0.0, 1.0);
@@ -593,13 +588,12 @@ class _TypingIndicatorState extends State<_TypingIndicator> {
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: AppTheme.ndisTeal.withOpacity(scale),
+                        color: AppTheme.ndisTeal.withValues(alpha: scale),
                         shape: BoxShape.circle,
                       ),
                     );
                   }),
-                );
-              },
+                ),
             ),
           ),
         ],

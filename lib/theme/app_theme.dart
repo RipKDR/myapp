@@ -37,20 +37,18 @@ class AppTheme {
   static const Color backgroundLight = Color(0xFFFAFAFA);
   static const Color backgroundDark = Color(0xFF303134);
 
-  static ThemeData lightTheme({bool highContrast = false}) {
+  static ThemeData lightTheme({final bool highContrast = false}) {
     final seedColor = highContrast ? ndisBlueHC : googleBlue;
     final base = ThemeData(
       colorScheme: ColorScheme.fromSeed(
         seedColor: seedColor,
-        brightness: Brightness.light,
         primary: seedColor,
         secondary: highContrast ? ndisTealHC : googleGreen,
         tertiary: highContrast ? ndisGreenHC : googleYellow,
         surface: highContrast ? Colors.white : surfaceLight,
-        background: highContrast ? Colors.white : backgroundLight,
         surfaceContainerHighest:
             highContrast ? Colors.grey[200] : googleLightGrey,
-        outline: googleGrey.withOpacity(0.2),
+        outline: googleGrey.withValues(alpha: 0.2),
       ),
       useMaterial3: true,
       visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -65,13 +63,13 @@ class AppTheme {
         color: base.colorScheme.surface,
         elevation: highContrast ? 2 : 1,
         shadowColor:
-            highContrast ? Colors.black : Colors.black.withOpacity(0.1),
+            highContrast ? Colors.black : Colors.black.withValues(alpha: 0.1),
         shape: RoundedRectangleBorder(
           borderRadius:
               BorderRadius.circular(12), // Google-style rounded corners
           side: highContrast
-              ? BorderSide(color: Colors.grey[400]!, width: 1)
-              : BorderSide(color: googleGrey.withOpacity(0.1), width: 1),
+              ? BorderSide(color: Colors.grey[400]!)
+              : BorderSide(color: googleGrey.withValues(alpha: 0.1)),
         ),
         margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
       ),
@@ -136,7 +134,7 @@ class AppTheme {
     );
   }
 
-  static ThemeData darkTheme({bool highContrast = false}) {
+  static ThemeData darkTheme({final bool highContrast = false}) {
     final seedColor = highContrast ? ndisLightBlue : ndisBlue;
     final base = ThemeData(
       colorScheme: ColorScheme.fromSeed(
@@ -165,7 +163,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: highContrast
-              ? BorderSide(color: Colors.grey[600]!, width: 1)
+              ? BorderSide(color: Colors.grey[600]!)
               : BorderSide.none,
         ),
         margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
@@ -231,8 +229,7 @@ class AppTheme {
     );
   }
 
-  static TextTheme _enhancedText(TextTheme base) {
-    return base.copyWith(
+  static TextTheme _enhancedText(final TextTheme base) => base.copyWith(
       displayLarge: base.displayLarge?.copyWith(
         fontWeight: FontWeight.w700,
         letterSpacing: -0.5,
@@ -285,10 +282,8 @@ class AppTheme {
         fontWeight: FontWeight.w500,
       ),
     );
-  }
 
-  static TextTheme _contrastText(TextTheme base) {
-    return base
+  static TextTheme _contrastText(final TextTheme base) => base
         .apply(
           bodyColor: Colors.black,
           displayColor: Colors.black,
@@ -304,10 +299,8 @@ class AppTheme {
             height: 1.5,
           ),
         );
-  }
 
-  static TextTheme _contrastTextDark(TextTheme base) {
-    return base
+  static TextTheme _contrastTextDark(final TextTheme base) => base
         .apply(
           bodyColor: Colors.white,
           displayColor: Colors.white,
@@ -323,5 +316,4 @@ class AppTheme {
             height: 1.5,
           ),
         );
-  }
 }

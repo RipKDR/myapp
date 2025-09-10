@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:math' as math;
 import '../theme/google_theme.dart';
 
 /// Cinematic data storytelling components for 2025+ visual narratives
 /// Creates engaging, story-driven data visualizations with cinematic effects
 class CinematicDataStoryTelling {
-  
   /// Creates a narrative progress arc that tells the user's NDIS journey story
   static Widget buildProgressNarrativeArc({
-    required BuildContext context,
-    required List<StoryPoint> storyPoints,
-    required double currentProgress,
-    Color? accentColor,
-    bool showAnimations = true,
+    required final BuildContext context,
+    required final List<StoryPoint> storyPoints,
+    required final double currentProgress,
+    final Color? accentColor,
+    final bool showAnimations = true,
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -25,14 +23,14 @@ class CinematicDataStoryTelling {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            (accentColor ?? colorScheme.primary).withOpacity(0.1),
+            (accentColor ?? colorScheme.primary).withValues(alpha: 0.1),
             Colors.transparent,
-            (accentColor ?? colorScheme.primary).withOpacity(0.05),
+            (accentColor ?? colorScheme.primary).withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (accentColor ?? colorScheme.primary).withOpacity(0.2),
+          color: (accentColor ?? colorScheme.primary).withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -47,25 +45,27 @@ class CinematicDataStoryTelling {
                 ..shader = LinearGradient(
                   colors: [
                     accentColor ?? colorScheme.primary,
-                    (accentColor ?? colorScheme.primary).withOpacity(0.7),
+                    (accentColor ?? colorScheme.primary).withValues(alpha: 0.7),
                   ],
                 ).createShader(const Rect.fromLTWH(0, 0, 200, 70)),
             ),
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // Interactive story timeline
           SizedBox(
             height: 120,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: storyPoints.length,
-              itemBuilder: (context, index) {
+              itemBuilder: (final context, final index) {
                 final point = storyPoints[index];
-                final isCompleted = (index / storyPoints.length) <= currentProgress;
-                final isCurrent = index == (currentProgress * storyPoints.length).floor();
-                
+                final isCompleted =
+                    (index / storyPoints.length) <= currentProgress;
+                final isCurrent =
+                    index == (currentProgress * storyPoints.length).floor();
+
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 500),
                   margin: const EdgeInsets.only(right: 16),
@@ -78,49 +78,55 @@ class CinematicDataStoryTelling {
                         width: 60,
                         height: 60,
                         decoration: BoxDecoration(
-                          color: isCompleted 
-                            ? (accentColor ?? colorScheme.primary)
-                            : colorScheme.surfaceContainerHighest,
+                          color: isCompleted
+                              ? (accentColor ?? colorScheme.primary)
+                              : colorScheme.surfaceContainerHighest,
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: isCurrent 
-                              ? (accentColor ?? colorScheme.primary)
-                              : Colors.transparent,
+                            color: isCurrent
+                                ? (accentColor ?? colorScheme.primary)
+                                : Colors.transparent,
                             width: 3,
                           ),
-                          boxShadow: isCurrent ? [
-                            BoxShadow(
-                              color: (accentColor ?? colorScheme.primary).withOpacity(0.4),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            ),
-                          ] : [],
+                          boxShadow: isCurrent
+                              ? [
+                                  BoxShadow(
+                                    color: (accentColor ?? colorScheme.primary)
+                                        .withValues(alpha: 0.4),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ]
+                              : [],
                         ),
                         child: Icon(
                           point.icon,
-                          color: isCompleted ? Colors.white : colorScheme.onSurfaceVariant,
+                          color: isCompleted
+                              ? Colors.white
+                              : colorScheme.onSurfaceVariant,
                           size: 28,
                         ),
                       ),
-                      
+
                       const SizedBox(height: 8),
-                      
+
                       // Story point title
                       Text(
                         point.title,
                         style: theme.textTheme.labelMedium?.copyWith(
-                          fontWeight: isCompleted ? FontWeight.w600 : FontWeight.w400,
-                          color: isCompleted 
-                            ? colorScheme.onSurface
-                            : colorScheme.onSurfaceVariant,
+                          fontWeight:
+                              isCompleted ? FontWeight.w600 : FontWeight.w400,
+                          color: isCompleted
+                              ? colorScheme.onSurface
+                              : colorScheme.onSurfaceVariant,
                         ),
                         textAlign: TextAlign.center,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      
+
                       const SizedBox(height: 4),
-                      
+
                       // Progress indicator
                       if (isCurrent)
                         AnimatedContainer(
@@ -138,9 +144,9 @@ class CinematicDataStoryTelling {
               },
             ),
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // Current chapter description
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 500),
@@ -151,7 +157,7 @@ class CinematicDataStoryTelling {
                 color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: colorScheme.outline.withOpacity(0.1),
+                  color: colorScheme.outline.withValues(alpha: 0.1),
                 ),
               ),
               child: Column(
@@ -179,22 +185,22 @@ class CinematicDataStoryTelling {
       ),
     );
   }
-  
+
   /// Creates animated data stories with contextual visual cues
   static Widget buildAnimatedDataStory({
-    required BuildContext context,
-    required String title,
-    required String value,
-    required String previousValue,
-    required String trendDescription,
-    required IconData icon,
-    Color? color,
-    bool showCelebration = false,
+    required final BuildContext context,
+    required final String title,
+    required final String value,
+    required final String previousValue,
+    required final String trendDescription,
+    required final IconData icon,
+    final Color? color,
+    final bool showCelebration = false,
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final storyColor = color ?? colorScheme.primary;
-    
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 800),
       curve: Curves.easeInOutCubic,
@@ -205,22 +211,24 @@ class CinematicDataStoryTelling {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              storyColor.withOpacity(0.1),
-              storyColor.withOpacity(0.05),
+              storyColor.withValues(alpha: 0.1),
+              storyColor.withValues(alpha: 0.05),
               Colors.transparent,
             ],
           ),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: storyColor.withOpacity(0.2),
+            color: storyColor.withValues(alpha: 0.2),
           ),
-          boxShadow: showCelebration ? [
-            BoxShadow(
-              color: storyColor.withOpacity(0.3),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ] : [],
+          boxShadow: showCelebration
+              ? [
+                  BoxShadow(
+                    color: storyColor.withValues(alpha: 0.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ]
+              : [],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,10 +244,10 @@ class CinematicDataStoryTelling {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: storyColor.withOpacity(0.2),
+                      color: storyColor.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: storyColor.withOpacity(0.3),
+                        color: storyColor.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Icon(
@@ -249,9 +257,9 @@ class CinematicDataStoryTelling {
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(width: 16),
-                
+
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,14 +281,13 @@ class CinematicDataStoryTelling {
                     ],
                   ),
                 ),
-                
+
                 // Celebration particles
                 if (showCelebration)
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 1000),
                     child: Stack(
-                      children: List.generate(3, (index) {
-                        return AnimatedPositioned(
+                      children: List.generate(3, (final index) => AnimatedPositioned(
                           duration: Duration(milliseconds: 500 + (index * 100)),
                           right: 10.0 + (index * 8),
                           top: 10.0 + (index * 12),
@@ -292,15 +299,14 @@ class CinematicDataStoryTelling {
                               shape: BoxShape.circle,
                             ),
                           ),
-                        );
-                      }),
+                        )),
                     ),
                   ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Value comparison with cinematic transition
             Row(
               crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -309,14 +315,15 @@ class CinematicDataStoryTelling {
                 AnimatedDefaultTextStyle(
                   duration: const Duration(milliseconds: 600),
                   style: theme.textTheme.headlineLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: storyColor,
-                  ) ?? const TextStyle(),
+                        fontWeight: FontWeight.w700,
+                        color: storyColor,
+                      ) ??
+                      const TextStyle(),
                   child: Text(value),
                 ),
-                
+
                 const SizedBox(width: 12),
-                
+
                 // Previous value with fade effect
                 AnimatedOpacity(
                   duration: const Duration(milliseconds: 400),
@@ -331,9 +338,9 @@ class CinematicDataStoryTelling {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             // Progress visualization
             AnimatedContainer(
               duration: const Duration(milliseconds: 800),
@@ -342,9 +349,9 @@ class CinematicDataStoryTelling {
                 borderRadius: BorderRadius.circular(2),
                 gradient: LinearGradient(
                   colors: [
-                    storyColor.withOpacity(0.3),
+                    storyColor.withValues(alpha: 0.3),
                     storyColor,
-                    storyColor.withOpacity(0.8),
+                    storyColor.withValues(alpha: 0.8),
                   ],
                 ),
               ),
@@ -354,21 +361,21 @@ class CinematicDataStoryTelling {
       ),
     );
   }
-  
+
   /// Creates contextual visual cues that guide user attention
   static Widget buildContextualVisualCue({
-    required BuildContext context,
-    required String message,
-    required CueType type,
-    VoidCallback? onAction,
-    bool isAnimated = true,
+    required final BuildContext context,
+    required final String message,
+    required final CueType type,
+    final VoidCallback? onAction,
+    final bool isAnimated = true,
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     Color cueColor;
     IconData cueIcon;
-    
+
     switch (type) {
       case CueType.success:
         cueColor = GoogleTheme.googleGreen;
@@ -391,28 +398,29 @@ class CinematicDataStoryTelling {
         cueIcon = Icons.celebration;
         break;
     }
-    
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 600),
-      transform: Matrix4.identity()
-        ..translate(0.0, isAnimated ? 0.0 : 10.0),
+      transform: Matrix4.identity()..translate(0.0, isAnimated ? 0.0 : 10.0),
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: cueColor.withOpacity(0.1),
+          color: cueColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: cueColor.withOpacity(0.3),
+            color: cueColor.withValues(alpha: 0.3),
             width: 1.5,
           ),
-          boxShadow: type == CueType.urgent ? [
-            BoxShadow(
-              color: cueColor.withOpacity(0.3),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ] : [],
+          boxShadow: type == CueType.urgent
+              ? [
+                  BoxShadow(
+                    color: cueColor.withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : [],
         ),
         child: Row(
           children: [
@@ -426,9 +434,7 @@ class CinematicDataStoryTelling {
                 size: 24,
               ),
             ),
-            
             const SizedBox(width: 12),
-            
             Expanded(
               child: Text(
                 message,
@@ -438,7 +444,6 @@ class CinematicDataStoryTelling {
                 ),
               ),
             ),
-            
             if (onAction != null)
               TextButton(
                 onPressed: () {
@@ -458,25 +463,25 @@ class CinematicDataStoryTelling {
       ),
     );
   }
-  
+
   /// Creates immersive data experience with parallax effects
   static Widget buildParallaxDataExperience({
-    required BuildContext context,
-    required ScrollController scrollController,
-    required List<Widget> dataLayers,
-    double parallaxFactor = 0.5,
-  }) {
-    return AnimatedBuilder(
+    required final BuildContext context,
+    required final ScrollController scrollController,
+    required final List<Widget> dataLayers,
+    final double parallaxFactor = 0.5,
+  }) => AnimatedBuilder(
       animation: scrollController,
-      builder: (context, child) {
-        final offset = scrollController.hasClients ? scrollController.offset : 0.0;
-        
+      builder: (final context, final child) {
+        final offset =
+            scrollController.hasClients ? scrollController.offset : 0.0;
+
         return Stack(
-          children: dataLayers.asMap().entries.map((entry) {
+          children: dataLayers.asMap().entries.map((final entry) {
             final index = entry.key;
             final layer = entry.value;
             final layerOffset = offset * parallaxFactor * (index + 1);
-            
+
             return Transform.translate(
               offset: Offset(0, layerOffset * 0.1),
               child: AnimatedOpacity(
@@ -489,33 +494,36 @@ class CinematicDataStoryTelling {
         );
       },
     );
-  }
 
   // Helper methods
-  static String _getCurrentChapterTitle(double progress, List<StoryPoint> points) {
-    final index = (progress * points.length).floor().clamp(0, points.length - 1);
+  static String _getCurrentChapterTitle(
+      final double progress, final List<StoryPoint> points) {
+    final index =
+        (progress * points.length).floor().clamp(0, points.length - 1);
     return points[index].title;
   }
-  
-  static String _getCurrentChapterDescription(double progress, List<StoryPoint> points) {
-    final index = (progress * points.length).floor().clamp(0, points.length - 1);
+
+  static String _getCurrentChapterDescription(
+      final double progress, final List<StoryPoint> points) {
+    final index =
+        (progress * points.length).floor().clamp(0, points.length - 1);
     return points[index].description;
   }
 }
 
 /// Represents a point in the user's NDIS story
 class StoryPoint {
-  final String title;
-  final String description;
-  final IconData icon;
-  final DateTime? completedAt;
-  
+
   const StoryPoint({
     required this.title,
     required this.description,
     required this.icon,
     this.completedAt,
   });
+  final String title;
+  final String description;
+  final IconData icon;
+  final DateTime? completedAt;
 }
 
 /// Types of contextual visual cues

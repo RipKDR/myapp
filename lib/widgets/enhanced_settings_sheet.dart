@@ -6,11 +6,11 @@ class EnhancedSettingsSheet extends StatelessWidget {
   const EnhancedSettingsSheet({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final settings = context.watch<SettingsController>();
     final scheme = Theme.of(context).colorScheme;
 
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: scheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -24,7 +24,7 @@ class EnhancedSettingsSheet extends StatelessWidget {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: scheme.onSurfaceVariant.withOpacity(0.4),
+              color: scheme.onSurfaceVariant.withValues(alpha: 0.4),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -37,7 +37,7 @@ class EnhancedSettingsSheet extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: scheme.primary.withOpacity(0.1),
+                    color: scheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -104,7 +104,7 @@ class EnhancedSettingsSheet extends StatelessWidget {
                               child: Text('Dark'),
                             ),
                           ],
-                          onChanged: (mode) {
+                          onChanged: (final mode) {
                             if (mode != null) {
                               settings.setThemeMode(mode);
                             }
@@ -143,7 +143,7 @@ class EnhancedSettingsSheet extends StatelessWidget {
                         min: 0.8,
                         max: 1.8,
                         onChanged: settings.setTextScale,
-                        formatter: (value) => '${(value * 100).round()}%',
+                        formatter: (final value) => '${(value * 100).round()}%',
                       ),
                     ],
                   ),
@@ -180,7 +180,7 @@ class EnhancedSettingsSheet extends StatelessWidget {
     );
   }
 
-  String _getThemeDescription(ThemeMode mode) {
+  String _getThemeDescription(final ThemeMode mode) {
     switch (mode) {
       case ThemeMode.system:
         return 'Follows system setting';
@@ -191,10 +191,10 @@ class EnhancedSettingsSheet extends StatelessWidget {
     }
   }
 
-  void _showResetDialog(BuildContext context, SettingsController settings) {
+  void _showResetDialog(final BuildContext context, final SettingsController settings) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (final context) => AlertDialog(
         title: const Text('Reset Settings'),
         content: const Text(
           'Are you sure you want to reset all settings to their default values? This action cannot be undone.',
@@ -210,7 +210,7 @@ class EnhancedSettingsSheet extends StatelessWidget {
               settings.setThemeMode(ThemeMode.system);
               settings.setHighContrast(false);
               settings.setReduceMotion(false);
-              settings.setTextScale(1.0);
+              settings.setTextScale(1);
               Navigator.pop(context);
             },
             child: const Text('Reset'),
@@ -220,10 +220,10 @@ class EnhancedSettingsSheet extends StatelessWidget {
     );
   }
 
-  void _showAccessibilityInfo(BuildContext context) {
+  void _showAccessibilityInfo(final BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (final context) => AlertDialog(
         title: const Text('Accessibility Features'),
         content: const SingleChildScrollView(
           child: Column(
@@ -256,18 +256,18 @@ class EnhancedSettingsSheet extends StatelessWidget {
 }
 
 class _SettingsSection extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final List<Widget> children;
 
   const _SettingsSection({
     required this.title,
     required this.icon,
     required this.children,
   });
+  final String title;
+  final IconData icon;
+  final List<Widget> children;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
     return Column(
@@ -298,10 +298,6 @@ class _SettingsSection extends StatelessWidget {
 }
 
 class _SettingTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final Widget trailing;
 
   const _SettingTile({
     required this.icon,
@@ -309,9 +305,13 @@ class _SettingTile extends StatelessWidget {
     required this.subtitle,
     required this.trailing,
   });
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Widget trailing;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
     return Container(
@@ -357,11 +357,6 @@ class _SettingTile extends StatelessWidget {
 }
 
 class _SwitchTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final bool value;
-  final ValueChanged<bool> onChanged;
 
   const _SwitchTile({
     required this.icon,
@@ -370,9 +365,14 @@ class _SwitchTile extends StatelessWidget {
     required this.value,
     required this.onChanged,
   });
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final bool value;
+  final ValueChanged<bool> onChanged;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
     return Container(
@@ -421,14 +421,6 @@ class _SwitchTile extends StatelessWidget {
 }
 
 class _SliderTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final double value;
-  final double min;
-  final double max;
-  final ValueChanged<double> onChanged;
-  final String Function(double) formatter;
 
   const _SliderTile({
     required this.icon,
@@ -440,9 +432,17 @@ class _SliderTile extends StatelessWidget {
     required this.onChanged,
     required this.formatter,
   });
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final double value;
+  final double min;
+  final double max;
+  final ValueChanged<double> onChanged;
+  final String Function(double) formatter;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
     return Container(
@@ -506,10 +506,6 @@ class _SliderTile extends StatelessWidget {
 }
 
 class _ActionTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
 
   const _ActionTile({
     required this.icon,
@@ -517,9 +513,13 @@ class _ActionTile extends StatelessWidget {
     required this.subtitle,
     required this.onTap,
   });
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
     return Container(

@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../controllers/gamification_controller.dart';
-import '../controllers/auth_controller.dart';
 import '../theme/google_theme.dart';
 import 'responsive_layout.dart';
 
 /// Google-style dashboard header with clean design and user info
 class GoogleDashboardHeader extends StatefulWidget {
-  final String greeting;
-  final String? subtitle;
-  final Widget? avatar;
-  final List<Widget>? actions;
-  final bool showStats;
-  final VoidCallback? onProfileTap;
 
   const GoogleDashboardHeader({
     super.key,
@@ -23,6 +16,12 @@ class GoogleDashboardHeader extends StatefulWidget {
     this.showStats = true,
     this.onProfileTap,
   });
+  final String greeting;
+  final String? subtitle;
+  final Widget? avatar;
+  final List<Widget>? actions;
+  final bool showStats;
+  final VoidCallback? onProfileTap;
 
   @override
   State<GoogleDashboardHeader> createState() => _GoogleDashboardHeaderState();
@@ -47,11 +46,11 @@ class _GoogleDashboardHeaderState extends State<GoogleDashboardHeader>
     );
 
     _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0,
+      end: 1,
     ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      curve: const Interval(0, 0.6, curve: Curves.easeOut),
     ));
 
     _slideAnimation = Tween<Offset>(
@@ -72,15 +71,14 @@ class _GoogleDashboardHeaderState extends State<GoogleDashboardHeader>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isMobile = context.isMobile;
 
     return AnimatedBuilder(
       animation: _animationController,
-      builder: (context, child) {
-        return FadeTransition(
+      builder: (final context, final child) => FadeTransition(
           opacity: _fadeAnimation,
           child: SlideTransition(
             position: _slideAnimation,
@@ -89,7 +87,7 @@ class _GoogleDashboardHeaderState extends State<GoogleDashboardHeader>
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    GoogleTheme.googleBlue.withOpacity(0.05),
+                    GoogleTheme.googleBlue.withValues(alpha: 0.05),
                     Colors.transparent,
                   ],
                   begin: Alignment.topCenter,
@@ -141,7 +139,7 @@ class _GoogleDashboardHeaderState extends State<GoogleDashboardHeader>
                                 shape: BoxShape.circle,
                                 border: Border.all(
                                   color:
-                                      GoogleTheme.googleBlue.withOpacity(0.3),
+                                      GoogleTheme.googleBlue.withValues(alpha: 0.3),
                                   width: 2,
                                 ),
                               ),
@@ -149,7 +147,7 @@ class _GoogleDashboardHeaderState extends State<GoogleDashboardHeader>
                                   CircleAvatar(
                                     radius: 20,
                                     backgroundColor:
-                                        GoogleTheme.googleBlue.withOpacity(0.1),
+                                        GoogleTheme.googleBlue.withValues(alpha: 0.1),
                                     child: const Icon(
                                       Icons.person,
                                       color: GoogleTheme.googleBlue,
@@ -172,12 +170,11 @@ class _GoogleDashboardHeaderState extends State<GoogleDashboardHeader>
               ),
             ),
           ),
-        );
-      },
+        ),
     );
   }
 
-  Widget _buildStatsSection(BuildContext context) {
+  Widget _buildStatsSection(final BuildContext context) {
     final gamification = context.watch<GamificationController>();
     final isMobile = context.isMobile;
 
@@ -187,11 +184,11 @@ class _GoogleDashboardHeaderState extends State<GoogleDashboardHeader>
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: GoogleTheme.googleGrey.withOpacity(0.1),
+          color: GoogleTheme.googleGrey.withValues(alpha: 0.1),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -208,8 +205,7 @@ class _GoogleDashboardHeaderState extends State<GoogleDashboardHeader>
     );
   }
 
-  List<Widget> _buildStatItems(GamificationController gamification) {
-    return [
+  List<Widget> _buildStatItems(final GamificationController gamification) => [
       _StatItem(
         icon: Icons.local_fire_department,
         label: 'Daily Streak',
@@ -240,7 +236,6 @@ class _GoogleDashboardHeaderState extends State<GoogleDashboardHeader>
         subtitle: 'sessions',
       ),
     ];
-  }
 
   String _getGreeting() {
     final hour = DateTime.now().hour;
@@ -259,11 +254,6 @@ class _GoogleDashboardHeaderState extends State<GoogleDashboardHeader>
 }
 
 class _StatItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final String? subtitle;
-  final Color color;
 
   const _StatItem({
     required this.icon,
@@ -272,9 +262,14 @@ class _StatItem extends StatelessWidget {
     this.subtitle,
     required this.color,
   });
+  final IconData icon;
+  final String label;
+  final String value;
+  final String? subtitle;
+  final Color color;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final isMobile = context.isMobile;
 
@@ -284,7 +279,7 @@ class _StatItem extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -314,7 +309,7 @@ class _StatItem extends StatelessWidget {
             Text(
               subtitle!,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
+                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
               ),
               textAlign: TextAlign.center,
             ),
@@ -327,32 +322,31 @@ class _StatItem extends StatelessWidget {
 
 /// Google-style quick actions bar
 class GoogleQuickActions extends StatelessWidget {
-  final List<QuickAction> actions;
-  final EdgeInsetsGeometry? padding;
 
   const GoogleQuickActions({
     super.key,
     required this.actions,
     this.padding,
   });
+  final List<QuickAction> actions;
+  final EdgeInsetsGeometry? padding;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return Container(
       padding: padding ?? const EdgeInsets.all(16),
       child: Row(
-        children: actions.map((action) {
-          return Expanded(
+        children: actions.map((final action) => Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Material(
                 color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
                 elevation: 1,
-                shadowColor: Colors.black.withOpacity(0.1),
+                shadowColor: Colors.black.withValues(alpha: 0.1),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(12),
                   onTap: action.onTap,
@@ -366,7 +360,7 @@ class GoogleQuickActions extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: action.color.withOpacity(0.1),
+                            color: action.color.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Icon(
@@ -391,8 +385,7 @@ class GoogleQuickActions extends StatelessWidget {
                 ),
               ),
             ),
-          );
-        }).toList(),
+          )).toList(),
       ),
     );
   }
@@ -400,10 +393,6 @@ class GoogleQuickActions extends StatelessWidget {
 
 /// Quick action data model
 class QuickAction {
-  final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
 
   const QuickAction({
     required this.icon,
@@ -411,4 +400,8 @@ class QuickAction {
     required this.color,
     required this.onTap,
   });
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
 }

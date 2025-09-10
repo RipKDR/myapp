@@ -79,9 +79,9 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
   void _addWelcomeMessage() {
     final hour = DateTime.now().hour;
     String greeting = 'Hi';
-    if (hour < 12)
+    if (hour < 12) {
       greeting = 'Good morning';
-    else if (hour < 17)
+    } else if (hour < 17)
       greeting = 'Good afternoon';
     else
       greeting = 'Good evening';
@@ -126,18 +126,16 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
+        headerSliverBuilder: (final context, final innerBoxIsScrolled) => [
             _buildEnhancedSliverAppBar(context),
-          ];
-        },
+          ],
         body: Column(
           children: [
             // Enhanced conversation context indicator
@@ -145,15 +143,15 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
 
             // Chat messages with glassmorphism background
             Expanded(
-              child: Container(
+              child: DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      GoogleTheme.googleBlue.withOpacity(0.03),
+                      GoogleTheme.googleBlue.withValues(alpha: 0.1),
                       Colors.transparent,
-                      GoogleTheme.ndisTeal.withOpacity(0.02),
+                      GoogleTheme.ndisTeal.withValues(alpha: 0.1),
                     ],
                   ),
                 ),
@@ -174,10 +172,8 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
     );
   }
 
-  Widget _buildEnhancedSliverAppBar(BuildContext context) {
-    return SliverAppBar(
+  Widget _buildEnhancedSliverAppBar(final BuildContext context) => SliverAppBar(
       expandedHeight: 200,
-      floating: false,
       pinned: true,
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -222,9 +218,8 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
         ),
       ),
     );
-  }
 
-  Widget _buildConversationContext(BuildContext context) {
+  Widget _buildConversationContext(final BuildContext context) {
     if (_conversationDepth == 0) return const SizedBox.shrink();
 
     return Container(
@@ -238,7 +233,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
     );
   }
 
-  Widget _buildEnhancedEmptyState(BuildContext context) {
+  Widget _buildEnhancedEmptyState(final BuildContext context) {
     final theme = Theme.of(context);
 
     return SingleChildScrollView(
@@ -258,7 +253,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                       colors: [
                         GoogleTheme.googleGreen,
                         GoogleTheme.ndisTeal,
@@ -267,7 +262,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: GoogleTheme.googleGreen.withOpacity(0.3),
+                        color: GoogleTheme.googleGreen.withValues(alpha: 0.1),
                         blurRadius: 20,
                         offset: const Offset(0, 8),
                       ),
@@ -308,7 +303,6 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
                   context: context,
                   isListening: _isVoiceInputActive,
                   onVoiceToggle: _toggleVoiceInput,
-                  transcribedText: null,
                   isAccessible: true,
                 ),
               ],
@@ -346,12 +340,11 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
     );
   }
 
-  Widget _buildEnhancedMessagesList(BuildContext context) {
-    return ListView.builder(
+  Widget _buildEnhancedMessagesList(final BuildContext context) => ListView.builder(
       controller: _scrollController,
       padding: const EdgeInsets.all(16),
       itemCount: _messages.length,
-      itemBuilder: (context, index) {
+      itemBuilder: (final context, final index) {
         final message = _messages[index];
         final animation = _createMessageAnimation(index);
 
@@ -362,25 +355,23 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
         );
       },
     );
-  }
 
   Widget _buildEnhancedMessageBubble({
-    required ChatMessage message,
-    Animation<double>? animation,
-    required int index,
+    required final ChatMessage message,
+    final Animation<double>? animation,
+    required final int index,
   }) {
     final isUser = message.isUser;
 
     return AnimatedBuilder(
-      animation: animation ?? const AlwaysStoppedAnimation(1.0),
-      builder: (context, child) {
-        return FadeTransition(
-          opacity: animation ?? const AlwaysStoppedAnimation(1.0),
+      animation: animation ?? const AlwaysStoppedAnimation(1),
+      builder: (final context, final child) => FadeTransition(
+          opacity: animation ?? const AlwaysStoppedAnimation(1),
           child: SlideTransition(
             position: Tween<Offset>(
               begin: Offset(isUser ? 0.3 : -0.3, 0),
               end: Offset.zero,
-            ).animate(animation ?? const AlwaysStoppedAnimation(1.0)),
+            ).animate(animation ?? const AlwaysStoppedAnimation(1)),
             child: Container(
               margin: const EdgeInsets.symmetric(vertical: 8),
               child: Row(
@@ -393,7 +384,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
                     Container(
                       width: 36,
                       height: 36,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
                             GoogleTheme.googleGreen,
@@ -429,7 +420,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
                     Container(
                       width: 36,
                       height: 36,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: GoogleTheme.googleBlue,
                         shape: BoxShape.circle,
                       ),
@@ -444,12 +435,11 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
               ),
             ),
           ),
-        );
-      },
+        ),
     );
   }
 
-  Widget _buildMessageContent(ChatMessage message) {
+  Widget _buildMessageContent(final ChatMessage message) {
     final theme = Theme.of(context);
     final isUser = message.isUser;
 
@@ -468,8 +458,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: message.quickActions.map((action) {
-              return GestureDetector(
+            children: message.quickActions.map((final action) => GestureDetector(
                 onTap: () {
                   HapticFeedback.lightImpact();
                   action.onTap();
@@ -478,10 +467,10 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: GoogleTheme.googleGreen.withOpacity(0.1),
+                    color: GoogleTheme.googleGreen.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: GoogleTheme.googleGreen.withOpacity(0.3),
+                      color: GoogleTheme.googleGreen.withValues(alpha: 0.1),
                     ),
                   ),
                   child: Row(
@@ -505,8 +494,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
                     ],
                   ),
                 ),
-              );
-            }).toList(),
+              )).toList(),
           ),
         ],
         const SizedBox(height: 8),
@@ -514,7 +502,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
           _formatTimestamp(message.timestamp),
           style: theme.textTheme.labelSmall?.copyWith(
             color: (isUser ? Colors.white : theme.colorScheme.onSurfaceVariant)
-                .withOpacity(0.7),
+                .withValues(alpha: 0.1),
           ),
         ),
       ],
@@ -532,7 +520,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
           Container(
             width: 28,
             height: 28,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
                   GoogleTheme.googleGreen,
@@ -566,31 +554,29 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
                   ),
                   const SizedBox(width: 8),
                   // Animated thinking dots
-                  ...List.generate(3, (index) {
-                    return AnimatedContainer(
+                  ...List.generate(3, (final index) => AnimatedContainer(
                       duration: Duration(milliseconds: 500 + (index * 100)),
                       margin: const EdgeInsets.symmetric(horizontal: 1),
                       width: 4,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: GoogleTheme.googleGreen.withOpacity(0.7),
+                        color: GoogleTheme.googleGreen.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
-                    );
-                  }),
+                    )),
                 ],
               ),
             ),
             borderRadius: BorderRadius.circular(20),
             backgroundColor: GoogleTheme.googleGreen,
-            blurIntensity: 10.0,
+            blurIntensity: 10,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildVoiceFirstInputInterface(BuildContext context) {
+  Widget _buildVoiceFirstInputInterface(final BuildContext context) {
     final theme = Theme.of(context);
 
     return Container(
@@ -599,7 +585,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
         color: theme.colorScheme.surface,
         border: Border(
           top: BorderSide(
-            color: theme.colorScheme.outline.withOpacity(0.1),
+            color: theme.colorScheme.outline.withValues(alpha: 0.1),
           ),
         ),
       ),
@@ -631,8 +617,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
   }
 
   Widget _buildEnhancedSuggestionChip(
-      String label, IconData icon, Color color) {
-    return GestureDetector(
+      final String label, final IconData icon, final Color color) => GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
         _handleQuickAction(label);
@@ -640,10 +625,10 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.1),
           ),
         ),
         child: Row(
@@ -662,9 +647,8 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
         ),
       ),
     );
-  }
 
-  String _formatTimestamp(DateTime timestamp) {
+  String _formatTimestamp(final DateTime timestamp) {
     final now = DateTime.now();
     final diff = now.difference(timestamp);
 
@@ -674,12 +658,12 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
     return '${timestamp.day}/${timestamp.month}';
   }
 
-  Animation<double>? _createMessageAnimation(int index) {
+  Animation<double>? _createMessageAnimation(final int index) {
     // Animate only the last few messages for performance
     if (index >= _messages.length - 3) {
       return Tween<double>(
-        begin: 0.0,
-        end: 1.0,
+        begin: 0,
+        end: 1,
       ).animate(CurvedAnimation(
         parent: _messageController,
         curve: Curves.easeOut,
@@ -688,7 +672,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
     return null;
   }
 
-  void _sendMessage(String text) async {
+  Future<void> _sendMessage(final String text) async {
     if (text.trim().isEmpty) return;
 
     // Add user message
@@ -715,7 +699,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
 
     try {
       // Simulate AI response delay
-      await Future.delayed(const Duration(milliseconds: 1500));
+      await Future<void>.delayed(const Duration(milliseconds: 1500));
 
       // Generate enhanced AI response
       final aiResponse = _generateEnhancedAIResponse(text);
@@ -740,7 +724,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
     }
   }
 
-  ChatMessage _generateEnhancedAIResponse(String userText) {
+  ChatMessage _generateEnhancedAIResponse(final String userText) {
     final lowerText = userText.toLowerCase();
 
     String response;
@@ -757,7 +741,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
       _currentConversationTopic = 'budget management';
       response = _conversationDepth > 2
           ? 'I notice we\'ve been discussing budget management. You have \$18,400 remaining (74% of your plan). Your spending pattern shows you\'re very responsible! 🌟 Your Core Supports are 70% used, which is perfect pacing. Any specific budget concerns I can help address?'
-          : 'Based on your current NDIS plan, you have \$18,400 remaining across all categories. Your Core Supports budget is 70% utilized, which shows excellent financial planning! Would you like a detailed breakdown or help tracking a new expense?';
+          : r'Based on your current NDIS plan, you have $18,400 remaining across all categories. Your Core Supports budget is 70% utilized, which shows excellent financial planning! Would you like a detailed breakdown or help tracking a new expense?';
 
       actions = [
         QuickAction(
@@ -909,7 +893,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
     );
   }
 
-  String _generateContextualResponse(String userText) {
+  String _generateContextualResponse(final String userText) {
     final encouragingResponses = [
       'I\'m here to support your NDIS journey every step of the way! 🌟',
       'You\'re doing great managing your NDIS plan - I\'m proud of your progress! 💪',
@@ -923,7 +907,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
     return 'I understand you\'re asking about "$userText". $randomEncouragement I\'m equipped to help with NDIS plans, appointments, budgets, health goals, emergency contacts, and emotional support. What would you like to explore together?';
   }
 
-  void _updateConversationContext(String text) {
+  void _updateConversationContext(final String text) {
     if (text.contains('budget') || text.contains('money')) {
       _currentConversationTopic = 'budget management';
     } else if (text.contains('health') || text.contains('goal')) {
@@ -935,7 +919,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
     }
   }
 
-  void _handleEmergencyCall(String type) {
+  void _handleEmergencyCall(final String type) {
     String message;
     switch (type) {
       case 'primary':
@@ -958,27 +942,26 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
       SnackBar(
         content: Text(message),
         backgroundColor: GoogleTheme.googleRed,
-        duration: const Duration(seconds: 4),
       ),
     );
   }
 
-  void _handleQuickAction(String action) {
+  void _handleQuickAction(final String action) {
     _sendMessage(action);
   }
 
-  void _handleMessageTap(ChatMessage message) {
+  void _handleMessageTap(final ChatMessage message) {
     if (!message.isUser && message.quickActions.isNotEmpty) {
       // Show quick actions in a bottom sheet
       _showQuickActionsSheet(message.quickActions);
     }
   }
 
-  void _showQuickActionsSheet(List<QuickAction> actions) {
-    showModalBottomSheet(
+  void _showQuickActionsSheet(final List<QuickAction> actions) {
+    showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
+      builder: (final context) => Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -994,8 +977,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
                   ),
             ),
             const SizedBox(height: 16),
-            ...actions.map((action) {
-              return Container(
+            ...actions.map((final action) => Container(
                 width: double.infinity,
                 margin: const EdgeInsets.only(bottom: 8),
                 child: EnhancedButton(
@@ -1015,66 +997,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
                     ],
                   ),
                 ),
-              );
-            }).toList(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showMessageOptions(ChatMessage message) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Message Options',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-            const SizedBox(height: 16),
-            EnhancedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                _copyMessage(message);
-              },
-              isSecondary: true,
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.copy, size: 18),
-                  SizedBox(width: 8),
-                  Text('Copy Message'),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-            if (!message.isUser)
-              EnhancedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _reportMessage(message);
-                },
-                isSecondary: true,
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.report, size: 18),
-                    SizedBox(width: 8),
-                    Text('Report Issue'),
-                  ],
-                ),
-              ),
+              )),
           ],
         ),
       ),
@@ -1091,12 +1014,12 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
     }
   }
 
-  void _startVoiceInput() async {
+  Future<void> _startVoiceInput() async {
     HapticFeedback.lightImpact();
 
     try {
       // TODO: Implement actual speech-to-text
-      await Future.delayed(const Duration(seconds: 3));
+      await Future<void>.delayed(const Duration(seconds: 3));
 
       // Mock voice input result
       const voiceText = 'What is my budget status?';
@@ -1126,7 +1049,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
     }
   }
 
-  void _showErrorMessage(String error) {
+  void _showErrorMessage(final String error) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(error),
@@ -1136,32 +1059,10 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
     );
   }
 
-  void _copyMessage(ChatMessage message) {
-    Clipboard.setData(ClipboardData(text: message.text));
-    HapticFeedback.lightImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Message copied to clipboard'),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
-  void _reportMessage(ChatMessage message) {
-    // TODO: Implement message reporting
-    HapticFeedback.lightImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Thank you for your feedback'),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
   void _showEnhancedChatSettings() {
-    showDialog(
+    showDialog<void>(
       context: context,
-      builder: (context) => AdvancedGlassmorphism2025.buildGlassModalOverlay(
+      builder: (final context) => AdvancedGlassmorphism2025.buildGlassModalOverlay(
         context: context,
         child: _buildEnhancedChatSettingsDialog(),
         onDismiss: () => Navigator.pop(context),
@@ -1169,8 +1070,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
     );
   }
 
-  Widget _buildEnhancedChatSettingsDialog() {
-    return Container(
+  Widget _buildEnhancedChatSettingsDialog() => Container(
       width: 500,
       padding: const EdgeInsets.all(32),
       child: Column(
@@ -1254,12 +1154,11 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
         ],
       ),
     );
-  }
 
   void _clearChat() {
-    showDialog(
+    showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (final context) => AlertDialog(
         title: const Text('New Conversation'),
         content: const Text(
             'This will clear the current conversation and start fresh. Continue?'),
@@ -1271,9 +1170,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen>
           EnhancedButton(
             onPressed: () {
               Navigator.pop(context);
-              setState(() {
-                _messages.clear();
-              });
+              setState(_messages.clear);
               _addWelcomeMessage();
               HapticFeedback.lightImpact();
             },

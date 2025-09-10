@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
-import '../theme/google_theme.dart';
 import 'creative_components.dart';
 
 /// Advanced 3D data visualization components
 
 /// 3D bar chart with interactive elements
 class ThreeDBarChart extends StatefulWidget {
-  final List<BarData> data;
-  final double height;
-  final double barWidth;
 
   const ThreeDBarChart({
     super.key,
@@ -18,6 +14,9 @@ class ThreeDBarChart extends StatefulWidget {
     this.height = 250,
     this.barWidth = 40,
   });
+  final List<BarData> data;
+  final double height;
+  final double barWidth;
 
   @override
   State<ThreeDBarChart> createState() => _ThreeDBarChartState();
@@ -62,15 +61,15 @@ class _ThreeDBarChartState extends State<ThreeDBarChart>
   }
 
   @override
-  Widget build(BuildContext context) {
-    final maxValue = widget.data.map((d) => d.value).reduce(math.max);
+  Widget build(final BuildContext context) {
+    final maxValue = widget.data.map((final d) => d.value).reduce(math.max);
 
     return SizedBox(
       height: widget.height,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.end,
-        children: widget.data.asMap().entries.map((entry) {
+        children: widget.data.asMap().entries.map((final entry) {
           final index = entry.key;
           final data = entry.value;
           final barHeight = (data.value / maxValue) * (widget.height - 50);
@@ -82,8 +81,7 @@ class _ThreeDBarChartState extends State<ThreeDBarChart>
             },
             child: AnimatedBuilder(
               animation: _barControllers[index],
-              builder: (context, child) {
-                return Column(
+              builder: (final context, final child) => Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     // Value label with animation
@@ -100,7 +98,7 @@ class _ThreeDBarChartState extends State<ThreeDBarChart>
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: data.color.withOpacity(0.4),
+                              color: data.color.withValues(alpha: 0.4),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -134,7 +132,7 @@ class _ThreeDBarChartState extends State<ThreeDBarChart>
                             height: barHeight * _barControllers[index].value,
                             margin: const EdgeInsets.only(top: 10, left: 10),
                             decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Colors.black.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
@@ -148,14 +146,14 @@ class _ThreeDBarChartState extends State<ThreeDBarChart>
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
                                 colors: [
-                                  data.color.withOpacity(0.9),
+                                  data.color.withValues(alpha: 0.9),
                                   data.color,
                                 ],
                               ),
                               borderRadius: BorderRadius.circular(8),
                               boxShadow: [
                                 BoxShadow(
-                                  color: data.color.withOpacity(0.4),
+                                  color: data.color.withValues(alpha: 0.4),
                                   blurRadius: 15,
                                   offset: const Offset(0, 5),
                                 ),
@@ -170,7 +168,7 @@ class _ThreeDBarChartState extends State<ThreeDBarChart>
                               width: widget.barWidth,
                               height: 10,
                               decoration: BoxDecoration(
-                                color: data.color.withOpacity(0.7),
+                                color: data.color.withValues(alpha: 0.7),
                                 borderRadius: const BorderRadius.only(
                                   topLeft: Radius.circular(8),
                                   topRight: Radius.circular(8),
@@ -194,8 +192,7 @@ class _ThreeDBarChartState extends State<ThreeDBarChart>
                           ),
                     ),
                   ],
-                );
-              },
+                ),
             ),
           );
         }).toList(),
@@ -206,9 +203,6 @@ class _ThreeDBarChartState extends State<ThreeDBarChart>
 
 /// Interactive 3D pie chart with explosion effect
 class ThreeDPieChart extends StatefulWidget {
-  final List<PieData> data;
-  final double size;
-  final double thickness;
 
   const ThreeDPieChart({
     super.key,
@@ -216,6 +210,9 @@ class ThreeDPieChart extends StatefulWidget {
     this.size = 200,
     this.thickness = 40,
   });
+  final List<PieData> data;
+  final double size;
+  final double thickness;
 
   @override
   State<ThreeDPieChart> createState() => _ThreeDPieChartState();
@@ -251,11 +248,9 @@ class _ThreeDPieChartState extends State<ThreeDPieChart>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
+  Widget build(final BuildContext context) => AnimatedBuilder(
       animation: _animation,
-      builder: (context, child) {
-        return Transform(
+      builder: (final context, final child) => Transform(
           alignment: Alignment.center,
           transform: Matrix4.identity()
             ..setEntry(3, 2, 0.001)
@@ -287,9 +282,7 @@ class _ThreeDPieChartState extends State<ThreeDPieChart>
                 ),
 
                 // Interactive overlay
-                ...List.generate(widget.data.length, (index) {
-                  return _buildInteractiveSegment(index);
-                }),
+                ...List.generate(widget.data.length, _buildInteractiveSegment),
 
                 // Center info
                 GlassmorphicContainer(
@@ -305,7 +298,7 @@ class _ThreeDPieChartState extends State<ThreeDPieChart>
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                         Text(
-                          '\$${widget.data.map((d) => d.value).reduce((a, b) => a + b).toStringAsFixed(0)}',
+                          '\$${widget.data.map((final d) => d.value).reduce((final a, final b) => a + b).toStringAsFixed(0)}',
                           style:
                               Theme.of(context).textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
@@ -318,13 +311,11 @@ class _ThreeDPieChartState extends State<ThreeDPieChart>
               ],
             ),
           ),
-        );
-      },
+        ),
     );
-  }
 
-  Widget _buildInteractiveSegment(int index) {
-    final total = widget.data.map((d) => d.value).reduce((a, b) => a + b);
+  Widget _buildInteractiveSegment(final int index) {
+    final total = widget.data.map((final d) => d.value).reduce((final a, final b) => a + b);
     double startAngle = -math.pi / 2;
 
     for (int i = 0; i < index; i++) {
@@ -353,10 +344,6 @@ class _ThreeDPieChartState extends State<ThreeDPieChart>
 }
 
 class _ThreeDPiePainter extends CustomPainter {
-  final List<PieData> data;
-  final double thickness;
-  final double animation;
-  final int? selectedIndex;
 
   _ThreeDPiePainter({
     required this.data,
@@ -364,12 +351,16 @@ class _ThreeDPiePainter extends CustomPainter {
     required this.animation,
     this.selectedIndex,
   });
+  final List<PieData> data;
+  final double thickness;
+  final double animation;
+  final int? selectedIndex;
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(final Canvas canvas, final Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = math.min(size.width, size.height) / 2 - 20;
-    final total = data.map((d) => d.value).reduce((a, b) => a + b);
+    final total = data.map((final d) => d.value).reduce((final a, final b) => a + b);
 
     double startAngle = -math.pi / 2;
 
@@ -423,7 +414,7 @@ class _ThreeDPiePainter extends CustomPainter {
       final gradientPaint = Paint()
         ..shader = RadialGradient(
           colors: [
-            Colors.white.withOpacity(0.2),
+            Colors.white.withValues(alpha: 0.2),
             Colors.transparent,
           ],
         ).createShader(Rect.fromCircle(center: segmentCenter, radius: radius))
@@ -436,20 +427,20 @@ class _ThreeDPiePainter extends CustomPainter {
   }
 
   void _draw3DSides(
-    Canvas canvas,
-    Offset center,
-    double radius,
-    double startAngle,
-    double sweepAngle,
-    Color color,
+    final Canvas canvas,
+    final Offset center,
+    final double radius,
+    final double startAngle,
+    final double sweepAngle,
+    final Color color,
   ) {
     final paint = Paint()
-      ..color = color.withOpacity(0.7)
+      ..color = color.withValues(alpha: 0.7)
       ..style = PaintingStyle.fill;
 
     // Draw outer edge
     final outerPath = Path();
-    final steps = 20;
+    const steps = 20;
     final angleStep = sweepAngle / steps;
 
     for (int i = 0; i <= steps; i++) {
@@ -481,25 +472,25 @@ class _ThreeDPiePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  bool shouldRepaint(covariant final CustomPainter oldDelegate) => true;
 }
 
 class _PieShadowPainter extends CustomPainter {
-  final List<PieData> data;
-  final double thickness;
 
   _PieShadowPainter({
     required this.data,
     required this.thickness,
   });
+  final List<PieData> data;
+  final double thickness;
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(final Canvas canvas, final Size size) {
     final center = Offset(size.width / 2, size.height / 2 + 20);
     final radius = math.min(size.width, size.height) / 2 - 20;
 
     final paint = Paint()
-      ..color = Colors.black.withOpacity(0.1)
+      ..color = Colors.black.withValues(alpha: 0.1)
       ..style = PaintingStyle.fill
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20);
 
@@ -507,29 +498,29 @@ class _PieShadowPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant final CustomPainter oldDelegate) => false;
 }
 
 class _InteractiveSegmentPainter extends CustomPainter {
-  final double startAngle;
-  final double sweepAngle;
-  final bool isSelected;
 
   _InteractiveSegmentPainter({
     required this.startAngle,
     required this.sweepAngle,
     required this.isSelected,
   });
+  final double startAngle;
+  final double sweepAngle;
+  final bool isSelected;
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(final Canvas canvas, final Size size) {
     if (!isSelected) return;
 
     final center = Offset(size.width / 2, size.height / 2);
     final radius = math.min(size.width, size.height) / 2 - 20;
 
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.3)
+      ..color = Colors.white.withValues(alpha: 0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
@@ -545,14 +536,11 @@ class _InteractiveSegmentPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  bool shouldRepaint(covariant final CustomPainter oldDelegate) => true;
 }
 
 /// Wave chart with liquid animation
 class LiquidWaveChart extends StatefulWidget {
-  final List<double> values;
-  final Color color;
-  final double height;
 
   const LiquidWaveChart({
     super.key,
@@ -560,6 +548,9 @@ class LiquidWaveChart extends StatefulWidget {
     required this.color,
     this.height = 150,
   });
+  final List<double> values;
+  final Color color;
+  final double height;
 
   @override
   State<LiquidWaveChart> createState() => _LiquidWaveChartState();
@@ -585,36 +576,32 @@ class _LiquidWaveChartState extends State<LiquidWaveChart>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
+  Widget build(final BuildContext context) => AnimatedBuilder(
       animation: _controller,
-      builder: (context, child) {
-        return CustomPaint(
+      builder: (final context, final child) => CustomPaint(
           size: Size(double.infinity, widget.height),
           painter: _LiquidWavePainter(
             values: widget.values,
             color: widget.color,
             animation: _controller.value,
           ),
-        );
-      },
+        ),
     );
-  }
 }
 
 class _LiquidWavePainter extends CustomPainter {
-  final List<double> values;
-  final Color color;
-  final double animation;
 
   _LiquidWavePainter({
     required this.values,
     required this.color,
     required this.animation,
   });
+  final List<double> values;
+  final Color color;
+  final double animation;
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(final Canvas canvas, final Size size) {
     if (values.isEmpty) return;
 
     final paint = Paint()
@@ -663,7 +650,7 @@ class _LiquidWavePainter extends CustomPainter {
       end: Alignment.bottomCenter,
       colors: [
         color,
-        color.withOpacity(0.3),
+        color.withValues(alpha: 0.3),
       ],
     );
 
@@ -708,30 +695,30 @@ class _LiquidWavePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  bool shouldRepaint(covariant final CustomPainter oldDelegate) => true;
 }
 
 // Data models
 class BarData {
-  final String label;
-  final double value;
-  final Color color;
 
   BarData({
     required this.label,
     required this.value,
     required this.color,
   });
-}
-
-class PieData {
   final String label;
   final double value;
   final Color color;
+}
+
+class PieData {
 
   PieData({
     required this.label,
     required this.value,
     required this.color,
   });
+  final String label;
+  final double value;
+  final Color color;
 }

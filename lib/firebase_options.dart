@@ -5,15 +5,14 @@ import 'package:firebase_core/firebase_core.dart';
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     // Read from environment to avoid hardcoded placeholders.
-    const apiKey = String.fromEnvironment('FIREBASE_API_KEY', defaultValue: '');
-    const appId = String.fromEnvironment('FIREBASE_APP_ID', defaultValue: '');
+    const apiKey = String.fromEnvironment('FIREBASE_API_KEY');
+    const appId = String.fromEnvironment('FIREBASE_APP_ID');
     const messagingSenderId = String.fromEnvironment(
       'FIREBASE_MESSAGING_SENDER_ID',
-      defaultValue: '',
     );
-    const projectId = String.fromEnvironment('FIREBASE_PROJECT_ID', defaultValue: '');
-    const storageBucket = String.fromEnvironment('FIREBASE_STORAGE_BUCKET', defaultValue: '');
-    const measurementId = String.fromEnvironment('FIREBASE_MEASUREMENT_ID', defaultValue: '');
+    const projectId = String.fromEnvironment('FIREBASE_PROJECT_ID');
+    const storageBucket = String.fromEnvironment('FIREBASE_STORAGE_BUCKET');
+    const measurementId = String.fromEnvironment('FIREBASE_MEASUREMENT_ID');
 
     return FirebaseOptions(
       apiKey: apiKey,

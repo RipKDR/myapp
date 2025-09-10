@@ -31,7 +31,7 @@ class MapsService {
       final providers = await _getProvidersData();
 
       if (providers.isNotEmpty) {
-        final jsonData = providers.map((p) => p.toMap()).toList();
+        final jsonData = providers.map((final p) => p.toMap()).toList();
         await prefs.setString(_providersCacheKey, jsonEncode(jsonData));
       }
     } catch (e) {
@@ -87,7 +87,7 @@ class MapsService {
       if (cachedData != null) {
         final decoded = jsonDecode(cachedData);
         if (decoded is List) {
-          return decoded.map((json) => ProviderLocation.fromMap(json)).toList();
+          return decoded.map((final json) => ProviderLocation.fromMap(json as Map<String, dynamic>)).toList();
         }
       }
 

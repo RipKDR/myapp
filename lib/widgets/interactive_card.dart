@@ -5,11 +5,6 @@ import '../controllers/settings_controller.dart';
 
 /// Interactive wrapper that adds subtle press/hover motion and optional haptics.
 class InteractiveCard extends StatefulWidget {
-  final Widget child;
-  final VoidCallback? onTap;
-  final Duration duration;
-  final double pressScale;
-  final double hoverTranslateY;
 
   const InteractiveCard({
     super.key,
@@ -19,6 +14,11 @@ class InteractiveCard extends StatefulWidget {
     this.pressScale = 0.98,
     this.hoverTranslateY = -2,
   });
+  final Widget child;
+  final VoidCallback? onTap;
+  final Duration duration;
+  final double pressScale;
+  final double hoverTranslateY;
 
   @override
   State<InteractiveCard> createState() => _InteractiveCardState();
@@ -34,7 +34,7 @@ class _InteractiveCardState extends State<InteractiveCard>
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this, duration: widget.duration);
-    _scale = Tween<double>(begin: 1.0, end: widget.pressScale).animate(
+    _scale = Tween<double>(begin: 1, end: widget.pressScale).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
     );
   }
@@ -58,7 +58,7 @@ class _InteractiveCardState extends State<InteractiveCard>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final settings = context.watch<SettingsController>();
 
     return MouseRegion(
@@ -67,7 +67,7 @@ class _InteractiveCardState extends State<InteractiveCard>
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTapDown: _handleTapDown,
-        onTapUp: (d) {
+        onTapUp: (final d) {
           _handleTapUp(d);
           if (!settings.disableHaptics) {
             HapticFeedback.selectionClick();
@@ -77,7 +77,7 @@ class _InteractiveCardState extends State<InteractiveCard>
         onTapCancel: _handleTapCancel,
         child: AnimatedBuilder(
           animation: _scale,
-          builder: (context, child) {
+          builder: (final context, final child) {
             final translateY = _isHovered ? widget.hoverTranslateY : 0.0;
             return Transform.translate(
               offset: Offset(0, translateY),

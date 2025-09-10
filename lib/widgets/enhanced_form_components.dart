@@ -7,19 +7,6 @@ import '../theme/google_theme.dart';
 
 /// Enhanced text field with advanced animations and accessibility
 class EnhancedTextField extends StatefulWidget {
-  final TextEditingController controller;
-  final String label;
-  final String? hint;
-  final IconData? prefixIcon;
-  final Widget? suffixIcon;
-  final TextInputType? keyboardType;
-  final bool obscureText;
-  final String? Function(String?)? validator;
-  final VoidCallback? onTap;
-  final bool enabled;
-  final int? maxLines;
-  final TextInputAction? textInputAction;
-  final void Function(String)? onChanged;
 
   const EnhancedTextField({
     super.key,
@@ -37,6 +24,19 @@ class EnhancedTextField extends StatefulWidget {
     this.textInputAction,
     this.onChanged,
   });
+  final TextEditingController controller;
+  final String label;
+  final String? hint;
+  final IconData? prefixIcon;
+  final Widget? suffixIcon;
+  final TextInputType? keyboardType;
+  final bool obscureText;
+  final String? Function(String?)? validator;
+  final VoidCallback? onTap;
+  final bool enabled;
+  final int? maxLines;
+  final TextInputAction? textInputAction;
+  final void Function(String)? onChanged;
 
   @override
   State<EnhancedTextField> createState() => _EnhancedTextFieldState();
@@ -45,7 +45,6 @@ class EnhancedTextField extends StatefulWidget {
 class _EnhancedTextFieldState extends State<EnhancedTextField>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late Animation<double> _focusAnimation;
   late Animation<Color?> _borderColorAnimation;
 
   final FocusNode _focusNode = FocusNode();
@@ -65,14 +64,6 @@ class _EnhancedTextFieldState extends State<EnhancedTextField>
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-
-    _focusAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
 
     _borderColorAnimation = ColorTween(
       begin: Theme.of(context).colorScheme.outline,
@@ -110,14 +101,13 @@ class _EnhancedTextFieldState extends State<EnhancedTextField>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return AnimatedBuilder(
       animation: _animationController,
-      builder: (context, child) {
-        return Column(
+      builder: (final context, final child) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Floating label
@@ -145,13 +135,13 @@ class _EnhancedTextFieldState extends State<EnhancedTextField>
             ),
 
             // Text field container
-            Container(
+            DecoratedBox(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: _isFocused
                     ? [
                         BoxShadow(
-                          color: GoogleTheme.googleBlue.withOpacity(0.1),
+                          color: GoogleTheme.googleBlue.withValues(alpha: 0.1),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -167,7 +157,7 @@ class _EnhancedTextFieldState extends State<EnhancedTextField>
                 maxLines: widget.maxLines,
                 textInputAction: widget.textInputAction,
                 onTap: widget.onTap,
-                onChanged: (value) {
+                onChanged: (final value) {
                   widget.onChanged?.call(value);
                   if (_hasError) {
                     _validateField();
@@ -176,12 +166,12 @@ class _EnhancedTextFieldState extends State<EnhancedTextField>
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: widget.enabled
                       ? colorScheme.onSurface
-                      : colorScheme.onSurfaceVariant.withOpacity(0.6),
+                      : colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                 ),
                 decoration: InputDecoration(
                   hintText: widget.hint ?? widget.label,
                   hintStyle: theme.textTheme.bodyLarge?.copyWith(
-                    color: colorScheme.onSurfaceVariant.withOpacity(0.6),
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                   ),
                   prefixIcon: widget.prefixIcon != null
                       ? AnimatedContainer(
@@ -201,7 +191,7 @@ class _EnhancedTextFieldState extends State<EnhancedTextField>
                   filled: true,
                   fillColor: widget.enabled
                       ? colorScheme.surfaceContainerHighest
-                      : colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                      : colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,
@@ -209,8 +199,7 @@ class _EnhancedTextFieldState extends State<EnhancedTextField>
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                      color: colorScheme.outline.withOpacity(0.5),
-                      width: 1,
+                      color: colorScheme.outline.withValues(alpha: 0.5),
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
@@ -225,7 +214,6 @@ class _EnhancedTextFieldState extends State<EnhancedTextField>
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
                       color: colorScheme.error,
-                      width: 1,
                     ),
                   ),
                   focusedErrorBorder: OutlineInputBorder(
@@ -276,21 +264,13 @@ class _EnhancedTextFieldState extends State<EnhancedTextField>
               ),
             ),
           ],
-        );
-      },
+        ),
     );
   }
 }
 
 /// Enhanced button with loading states and micro-interactions
 class EnhancedButton extends StatefulWidget {
-  final VoidCallback? onPressed;
-  final Widget child;
-  final ButtonStyle? style;
-  final bool isLoading;
-  final bool isSecondary;
-  final IconData? icon;
-  final String? tooltip;
 
   const EnhancedButton({
     super.key,
@@ -302,6 +282,13 @@ class EnhancedButton extends StatefulWidget {
     this.icon,
     this.tooltip,
   });
+  final VoidCallback? onPressed;
+  final Widget child;
+  final ButtonStyle? style;
+  final bool isLoading;
+  final bool isSecondary;
+  final IconData? icon;
+  final String? tooltip;
 
   @override
   State<EnhancedButton> createState() => _EnhancedButtonState();
@@ -328,7 +315,7 @@ class _EnhancedButtonState extends State<EnhancedButton>
     );
 
     _scaleAnimation = Tween<double>(
-      begin: 1.0,
+      begin: 1,
       end: 0.95,
     ).animate(CurvedAnimation(
       parent: _animationController,
@@ -336,8 +323,8 @@ class _EnhancedButtonState extends State<EnhancedButton>
     ));
 
     _elevationAnimation = Tween<double>(
-      begin: 1.0,
-      end: 4.0,
+      begin: 1,
+      end: 4,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeOut,
@@ -350,7 +337,7 @@ class _EnhancedButtonState extends State<EnhancedButton>
     super.dispose();
   }
 
-  void _handleTapDown(TapDownDetails details) {
+  void _handleTapDown(final TapDownDetails details) {
     if (widget.onPressed != null && !widget.isLoading) {
       setState(() => _isPressed = true);
       _animationController.forward();
@@ -358,7 +345,7 @@ class _EnhancedButtonState extends State<EnhancedButton>
     }
   }
 
-  void _handleTapUp(TapUpDetails details) {
+  void _handleTapUp(final TapUpDetails details) {
     _handleTapEnd();
   }
 
@@ -374,22 +361,21 @@ class _EnhancedButtonState extends State<EnhancedButton>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    Widget button = AnimatedBuilder(
+    final Widget button = AnimatedBuilder(
       animation: _animationController,
-      builder: (context, child) {
-        return Transform.scale(
+      builder: (final context, final child) => Transform.scale(
           scale: _scaleAnimation.value,
-          child: Container(
+          child: DecoratedBox(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               boxShadow: !widget.isSecondary && widget.onPressed != null
                   ? [
                       BoxShadow(
-                        color: GoogleTheme.googleBlue.withOpacity(0.2),
+                        color: GoogleTheme.googleBlue.withValues(alpha: 0.2),
                         blurRadius: _elevationAnimation.value * 2,
                         offset: Offset(0, _elevationAnimation.value),
                       ),
@@ -430,8 +416,7 @@ class _EnhancedButtonState extends State<EnhancedButton>
                     child: _buildButtonContent(),
                   ),
           ),
-        );
-      },
+        ),
     );
 
     return GestureDetector(
@@ -440,7 +425,7 @@ class _EnhancedButtonState extends State<EnhancedButton>
       onTapCancel: _handleTapCancel,
       child: widget.tooltip != null
           ? Tooltip(
-              message: widget.tooltip!,
+              message: widget.tooltip,
               child: button,
             )
           : button,
@@ -478,9 +463,6 @@ class _EnhancedButtonState extends State<EnhancedButton>
 
 /// Social login button with brand styling
 class SocialLoginButton extends StatelessWidget {
-  final String provider;
-  final VoidCallback? onPressed;
-  final bool isLoading;
 
   const SocialLoginButton({
     super.key,
@@ -488,9 +470,12 @@ class SocialLoginButton extends StatelessWidget {
     this.onPressed,
     this.isLoading = false,
   });
+  final String provider;
+  final VoidCallback? onPressed;
+  final bool isLoading;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -545,10 +530,6 @@ class SocialLoginButton extends StatelessWidget {
 
 /// Enhanced checkbox with animations
 class EnhancedCheckbox extends StatefulWidget {
-  final bool value;
-  final ValueChanged<bool?> onChanged;
-  final String label;
-  final String? subtitle;
 
   const EnhancedCheckbox({
     super.key,
@@ -557,6 +538,10 @@ class EnhancedCheckbox extends StatefulWidget {
     required this.label,
     this.subtitle,
   });
+  final bool value;
+  final ValueChanged<bool?> onChanged;
+  final String label;
+  final String? subtitle;
 
   @override
   State<EnhancedCheckbox> createState() => _EnhancedCheckboxState();
@@ -575,7 +560,7 @@ class _EnhancedCheckboxState extends State<EnhancedCheckbox>
       vsync: this,
     );
     _scaleAnimation = Tween<double>(
-      begin: 1.0,
+      begin: 1,
       end: 1.1,
     ).animate(CurvedAnimation(
       parent: _animationController,
@@ -588,7 +573,7 @@ class _EnhancedCheckboxState extends State<EnhancedCheckbox>
   }
 
   @override
-  void didUpdateWidget(EnhancedCheckbox oldWidget) {
+  void didUpdateWidget(final EnhancedCheckbox oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.value != oldWidget.value) {
       if (widget.value) {
@@ -606,7 +591,7 @@ class _EnhancedCheckboxState extends State<EnhancedCheckbox>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
 
     return GestureDetector(
@@ -618,8 +603,7 @@ class _EnhancedCheckboxState extends State<EnhancedCheckbox>
         children: [
           AnimatedBuilder(
             animation: _scaleAnimation,
-            builder: (context, child) {
-              return Transform.scale(
+            builder: (final context, final child) => Transform.scale(
                 scale: _scaleAnimation.value,
                 child: Checkbox(
                   value: widget.value,
@@ -628,8 +612,7 @@ class _EnhancedCheckboxState extends State<EnhancedCheckbox>
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
-              );
-            },
+              ),
           ),
           const SizedBox(width: 12),
           Expanded(

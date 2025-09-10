@@ -6,7 +6,7 @@ import '../controllers/settings_controller.dart';
 /// Utility class for managing haptic feedback with accessibility considerations
 class HapticUtils {
   /// Provides light haptic feedback for button taps and selections
-  static Future<void> lightImpact(BuildContext context) async {
+  static Future<void> lightImpact(final BuildContext context) async {
     final settings = context.read<SettingsController>();
     if (!settings.reduceMotion && !settings.disableHaptics) {
       await HapticFeedback.lightImpact();
@@ -14,7 +14,7 @@ class HapticUtils {
   }
 
   /// Provides medium haptic feedback for important interactions
-  static Future<void> mediumImpact(BuildContext context) async {
+  static Future<void> mediumImpact(final BuildContext context) async {
     final settings = context.read<SettingsController>();
     if (!settings.reduceMotion && !settings.disableHaptics) {
       await HapticFeedback.mediumImpact();
@@ -22,7 +22,7 @@ class HapticUtils {
   }
 
   /// Provides heavy haptic feedback for critical actions
-  static Future<void> heavyImpact(BuildContext context) async {
+  static Future<void> heavyImpact(final BuildContext context) async {
     final settings = context.read<SettingsController>();
     if (!settings.reduceMotion && !settings.disableHaptics) {
       await HapticFeedback.heavyImpact();
@@ -30,7 +30,7 @@ class HapticUtils {
   }
 
   /// Provides selection feedback for sliders and pickers
-  static Future<void> selectionClick(BuildContext context) async {
+  static Future<void> selectionClick(final BuildContext context) async {
     final settings = context.read<SettingsController>();
     if (!settings.reduceMotion && !settings.disableHaptics) {
       await HapticFeedback.selectionClick();
@@ -38,27 +38,27 @@ class HapticUtils {
   }
 
   /// Provides error haptic feedback pattern
-  static Future<void> errorFeedback(BuildContext context) async {
+  static Future<void> errorFeedback(final BuildContext context) async {
     final settings = context.read<SettingsController>();
     if (!settings.reduceMotion && !settings.disableHaptics) {
       await HapticFeedback.heavyImpact();
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
       await HapticFeedback.mediumImpact();
     }
   }
 
   /// Provides success haptic feedback pattern
-  static Future<void> successFeedback(BuildContext context) async {
+  static Future<void> successFeedback(final BuildContext context) async {
     final settings = context.read<SettingsController>();
     if (!settings.reduceMotion && !settings.disableHaptics) {
       await HapticFeedback.lightImpact();
-      await Future.delayed(const Duration(milliseconds: 50));
+      await Future<void>.delayed(const Duration(milliseconds: 50));
       await HapticFeedback.lightImpact();
     }
   }
 
   /// Provides notification haptic feedback
-  static Future<void> notificationFeedback(BuildContext context) async {
+  static Future<void> notificationFeedback(final BuildContext context) async {
     final settings = context.read<SettingsController>();
     if (!settings.reduceMotion && !settings.disableHaptics) {
       await HapticFeedback.mediumImpact();
@@ -68,16 +68,6 @@ class HapticUtils {
 
 /// Enhanced button widget with haptic feedback and micro-interactions
 class HapticButton extends StatefulWidget {
-  final Widget child;
-  final VoidCallback? onPressed;
-  final Color? backgroundColor;
-  final Color? foregroundColor;
-  final EdgeInsets? padding;
-  final BorderRadius? borderRadius;
-  final double? elevation;
-  final bool isDestructive;
-  final bool isPrimary;
-  final String? semanticLabel;
 
   const HapticButton({
     super.key,
@@ -92,6 +82,16 @@ class HapticButton extends StatefulWidget {
     this.isPrimary = false,
     this.semanticLabel,
   });
+  final Widget child;
+  final VoidCallback? onPressed;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final EdgeInsets? padding;
+  final BorderRadius? borderRadius;
+  final double? elevation;
+  final bool isDestructive;
+  final bool isPrimary;
+  final String? semanticLabel;
 
   @override
   State<HapticButton> createState() => _HapticButtonState();
@@ -112,7 +112,7 @@ class _HapticButtonState extends State<HapticButton>
     );
 
     _scaleAnimation = Tween<double>(
-      begin: 1.0,
+      begin: 1,
       end: 0.95,
     ).animate(CurvedAnimation(
       parent: _controller,
@@ -134,14 +134,14 @@ class _HapticButtonState extends State<HapticButton>
     super.dispose();
   }
 
-  void _handleTapDown(TapDownDetails details) {
+  void _handleTapDown(final TapDownDetails details) {
     if (widget.onPressed != null) {
       _controller.forward();
       HapticUtils.lightImpact(context);
     }
   }
 
-  void _handleTapUp(TapUpDetails details) {
+  void _handleTapUp(final TapUpDetails details) {
     _controller.reverse();
   }
 
@@ -163,7 +163,7 @@ class _HapticButtonState extends State<HapticButton>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -173,8 +173,7 @@ class _HapticButtonState extends State<HapticButton>
       enabled: widget.onPressed != null,
       child: AnimatedBuilder(
         animation: _controller,
-        builder: (context, child) {
-          return Transform.scale(
+        builder: (final context, final child) => Transform.scale(
             scale: _scaleAnimation.value,
             child: Material(
               elevation: _elevationAnimation.value,
@@ -208,8 +207,7 @@ class _HapticButtonState extends State<HapticButton>
                 ),
               ),
             ),
-          );
-        },
+          ),
       ),
     );
   }
@@ -217,14 +215,6 @@ class _HapticButtonState extends State<HapticButton>
 
 /// Enhanced card widget with subtle hover and press animations
 class InteractiveCard extends StatefulWidget {
-  final Widget child;
-  final VoidCallback? onTap;
-  final EdgeInsets? padding;
-  final EdgeInsets? margin;
-  final Color? backgroundColor;
-  final double? elevation;
-  final BorderRadius? borderRadius;
-  final bool enableHoverEffect;
 
   const InteractiveCard({
     super.key,
@@ -237,6 +227,14 @@ class InteractiveCard extends StatefulWidget {
     this.borderRadius,
     this.enableHoverEffect = true,
   });
+  final Widget child;
+  final VoidCallback? onTap;
+  final EdgeInsets? padding;
+  final EdgeInsets? margin;
+  final Color? backgroundColor;
+  final double? elevation;
+  final BorderRadius? borderRadius;
+  final bool enableHoverEffect;
 
   @override
   State<InteractiveCard> createState() => _InteractiveCardState();
@@ -265,7 +263,7 @@ class _InteractiveCardState extends State<InteractiveCard>
     ));
 
     _scaleAnimation = Tween<double>(
-      begin: 1.0,
+      begin: 1,
       end: 1.02,
     ).animate(CurvedAnimation(
       parent: _controller,
@@ -279,7 +277,7 @@ class _InteractiveCardState extends State<InteractiveCard>
     super.dispose();
   }
 
-  void _handleHover(bool isHovered) {
+  void _handleHover(final bool isHovered) {
     if (!widget.enableHoverEffect) return;
 
     if (isHovered) {
@@ -297,14 +295,13 @@ class _InteractiveCardState extends State<InteractiveCard>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return AnimatedBuilder(
       animation: _controller,
-      builder: (context, child) {
-        return Transform.scale(
+      builder: (final context, final child) => Transform.scale(
           scale: _scaleAnimation.value,
           child: Container(
             margin: widget.margin,
@@ -323,8 +320,7 @@ class _InteractiveCardState extends State<InteractiveCard>
               ),
             ),
           ),
-        );
-      },
+        ),
     );
   }
 }

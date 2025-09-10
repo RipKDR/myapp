@@ -5,7 +5,7 @@ class SettingsController extends ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.system;
   bool _highContrast = false;
   bool _reduceMotion = false;
-  double _textScale = 1.0; // 1.0=100%, 1.3=130%, etc.
+  double _textScale = 1; // 1.0=100%, 1.3=130%, etc.
   bool _disableHaptics = false; // New: Control haptic feedback
   bool _voiceNavigation = false;
   bool _cognitiveAssistance = false;
@@ -54,91 +54,91 @@ class SettingsController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setThemeMode(ThemeMode mode) async {
+  Future<void> setThemeMode(final ThemeMode mode) async {
     _themeMode = mode;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('themeMode', mode.name);
   }
 
-  Future<void> setHighContrast(bool value) async {
+  Future<void> setHighContrast(final bool value) async {
     _highContrast = value;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('highContrast', value);
   }
 
-  Future<void> setReduceMotion(bool value) async {
+  Future<void> setReduceMotion(final bool value) async {
     _reduceMotion = value;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('reduceMotion', value);
   }
 
-  Future<void> setTextScale(double value) async {
+  Future<void> setTextScale(final double value) async {
     _textScale = value;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('textScale', value);
   }
 
-  Future<void> setDisableHaptics(bool value) async {
+  Future<void> setDisableHaptics(final bool value) async {
     _disableHaptics = value;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('disableHaptics', value);
   }
 
-  Future<void> setVoiceNavigation(bool value) async {
+  Future<void> setVoiceNavigation(final bool value) async {
     _voiceNavigation = value;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('voiceNavigation', value);
   }
 
-  Future<void> setCognitiveAssistance(bool value) async {
+  Future<void> setCognitiveAssistance(final bool value) async {
     _cognitiveAssistance = value;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('cognitiveAssistance', value);
   }
 
-  Future<void> setNotifAppointmentReminders(bool value) async {
+  Future<void> setNotifAppointmentReminders(final bool value) async {
     _notifAppointmentReminders = value;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('notifAppointmentReminders', value);
   }
 
-  Future<void> setNotifBudgetAlerts(bool value) async {
+  Future<void> setNotifBudgetAlerts(final bool value) async {
     _notifBudgetAlerts = value;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('notifBudgetAlerts', value);
   }
 
-  Future<void> setNotifAIUpdates(bool value) async {
+  Future<void> setNotifAIUpdates(final bool value) async {
     _notifAIUpdates = value;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('notifAIUpdates', value);
   }
 
-  Future<void> setShareData(bool value) async {
+  Future<void> setShareData(final bool value) async {
     _shareData = value;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('shareData', value);
   }
 
-  Future<void> setAnalyticsEnabled(bool value) async {
+  Future<void> setAnalyticsEnabled(final bool value) async {
     _analyticsEnabled = value;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('analyticsEnabled', value);
   }
 
-  Future<void> setCrashReportingEnabled(bool value) async {
+  Future<void> setCrashReportingEnabled(final bool value) async {
     _crashReportingEnabled = value;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();

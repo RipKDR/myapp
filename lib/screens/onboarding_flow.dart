@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import '../controllers/auth_controller.dart';
 import '../theme/google_theme.dart';
 import '../widgets/responsive_layout.dart';
 import '../widgets/enhanced_form_components.dart';
@@ -27,7 +25,7 @@ class _OnboardingFlowState extends State<OnboardingFlow>
   // User selection data
   String? _selectedRole;
   final List<String> _selectedNeeds = [];
-  final Map<String, dynamic> _accessibilityPreferences = {
+  final Map<String, bool> _accessibilityPreferences = {
     'highContrast': false,
     'largeText': false,
     'voiceOver': false,
@@ -75,10 +73,9 @@ class _OnboardingFlowState extends State<OnboardingFlow>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final isMobile = context.isMobile;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -94,9 +91,7 @@ class _OnboardingFlowState extends State<OnboardingFlow>
                 controller: _pageController,
                 onPageChanged: _onPageChanged,
                 itemCount: _steps.length,
-                itemBuilder: (context, index) {
-                  return _buildStepContent(_steps[index], index);
-                },
+                itemBuilder: (final context, final index) => _buildStepContent(_steps[index], index),
               ),
             ),
 
@@ -118,7 +113,7 @@ class _OnboardingFlowState extends State<OnboardingFlow>
         children: [
           // Step indicator
           Row(
-            children: List.generate(_steps.length, (index) {
+            children: List.generate(_steps.length, (final index) {
               final isActive = index <= _currentPage;
               final isCurrent = index == _currentPage;
 
@@ -131,21 +126,19 @@ class _OnboardingFlowState extends State<OnboardingFlow>
                   decoration: BoxDecoration(
                     color: isActive
                         ? GoogleTheme.googleBlue
-                        : colorScheme.outline.withOpacity(0.3),
+                        : colorScheme.outline.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(2),
                   ),
                   child: isCurrent
                       ? AnimatedBuilder(
                           animation: _progressController,
-                          builder: (context, child) {
-                            return LinearProgressIndicator(
+                          builder: (final context, final child) => LinearProgressIndicator(
                               value: _progressController.value,
                               backgroundColor: Colors.transparent,
                               valueColor: const AlwaysStoppedAnimation<Color>(
                                 GoogleTheme.googleBlue,
                               ),
-                            );
-                          },
+                            ),
                         )
                       : null,
                 ),
@@ -185,11 +178,9 @@ class _OnboardingFlowState extends State<OnboardingFlow>
     );
   }
 
-  Widget _buildStepContent(OnboardingStep step, int index) {
-    return AnimatedBuilder(
+  Widget _buildStepContent(final OnboardingStep step, final int index) => AnimatedBuilder(
       animation: _slideController,
-      builder: (context, child) {
-        return SlideTransition(
+      builder: (final context, final child) => SlideTransition(
           position: Tween<Offset>(
             begin: const Offset(0.3, 0),
             end: Offset.zero,
@@ -206,12 +197,10 @@ class _OnboardingFlowState extends State<OnboardingFlow>
               child: _buildStepWidget(step, index),
             ),
           ),
-        );
-      },
+        ),
     );
-  }
 
-  Widget _buildStepWidget(OnboardingStep step, int index) {
+  Widget _buildStepWidget(final OnboardingStep step, final int index) {
     switch (step.type) {
       case OnboardingStepType.welcome:
         return _buildWelcomeStep();
@@ -244,8 +233,8 @@ class _OnboardingFlowState extends State<OnboardingFlow>
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    GoogleTheme.googleBlue.withOpacity(0.1),
-                    GoogleTheme.googleGreen.withOpacity(0.1),
+                    GoogleTheme.googleBlue.withValues(alpha: 0.1),
+                    GoogleTheme.googleGreen.withValues(alpha: 0.1),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -339,7 +328,7 @@ class _OnboardingFlowState extends State<OnboardingFlow>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 32),
-            ...roles.map((role) => _buildRoleCard(role)),
+            ...roles.map(_buildRoleCard),
             const SizedBox(height: 32),
           ],
         ),
@@ -347,7 +336,7 @@ class _OnboardingFlowState extends State<OnboardingFlow>
     );
   }
 
-  Widget _buildRoleCard(RoleOption role) {
+  Widget _buildRoleCard(final RoleOption role) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isSelected = _selectedRole == role.id;
@@ -355,10 +344,10 @@ class _OnboardingFlowState extends State<OnboardingFlow>
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       child: Material(
-        color: isSelected ? role.color.withOpacity(0.1) : colorScheme.surface,
+        color: isSelected ? role.color.withValues(alpha: 0.1) : colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         elevation: isSelected ? 2 : 1,
-        shadowColor: Colors.black.withOpacity(0.1),
+        shadowColor: Colors.black.withValues(alpha: 0.1),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
@@ -372,7 +361,7 @@ class _OnboardingFlowState extends State<OnboardingFlow>
               border: Border.all(
                 color: isSelected
                     ? role.color
-                    : colorScheme.outline.withOpacity(0.2),
+                    : colorScheme.outline.withValues(alpha: 0.1),
                 width: isSelected ? 2 : 1,
               ),
             ),
@@ -381,7 +370,7 @@ class _OnboardingFlowState extends State<OnboardingFlow>
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: role.color.withOpacity(0.1),
+                    color: role.color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -454,7 +443,7 @@ class _OnboardingFlowState extends State<OnboardingFlow>
             Wrap(
               spacing: 12,
               runSpacing: 12,
-              children: needs.map((need) => _buildNeedChip(need)).toList(),
+              children: needs.map(_buildNeedChip).toList(),
             ),
             const SizedBox(height: 32),
           ],
@@ -463,7 +452,7 @@ class _OnboardingFlowState extends State<OnboardingFlow>
     );
   }
 
-  Widget _buildNeedChip(NeedOption need) {
+  Widget _buildNeedChip(final NeedOption need) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isSelected = _selectedNeeds.contains(need.id);
@@ -484,7 +473,7 @@ class _OnboardingFlowState extends State<OnboardingFlow>
         ],
       ),
       selected: isSelected,
-      onSelected: (selected) {
+      onSelected: (final selected) {
         setState(() {
           if (selected) {
             _selectedNeeds.add(need.id);
@@ -495,12 +484,12 @@ class _OnboardingFlowState extends State<OnboardingFlow>
         HapticFeedback.lightImpact();
       },
       backgroundColor: colorScheme.surface,
-      selectedColor: GoogleTheme.googleBlue.withOpacity(0.2),
+      selectedColor: GoogleTheme.googleBlue.withValues(alpha: 0.1),
       checkmarkColor: GoogleTheme.googleBlue,
       side: BorderSide(
         color: isSelected
             ? GoogleTheme.googleBlue
-            : colorScheme.outline.withOpacity(0.5),
+            : colorScheme.outline.withValues(alpha: 0.1),
       ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(24),
@@ -575,12 +564,11 @@ class _OnboardingFlowState extends State<OnboardingFlow>
       ),
     ];
 
-    return options.map((option) {
-      return Container(
+    return options.map((final option) => Container(
         margin: const EdgeInsets.only(bottom: 8),
         child: EnhancedCheckbox(
           value: _accessibilityPreferences[option.key] ?? false,
-          onChanged: (value) {
+          onChanged: (final value) {
             setState(() {
               _accessibilityPreferences[option.key] = value ?? false;
             });
@@ -588,8 +576,7 @@ class _OnboardingFlowState extends State<OnboardingFlow>
           label: option.title,
           subtitle: option.subtitle,
         ),
-      );
-    }).toList();
+      )).toList();
   }
 
   Widget _buildPermissionsStep() {
@@ -652,15 +639,14 @@ class _OnboardingFlowState extends State<OnboardingFlow>
       ),
     ];
 
-    return permissions.map((permission) {
-      return Container(
+    return permissions.map((final permission) => Container(
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
           ),
         ),
         child: Row(
@@ -668,7 +654,7 @@ class _OnboardingFlowState extends State<OnboardingFlow>
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: permission.color.withOpacity(0.1),
+                color: permission.color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -700,8 +686,7 @@ class _OnboardingFlowState extends State<OnboardingFlow>
             ),
           ],
         ),
-      );
-    }).toList();
+      )).toList();
   }
 
   Widget _buildCompletionStep() {
@@ -718,8 +703,8 @@ class _OnboardingFlowState extends State<OnboardingFlow>
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    GoogleTheme.googleGreen.withOpacity(0.1),
-                    GoogleTheme.googleBlue.withOpacity(0.1),
+                    GoogleTheme.googleGreen.withValues(alpha: 0.1),
+                    GoogleTheme.googleBlue.withValues(alpha: 0.1),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -800,7 +785,7 @@ class _OnboardingFlowState extends State<OnboardingFlow>
     );
   }
 
-  Widget _buildSummaryItem(IconData icon, String text) {
+  Widget _buildSummaryItem(final IconData icon, final String text) {
     final theme = Theme.of(context);
 
     return Row(
@@ -823,17 +808,15 @@ class _OnboardingFlowState extends State<OnboardingFlow>
     );
   }
 
-  Widget _buildFeaturePreview(List<FeaturePreview> features) {
-    return Column(
-      children: features.map((feature) {
-        return Container(
+  Widget _buildFeaturePreview(final List<FeaturePreview> features) => Column(
+      children: features.map((final feature) => Container(
           margin: const EdgeInsets.only(bottom: 12),
           child: Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: GoogleTheme.googleBlue.withOpacity(0.1),
+                  color: GoogleTheme.googleBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Icon(
@@ -865,13 +848,10 @@ class _OnboardingFlowState extends State<OnboardingFlow>
               ),
             ],
           ),
-        );
-      }).toList(),
+        )).toList(),
     );
-  }
 
   Widget _buildNavigationButtons() {
-    final theme = Theme.of(context);
     final canGoNext = _canProceedToNext();
 
     return Container(
@@ -908,7 +888,7 @@ class _OnboardingFlowState extends State<OnboardingFlow>
     );
   }
 
-  void _onPageChanged(int page) {
+  void _onPageChanged(final int page) {
     setState(() => _currentPage = page);
     _progressController.forward();
 
@@ -926,7 +906,7 @@ class _OnboardingFlowState extends State<OnboardingFlow>
     }
   }
 
-  void _goToNextPage() async {
+  Future<void> _goToNextPage() async {
     if (_currentPage < _steps.length - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
@@ -962,7 +942,6 @@ class _OnboardingFlowState extends State<OnboardingFlow>
 
     try {
       // Save onboarding data
-      final auth = context.read<AuthController>();
       // await auth.completeOnboarding({ // Method not available
       //   'role': _selectedRole,
       //   'needs': _selectedNeeds,
@@ -1046,7 +1025,7 @@ class _OnboardingFlowState extends State<OnboardingFlow>
     }
   }
 
-  String _getRoleTitle(String roleId) {
+  String _getRoleTitle(final String roleId) {
     switch (roleId) {
       case 'participant':
         return 'NDIS Participant';
@@ -1059,11 +1038,9 @@ class _OnboardingFlowState extends State<OnboardingFlow>
     }
   }
 
-  int _getEnabledAccessibilityCount() {
-    return _accessibilityPreferences.values
-        .where((enabled) => enabled == true)
+  int _getEnabledAccessibilityCount() => _accessibilityPreferences.values
+        .where((final enabled) => enabled == true)
         .length;
-  }
 }
 
 // Data models for onboarding
@@ -1077,9 +1054,6 @@ enum OnboardingStepType {
 }
 
 class OnboardingStep {
-  final OnboardingStepType type;
-  final String title;
-  final String description;
 
   OnboardingStep({
     required this.type,
@@ -1122,14 +1096,12 @@ class OnboardingStep {
         title: 'All Set!',
         description: 'Your personalized experience is ready',
       );
+  final OnboardingStepType type;
+  final String title;
+  final String description;
 }
 
 class RoleOption {
-  final String id;
-  final String title;
-  final String description;
-  final IconData icon;
-  final Color color;
 
   RoleOption({
     required this.id,
@@ -1138,25 +1110,26 @@ class RoleOption {
     required this.icon,
     required this.color,
   });
+  final String id;
+  final String title;
+  final String description;
+  final IconData icon;
+  final Color color;
 }
 
 class NeedOption {
-  final String id;
-  final String title;
-  final IconData icon;
 
   NeedOption({
     required this.id,
     required this.title,
     required this.icon,
   });
+  final String id;
+  final String title;
+  final IconData icon;
 }
 
 class AccessibilityOption {
-  final String key;
-  final String title;
-  final String subtitle;
-  final IconData icon;
 
   AccessibilityOption({
     required this.key,
@@ -1164,13 +1137,13 @@ class AccessibilityOption {
     required this.subtitle,
     required this.icon,
   });
+  final String key;
+  final String title;
+  final String subtitle;
+  final IconData icon;
 }
 
 class PermissionItem {
-  final IconData icon;
-  final String title;
-  final String description;
-  final Color color;
 
   PermissionItem({
     required this.icon,
@@ -1178,16 +1151,20 @@ class PermissionItem {
     required this.description,
     required this.color,
   });
-}
-
-class FeaturePreview {
   final IconData icon;
   final String title;
   final String description;
+  final Color color;
+}
+
+class FeaturePreview {
 
   FeaturePreview({
     required this.icon,
     required this.title,
     required this.description,
   });
+  final IconData icon;
+  final String title;
+  final String description;
 }

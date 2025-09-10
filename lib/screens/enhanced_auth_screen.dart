@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import '../controllers/auth_controller.dart';
 import '../theme/google_theme.dart';
 import '../widgets/responsive_layout.dart';
 import '../widgets/enhanced_form_components.dart';
@@ -51,8 +48,8 @@ class _EnhancedAuthScreenState extends State<EnhancedAuthScreen>
     );
 
     _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0,
+      end: 1,
     ).animate(CurvedAnimation(
       parent: _fadeController,
       curve: Curves.easeOut,
@@ -82,7 +79,7 @@ class _EnhancedAuthScreenState extends State<EnhancedAuthScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isMobile = context.isMobile;
@@ -90,7 +87,6 @@ class _EnhancedAuthScreenState extends State<EnhancedAuthScreen>
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: ResponsiveContainer(
-        maxWidth: 1200,
         child: Row(
           children: [
             // Left side - Branding/Illustration (hidden on mobile)
@@ -112,18 +108,18 @@ class _EnhancedAuthScreenState extends State<EnhancedAuthScreen>
     );
   }
 
-  Widget _buildBrandingSide(BuildContext context) {
+  Widget _buildBrandingSide(final BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            GoogleTheme.googleBlue.withOpacity(0.1),
-            GoogleTheme.googleGreen.withOpacity(0.1),
-            GoogleTheme.googleBlue.withOpacity(0.05),
+            GoogleTheme.googleBlue.withValues(alpha: 0.1),
+            GoogleTheme.googleGreen.withValues(alpha: 0.1),
+            GoogleTheme.googleBlue.withValues(alpha: 0.05),
           ],
         ),
       ),
@@ -141,7 +137,7 @@ class _EnhancedAuthScreenState extends State<EnhancedAuthScreen>
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),
@@ -185,7 +181,7 @@ class _EnhancedAuthScreenState extends State<EnhancedAuthScreen>
     );
   }
 
-  List<Widget> _buildFeatureHighlights(BuildContext context) {
+  List<Widget> _buildFeatureHighlights(final BuildContext context) {
     final features = [
       {
         'icon': Icons.accessibility,
@@ -204,15 +200,14 @@ class _EnhancedAuthScreenState extends State<EnhancedAuthScreen>
       },
     ];
 
-    return features.map((feature) {
-      return Padding(
+    return features.map((final feature) => Padding(
         padding: const EdgeInsets.only(bottom: 24),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: GoogleTheme.googleBlue.withOpacity(0.1),
+                color: GoogleTheme.googleBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -244,19 +239,17 @@ class _EnhancedAuthScreenState extends State<EnhancedAuthScreen>
             ),
           ],
         ),
-      );
-    }).toList();
+      )).toList();
   }
 
-  Widget _buildAuthForm(BuildContext context) {
+  Widget _buildAuthForm(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isMobile = context.isMobile;
 
     return AnimatedBuilder(
       animation: Listenable.merge([_fadeAnimation, _slideAnimation]),
-      builder: (context, child) {
-        return FadeTransition(
+      builder: (final context, final child) => FadeTransition(
           opacity: _fadeAnimation,
           child: SlideTransition(
             position: _slideAnimation,
@@ -277,7 +270,7 @@ class _EnhancedAuthScreenState extends State<EnhancedAuthScreen>
                             child: Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: GoogleTheme.googleBlue.withOpacity(0.1),
+                                color: GoogleTheme.googleBlue.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: const Icon(
@@ -320,7 +313,7 @@ class _EnhancedAuthScreenState extends State<EnhancedAuthScreen>
                             label: 'Full Name',
                             hint: 'Enter your full name',
                             prefixIcon: Icons.person_outline,
-                            validator: (value) {
+                            validator: (final value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter your name';
                               }
@@ -336,7 +329,7 @@ class _EnhancedAuthScreenState extends State<EnhancedAuthScreen>
                           hint: 'Enter your email address',
                           prefixIcon: Icons.email_outlined,
                           keyboardType: TextInputType.emailAddress,
-                          validator: (value) {
+                          validator: (final value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your email';
                             }
@@ -365,7 +358,7 @@ class _EnhancedAuthScreenState extends State<EnhancedAuthScreen>
                                   : Icons.visibility,
                             ),
                           ),
-                          validator: (value) {
+                          validator: (final value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your password';
                             }
@@ -394,7 +387,7 @@ class _EnhancedAuthScreenState extends State<EnhancedAuthScreen>
                                     : Icons.visibility,
                               ),
                             ),
-                            validator: (value) {
+                            validator: (final value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please confirm your password';
                               }
@@ -473,20 +466,19 @@ class _EnhancedAuthScreenState extends State<EnhancedAuthScreen>
               ),
             ),
           ),
-        );
-      },
+        ),
     );
   }
 
   Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    required IconData prefixIcon,
-    TextInputType? keyboardType,
-    bool obscureText = false,
-    Widget? suffixIcon,
-    String? Function(String?)? validator,
+    required final TextEditingController controller,
+    required final String label,
+    required final String hint,
+    required final IconData prefixIcon,
+    final TextInputType? keyboardType,
+    final bool obscureText = false,
+    final Widget? suffixIcon,
+    final String? Function(String?)? validator,
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -525,40 +517,7 @@ class _EnhancedAuthScreenState extends State<EnhancedAuthScreen>
     );
   }
 
-  Widget _buildSubmitButton(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return FilledButton(
-      onPressed: _isLoading ? null : _handleSubmit,
-      style: FilledButton.styleFrom(
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-      child: _isLoading
-          ? SizedBox(
-              height: 20,
-              width: 20,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: colorScheme.onPrimary,
-              ),
-            )
-          : Text(
-              _isLogin ? 'Sign In' : 'Create Account',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: colorScheme.onPrimary,
-              ),
-            ),
-    );
-  }
-
-  Widget _buildToggleButton(BuildContext context) {
+  Widget _buildToggleButton(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -576,7 +535,7 @@ class _EnhancedAuthScreenState extends State<EnhancedAuthScreen>
         text: TextSpan(
           text: _isLogin
               ? "Don't have an account? "
-              : "Already have an account? ",
+              : 'Already have an account? ',
           style: theme.textTheme.bodyMedium?.copyWith(
             color: colorScheme.onSurfaceVariant,
           ),
@@ -594,67 +553,19 @@ class _EnhancedAuthScreenState extends State<EnhancedAuthScreen>
     );
   }
 
-  Widget _buildSocialButtons(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Column(
-      children: [
-        OutlinedButton.icon(
-          onPressed: _isLoading ? null : _handleGoogleSignIn,
-          icon: Container(
-            width: 20,
-            height: 20,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                    'https://developers.google.com/identity/images/g-logo.png'),
-              ),
-            ),
-          ),
-          label: const Text('Continue with Google'),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: colorScheme.onSurface,
-            side: BorderSide(color: colorScheme.outline),
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        OutlinedButton.icon(
-          onPressed: _isLoading ? null : _handleAppleSignIn,
-          icon: const Icon(Icons.apple, size: 20),
-          label: const Text('Continue with Apple'),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: colorScheme.onSurface,
-            side: BorderSide(color: colorScheme.outline),
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _handleSubmit() async {
+  Future<void> _handleSubmit() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
-      final auth = context.read<AuthController>();
-
       if (_isLogin) {
         // Mock authentication - replace with actual auth implementation
-        await Future.delayed(const Duration(seconds: 1));
+        await Future<void>.delayed(const Duration(seconds: 1));
         // await auth.signIn(_emailController.text, _passwordController.text);
       } else {
         // Mock authentication - replace with actual auth implementation
-        await Future.delayed(const Duration(seconds: 1));
+        await Future<void>.delayed(const Duration(seconds: 1));
         // await auth.signUp(_emailController.text, _passwordController.text, _nameController.text);
       }
 
@@ -677,13 +588,12 @@ class _EnhancedAuthScreenState extends State<EnhancedAuthScreen>
     }
   }
 
-  void _handleGoogleSignIn() async {
+  Future<void> _handleGoogleSignIn() async {
     setState(() => _isLoading = true);
 
     try {
-      final auth = context.read<AuthController>();
       // Mock Google sign-in - replace with actual implementation
-      await Future.delayed(const Duration(seconds: 1));
+      await Future<void>.delayed(const Duration(seconds: 1));
 
       if (mounted) {
         Navigator.of(context).pushReplacementNamed('/dashboard');
@@ -704,13 +614,12 @@ class _EnhancedAuthScreenState extends State<EnhancedAuthScreen>
     }
   }
 
-  void _handleAppleSignIn() async {
+  Future<void> _handleAppleSignIn() async {
     setState(() => _isLoading = true);
 
     try {
-      final auth = context.read<AuthController>();
       // Mock Apple sign-in - replace with actual implementation
-      await Future.delayed(const Duration(seconds: 1));
+      await Future<void>.delayed(const Duration(seconds: 1));
 
       if (mounted) {
         Navigator.of(context).pushReplacementNamed('/dashboard');

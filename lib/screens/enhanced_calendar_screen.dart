@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../theme/google_theme.dart';
-import '../widgets/responsive_layout.dart';
 import '../widgets/calendar_components.dart';
 import '../widgets/enhanced_form_components.dart';
 import '../widgets/trending_2025_components.dart';
@@ -58,7 +57,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
       provider: 'Ability OT Services',
       location: '456 Care Avenue, Melbourne',
       providerRating: 4.9,
-      cost: 125.00,
+      cost: 125,
       ndisCategory: 'Capacity Building - Improved Daily Living',
       claimable: true,
       transportRequired: true,
@@ -76,7 +75,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
       provider: 'CareCo Support Services',
       location: 'Home visit',
       providerRating: 4.7,
-      cost: 156.00,
+      cost: 156,
       ndisCategory: 'Core Support - Social and Community Participation',
       claimable: true,
       transportRequired: false,
@@ -94,7 +93,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
       provider: 'NDIS Planning Team',
       location: 'NDIS Office - Level 3, 789 Plan Street',
       providerRating: 4.6,
-      cost: 0.00,
+      cost: 0,
       ndisCategory: 'Plan Management',
       claimable: false,
       transportRequired: true,
@@ -137,22 +136,19 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
+        headerSliverBuilder: (final context, final innerBoxIsScrolled) => [
             _buildSliverAppBar(context),
-          ];
-        },
+          ],
         body: AnimatedBuilder(
           animation: _contentController,
-          builder: (context, child) {
-            return FadeTransition(
+          builder: (final context, final child) => FadeTransition(
               opacity: _contentController,
               child: SlideTransition(
                 position: Tween<Offset>(
@@ -177,8 +173,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
                   ],
                 ),
               ),
-            );
-          },
+            ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -191,14 +186,13 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
     );
   }
 
-  Widget _buildSliverAppBar(BuildContext context) {
+  Widget _buildSliverAppBar(final BuildContext context) {
     final upcomingCount = _appointments
-        .where((apt) => apt.startTime.isAfter(DateTime.now()))
+        .where((final apt) => apt.startTime.isAfter(DateTime.now()))
         .length;
 
     return SliverAppBar(
       expandedHeight: 200,
-      floating: false,
       pinned: true,
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -211,7 +205,6 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
           icon: Icons.mic,
           isPrimary: false,
           backgroundColor: GoogleTheme.googleBlue,
-          hasRippleEffect: true,
         ),
         const SizedBox(width: 8),
         IconButton(
@@ -242,10 +235,10 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
     );
   }
 
-  Widget _buildViewToggle(BuildContext context) {
+  Widget _buildViewToggle(final BuildContext context) {
     final theme = Theme.of(context);
 
-    return Container(
+    return ColoredBox(
       color: theme.colorScheme.surface,
       child: TabBar(
         controller: _tabController,
@@ -267,8 +260,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
     );
   }
 
-  Widget _buildCalendarTab(BuildContext context) {
-    return SingleChildScrollView(
+  Widget _buildCalendarTab(final BuildContext context) => SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
@@ -276,7 +268,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
           EnhancedCalendarView(
             initialDate: _selectedDate,
             events: _appointments,
-            onDateSelected: (date) {
+            onDateSelected: (final date) {
               setState(() => _selectedDate = date);
             },
             onEventTap: _showEventDetails,
@@ -289,18 +281,17 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
         ],
       ),
     );
-  }
 
-  Widget _buildListTab(BuildContext context) {
+  Widget _buildListTab(final BuildContext context) {
     final upcomingAppointments = _appointments
-        .where((apt) => apt.startTime.isAfter(DateTime.now()))
+        .where((final apt) => apt.startTime.isAfter(DateTime.now()))
         .toList()
-      ..sort((a, b) => a.startTime.compareTo(b.startTime));
+      ..sort((final a, final b) => a.startTime.compareTo(b.startTime));
 
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: upcomingAppointments.length + 1,
-      itemBuilder: (context, index) {
+      itemBuilder: (final context, final index) {
         if (index == 0) {
           return _buildListHeader(context, upcomingAppointments.length);
         }
@@ -316,22 +307,22 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
     );
   }
 
-  Widget _buildListHeader(BuildContext context, int count) {
+  Widget _buildListHeader(final BuildContext context, final int count) {
     final theme = Theme.of(context);
 
     return Container(
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: GoogleTheme.googleBlue.withOpacity(0.05),
+        color: GoogleTheme.googleBlue.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: GoogleTheme.googleBlue.withOpacity(0.2),
+          color: GoogleTheme.googleBlue.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.event_available,
             color: GoogleTheme.googleBlue,
             size: 24,
@@ -362,10 +353,10 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
     );
   }
 
-  Widget _buildSelectedDateAppointments(BuildContext context) {
+  Widget _buildSelectedDateAppointments(final BuildContext context) {
     final theme = Theme.of(context);
     final appointmentsForDate = _appointments
-        .where((apt) =>
+        .where((final apt) =>
             apt.startTime.day == _selectedDate.day &&
             apt.startTime.month == _selectedDate.month &&
             apt.startTime.year == _selectedDate.year)
@@ -378,7 +369,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.1),
+          color: theme.colorScheme.outline.withValues(alpha: 0.1),
         ),
       ),
       child: Column(
@@ -411,7 +402,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
                   Icon(
                     Icons.event_available,
                     size: 48,
-                    color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5),
+                    color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -437,24 +428,22 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
               ),
             ),
           ] else ...[
-            ...appointmentsForDate.map((appointment) {
-              return AppointmentCard(
+            ...appointmentsForDate.map((final appointment) => AppointmentCard(
                 event: appointment,
                 onTap: () => _showEventDetails(appointment),
                 onEdit: () => _editAppointment(appointment),
                 onCancel: () => _cancelAppointment(appointment),
-              );
-            }).toList(),
+              )),
           ],
         ],
       ),
     );
   }
 
-  void _showBookingDialog({DateTime? selectedDate}) {
-    showDialog(
+  void _showBookingDialog({final DateTime? selectedDate}) {
+    showDialog<void>(
       context: context,
-      builder: (context) => AdvancedGlassmorphism2025.buildGlassModalOverlay(
+      builder: (final context) => AdvancedGlassmorphism2025.buildGlassModalOverlay(
         context: context,
         child: _buildEnhancedBookingDialog(selectedDate),
         onDismiss: () => Navigator.pop(context),
@@ -462,8 +451,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
     );
   }
 
-  Widget _buildEnhancedBookingDialog(DateTime? preSelectedDate) {
-    return Container(
+  Widget _buildEnhancedBookingDialog(final DateTime? preSelectedDate) => Container(
       width: 600,
       padding: const EdgeInsets.all(32),
       child: Column(
@@ -489,7 +477,6 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
                 const SnackBar(content: Text('Voice booking coming soon!')),
               );
             },
-            transcribedText: null,
             isAccessible: true,
           ),
 
@@ -519,7 +506,6 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
                   onPressed: () => Navigator.pop(context),
                   isPrimary: false,
                   backgroundColor: GoogleTheme.googleRed,
-                  hasRippleEffect: true,
                 ),
               ),
               const SizedBox(width: 16),
@@ -537,9 +523,8 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
         ],
       ),
     );
-  }
 
-  List<TimeSlot> _generateTimeSlots(DateTime date) {
+  List<TimeSlot> _generateTimeSlots(final DateTime date) {
     final slots = <TimeSlot>[];
     final baseTime =
         DateTime(date.year, date.month, date.day, 9); // Start at 9 AM
@@ -550,8 +535,8 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
       final endTime = startTime.add(const Duration(minutes: 30));
 
       // Check if slot conflicts with existing appointments
-      final hasConflict = _appointments.any((apt) =>
-          (startTime.isBefore(apt.endTime) && endTime.isAfter(apt.startTime)));
+      final hasConflict = _appointments.any((final apt) =>
+          startTime.isBefore(apt.endTime) && endTime.isAfter(apt.startTime));
 
       slots.add(TimeSlot(
         startTime: startTime,
@@ -561,10 +546,10 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
       ));
     }
 
-    return slots.where((slot) => slot.isAvailable).toList();
+    return slots.where((final slot) => slot.isAvailable).toList();
   }
 
-  String _formatTimeSlot(DateTime time) {
+  String _formatTimeSlot(final DateTime time) {
     final hour = time.hour;
     final minute = time.minute;
     final period = hour >= 12 ? 'PM' : 'AM';
@@ -572,7 +557,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
     return '$displayHour:${minute.toString().padLeft(2, '0')} $period';
   }
 
-  String _formatSelectedDate(DateTime date) {
+  String _formatSelectedDate(final DateTime date) {
     const months = [
       'Jan',
       'Feb',
@@ -593,14 +578,14 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
   }
 
   // Event handlers
-  void _showEventDetails(CalendarEvent event) {
-    showDialog(
+  void _showEventDetails(final CalendarEvent event) {
+    showDialog<void>(
       context: context,
-      builder: (context) => _buildEventDetailsDialog(event),
+      builder: (final context) => _buildEventDetailsDialog(event),
     );
   }
 
-  Widget _buildEventDetailsDialog(CalendarEvent event) {
+  Widget _buildEventDetailsDialog(final CalendarEvent event) {
     final theme = Theme.of(context);
 
     return Dialog(
@@ -616,7 +601,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: event.color.withOpacity(0.1),
+                    color: event.color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -680,7 +665,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
     );
   }
 
-  Widget _buildDetailRow(IconData icon, String label, String value) {
+  Widget _buildDetailRow(final IconData icon, final String label, final String value) {
     final theme = Theme.of(context);
 
     return Padding(
@@ -714,7 +699,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
   }
 
   // Helper methods
-  IconData _getEventIcon(AppointmentType type) {
+  IconData _getEventIcon(final AppointmentType type) {
     switch (type) {
       case AppointmentType.therapy:
         return Icons.healing;
@@ -729,7 +714,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
     }
   }
 
-  String _getStatusText(AppointmentStatus status) {
+  String _getStatusText(final AppointmentStatus status) {
     switch (status) {
       case AppointmentStatus.confirmed:
         return 'Confirmed';
@@ -740,7 +725,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
     }
   }
 
-  String _formatTime(DateTime time) {
+  String _formatTime(final DateTime time) {
     final hour = time.hour;
     final minute = time.minute;
     final period = hour >= 12 ? 'PM' : 'AM';
@@ -749,7 +734,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
   }
 
   // Event handlers
-  void _editAppointment(CalendarEvent event) {
+  void _editAppointment(final CalendarEvent event) {
     // TODO: Implement edit appointment
     HapticFeedback.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -757,10 +742,10 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
     );
   }
 
-  void _cancelAppointment(CalendarEvent event) {
-    showDialog(
+  void _cancelAppointment(final CalendarEvent event) {
+    showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (final context) => AlertDialog(
         title: const Text('Cancel Appointment'),
         content: Text('Are you sure you want to cancel "${event.title}"?'),
         actions: [
@@ -780,7 +765,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
     );
   }
 
-  void _performCancel(CalendarEvent event) {
+  void _performCancel(final CalendarEvent event) {
     // TODO: Implement actual cancellation
     HapticFeedback.mediumImpact();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -796,7 +781,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
     );
   }
 
-  void _selectBookingDate() async {
+  Future<void> _selectBookingDate() async {
     final date = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -849,7 +834,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
               'Core Support - Assistance with Daily Living',
               Icons.healing,
               GoogleTheme.googleBlue,
-              '\$85-120 per session',
+              r'$85-120 per session',
               'Fully claimable',
             ),
             const SizedBox(height: 8),
@@ -858,7 +843,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
               'Capacity Building - Improved Daily Living',
               Icons.accessibility,
               GoogleTheme.googleGreen,
-              '\$110-150 per session',
+              r'$110-150 per session',
               'Fully claimable',
             ),
             const SizedBox(height: 8),
@@ -867,7 +852,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
               'Core Support - Social and Community Participation',
               Icons.support_agent,
               GoogleTheme.ndisTeal,
-              '\$55-85 per hour',
+              r'$55-85 per hour',
               'Fully claimable',
             ),
           ],
@@ -877,27 +862,22 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
   }
 
   Widget _buildNDISServiceCard(
-    String title,
-    String category,
-    IconData icon,
-    Color color,
-    String cost,
-    String funding,
-  ) {
-    return Trending2025Components.buildAccessibleInfoCard(
+    final String title,
+    final String category,
+    final IconData icon,
+    final Color color,
+    final String cost,
+    final String funding,
+  ) => Trending2025Components.buildAccessibleInfoCard(
       context: context,
       title: title,
       content: '$category • $cost • $funding',
       icon: icon,
       accentColor: color,
-      onTap: () {
-        // Handle service selection
-        HapticFeedback.lightImpact();
-      },
+      onTap: HapticFeedback.lightImpact,
     );
-  }
 
-  Widget _buildAdvancedDateTimeSelection(DateTime? preSelectedDate) {
+  Widget _buildAdvancedDateTimeSelection(final DateTime? preSelectedDate) {
     final theme = Theme.of(context);
 
     return Column(
@@ -931,7 +911,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
           TimeSlotSelector(
             selectedDate: preSelectedDate,
             availableSlots: _generateTimeSlots(preSelectedDate),
-            onSlotSelected: (slot) {
+            onSlotSelected: (final slot) {
               HapticFeedback.lightImpact();
             },
           ),
@@ -979,8 +959,7 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
     );
   }
 
-  Widget _buildOptionChip(String label, IconData icon) {
-    return FilterChip(
+  Widget _buildOptionChip(final String label, final IconData icon) => FilterChip(
       label: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -989,12 +968,10 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
           Text(label),
         ],
       ),
-      selected: false, // TODO: Implement selection state
-      onSelected: (selected) {
+      onSelected: (final selected) {
         HapticFeedback.lightImpact();
       },
     );
-  }
 
   void _confirmEnhancedBooking() {
     Navigator.pop(context);
@@ -1006,7 +983,6 @@ class _EnhancedCalendarScreenState extends State<EnhancedCalendarScreen>
         content:
             Text('🎉 NDIS session booked successfully! Confirmation sent.'),
         backgroundColor: Colors.green,
-        duration: Duration(seconds: 4),
       ),
     );
   }

@@ -27,14 +27,14 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final auth = context.watch<AuthController>();
     final initialized = FirebaseService.initialized;
 
     return Scaffold(
       appBar: AppBar(title: const Text('NDIS Connect'), centerTitle: true),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -88,7 +88,7 @@ class _AuthScreenState extends State<AuthScreen> {
             if (initialized) ...[
               Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16),
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -110,7 +110,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             prefixIcon: Icon(Icons.email_outlined),
                             border: OutlineInputBorder(),
                           ),
-                          validator: (value) {
+                          validator: (final value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your email';
                             }
@@ -143,7 +143,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               },
                             ),
                           ),
-                          validator: (value) {
+                          validator: (final value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your password';
                             }
@@ -267,7 +267,7 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
-  Future<void> _handleBiometricAuth(BuildContext context) async {
+  Future<void> _handleBiometricAuth(final BuildContext context) async {
     // Guard: biometrics not supported on web; only enable on mobile/desktop
     if (kIsWeb) {
       _showToast(context, 'Biometrics not supported on web');
@@ -305,11 +305,10 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
-  Future<UserRole?> _showRolePicker(BuildContext context) async {
-    return await showDialog<UserRole>(
+  Future<UserRole?> _showRolePicker(final BuildContext context) async => showDialog<UserRole>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
+      builder: (final context) => AlertDialog(
         title: const Text('Choose Your Role'),
         content: const Text(
           'Select how you want to use NDIS Connect. This helps us personalize your experience.',
@@ -326,9 +325,8 @@ class _AuthScreenState extends State<AuthScreen> {
         ],
       ),
     );
-  }
 
-  void _showToast(BuildContext context, String message) {
+  void _showToast(final BuildContext context, final String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
     );

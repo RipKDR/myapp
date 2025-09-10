@@ -16,9 +16,9 @@ class FirestoreService {
 
   // Generic save operation
   static Future<bool> save(
-    String collection,
-    String id,
-    Map<String, dynamic> data,
+    final String collection,
+    final String id,
+    final Map<String, dynamic> data,
   ) async {
     try {
       final d = db;
@@ -36,7 +36,7 @@ class FirestoreService {
   }
 
   // Generic get operation
-  static Future<Map<String, dynamic>?> get(String collection, String id) async {
+  static Future<Map<String, dynamic>?> get(final String collection, final String id) async {
     try {
       final d = db;
       if (d == null) return null;
@@ -50,7 +50,7 @@ class FirestoreService {
   }
 
   // Generic delete operation
-  static Future<bool> delete(String collection, String id) async {
+  static Future<bool> delete(final String collection, final String id) async {
     try {
       final d = db;
       if (d == null) return false;
@@ -65,11 +65,11 @@ class FirestoreService {
 
   // Generic stream operation
   static Stream<List<Map<String, dynamic>>> stream(
-    String collection, {
-    String? orderBy,
-    bool descending = false,
-    int? limit,
-    DocumentSnapshot? startAfter,
+    final String collection, {
+    final String? orderBy,
+    final bool descending = false,
+    final int? limit,
+    final DocumentSnapshot? startAfter,
   }) {
     try {
       final d = db;
@@ -90,8 +90,8 @@ class FirestoreService {
       }
 
       return query.snapshots().map(
-            (snapshot) => snapshot.docs
-                .map((doc) =>
+            (final snapshot) => snapshot.docs
+                .map((final doc) =>
                     {'id': doc.id, ...doc.data() as Map<String, dynamic>})
                 .toList(),
           );
@@ -103,12 +103,12 @@ class FirestoreService {
 
   // Query with where clause
   static Stream<List<Map<String, dynamic>>> query(
-    String collection, {
-    required String field,
-    required dynamic value,
-    String? orderBy,
-    bool descending = false,
-    int? limit,
+    final String collection, {
+    required final String field,
+    required final dynamic value,
+    final String? orderBy,
+    final bool descending = false,
+    final int? limit,
   }) {
     try {
       final d = db;
@@ -125,8 +125,8 @@ class FirestoreService {
       }
 
       return query.snapshots().map(
-            (snapshot) => snapshot.docs
-                .map((doc) =>
+            (final snapshot) => snapshot.docs
+                .map((final doc) =>
                     {'id': doc.id, ...doc.data() as Map<String, dynamic>})
                 .toList(),
           );
@@ -137,7 +137,7 @@ class FirestoreService {
   }
 
   // Batch operations
-  static Future<bool> batchWrite(List<BatchOperation> operations) async {
+  static Future<bool> batchWrite(final List<BatchOperation> operations) async {
     try {
       final d = db;
       if (d == null) return false;
@@ -183,10 +183,6 @@ class FirestoreService {
 enum BatchOperationType { set, update, delete }
 
 class BatchOperation {
-  final BatchOperationType type;
-  final String collection;
-  final String id;
-  final Map<String, dynamic>? data;
 
   BatchOperation.set(this.collection, this.id, this.data)
       : type = BatchOperationType.set;
@@ -195,4 +191,8 @@ class BatchOperation {
   BatchOperation.delete(this.collection, this.id)
       : type = BatchOperationType.delete,
         data = null;
+  final BatchOperationType type;
+  final String collection;
+  final String id;
+  final Map<String, dynamic>? data;
 }

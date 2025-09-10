@@ -6,7 +6,7 @@ class RateService {
     'Speech': 180.0,
   };
 
-  static List<Map<String, dynamic>> compare(String category) {
+  static List<Map<String, dynamic>> compare(final String category) {
     final typical = _rates[category] ?? 0.0;
     // Mock nearby offers
     final offers = [
@@ -14,7 +14,7 @@ class RateService {
       {'provider': 'CareCo', 'rate': typical + 2},
     ];
     return offers
-        .map((o) => {
+        .map((final o) => {
               'provider': o['provider'],
               'rate': o['rate'],
               'saving': (typical - (o['rate'] as double)),

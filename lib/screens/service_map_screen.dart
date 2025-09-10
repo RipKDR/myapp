@@ -38,7 +38,7 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
   Future<void> _loadProviders() async {
     final list = await ProviderDirectoryService.listProviders();
     final filtered = list.where(
-      (p) =>
+      (final p) =>
           p.waitMinutes <= _waitFilter &&
           (!_accessibleOnly || p.accessible) &&
           p.rating >= _minRating,
@@ -78,8 +78,7 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(final BuildContext context) => Scaffold(
       appBar: AppBar(title: const Text('Service Map')),
       body: FeatureGuard(
         tier: FeatureTier.free,
@@ -92,9 +91,9 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.05),
+                    color: Colors.blue.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.blue.withOpacity(0.12)),
+                    border: Border.all(color: Colors.blue.withValues(alpha: 0.12)),
                   ),
                   child: Row(
                     children: [
@@ -123,7 +122,7 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
               wait: _waitFilter,
               accessibleOnly: _accessibleOnly,
               minRating: _minRating,
-              onChanged: (w, a, r) {
+              onChanged: (final w, final a, final r) {
                 setState(() {
                   _waitFilter = w;
                   _accessibleOnly = a;
@@ -136,10 +135,8 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
               child: FeatureFlags.isMapsEnabled
                   ? GoogleMap(
                       initialCameraPosition: _sydney,
-                      myLocationButtonEnabled: true,
-                      myLocationEnabled: false,
                       markers: _markers,
-                      onMapCreated: (c) => _controller.complete(c),
+                      onMapCreated: _controller.complete,
                     )
                   : _MapsDisabledFallback(
                       onEnableHelp: () => _showMapsSetupHelp(context)),
@@ -148,12 +145,11 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
         ),
       ),
     );
-  }
 
-  void _showMapsSetupHelp(BuildContext context) {
+  void _showMapsSetupHelp(final BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (final context) => AlertDialog(
         title: const Text('Enable Google Maps'),
         content: const Text(
             'Google Maps is disabled. Provide a Maps API key and launch with\n\n'
@@ -169,23 +165,22 @@ class _ServiceMapScreenState extends State<ServiceMapScreen> {
 }
 
 class _Filters extends StatelessWidget {
-  final double wait;
-  final bool accessibleOnly;
-  final double minRating;
-  final void Function(double wait, bool accessibleOnly, double rating)
-      onChanged;
   const _Filters(
       {required this.wait,
       required this.accessibleOnly,
       required this.minRating,
       required this.onChanged});
+  final double wait;
+  final bool accessibleOnly;
+  final double minRating;
+  final void Function(double wait, bool accessibleOnly, double rating)
+      onChanged;
 
   @override
-  Widget build(BuildContext context) {
-    return Card(
+  Widget build(final BuildContext context) => Card(
       margin: const EdgeInsets.all(8),
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -207,7 +202,7 @@ class _Filters extends StatelessWidget {
                     divisions: 11,
                     value: wait,
                     label: '${wait.round()}m',
-                    onChanged: (v) => onChanged(v, accessibleOnly, minRating),
+                    onChanged: (final v) => onChanged(v, accessibleOnly, minRating),
                   ),
                 ),
                 SizedBox(width: 48, child: Text('${wait.round()}m')),
@@ -218,12 +213,12 @@ class _Filters extends StatelessWidget {
                 const Text('Min rating'),
                 Expanded(
                   child: Slider(
-                    min: 1.0,
-                    max: 5.0,
+                    min: 1,
+                    max: 5,
                     divisions: 8,
                     value: minRating,
                     label: minRating.toStringAsFixed(1),
-                    onChanged: (v) => onChanged(wait, accessibleOnly, v),
+                    onChanged: (final v) => onChanged(wait, accessibleOnly, v),
                   ),
                 ),
                 SizedBox(width: 48, child: Text(minRating.toStringAsFixed(1))),
@@ -231,7 +226,7 @@ class _Filters extends StatelessWidget {
             ),
             SwitchListTile(
               value: accessibleOnly,
-              onChanged: (v) => onChanged(wait, v, minRating),
+              onChanged: (final v) => onChanged(wait, v, minRating),
               title: const Text('Accessible venues only'),
               contentPadding: EdgeInsets.zero,
             ),
@@ -239,18 +234,16 @@ class _Filters extends StatelessWidget {
         ),
       ),
     );
-  }
 }
 
 class _MapsDisabledFallback extends StatelessWidget {
-  final VoidCallback onEnableHelp;
   const _MapsDisabledFallback({required this.onEnableHelp});
+  final VoidCallback onEnableHelp;
 
   @override
-  Widget build(BuildContext context) {
-    return Center(
+  Widget build(final BuildContext context) => Center(
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -273,5 +266,4 @@ class _MapsDisabledFallback extends StatelessWidget {
         ),
       ),
     );
-  }
 }

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
@@ -15,8 +14,8 @@ class EnhancedVoiceService {
   Future<bool> initialize() async {
     try {
       _available = await _stt.initialize(
-        onError: (e) => debugPrint('STT error: $e'),
-        onStatus: (s) => debugPrint('STT status: $s'),
+        onError: (final e) => debugPrint('STT error: $e'),
+        onStatus: (final s) => debugPrint('STT status: $s'),
       );
       if (_available) {
         final locales = await _stt.locales();
@@ -30,8 +29,8 @@ class EnhancedVoiceService {
   }
 
   Future<void> start({
-    required void Function(String text) onResult,
-    String? localeId,
+    required final void Function(String text) onResult,
+    final String? localeId,
   }) async {
     if (!_available) {
       _available = await initialize();
@@ -40,10 +39,8 @@ class EnhancedVoiceService {
     _listening = true;
     await _stt.listen(
       localeId: localeId ?? _lastLocaleId,
-      listenMode: stt.ListenMode.confirmation,
-      partialResults: true,
-      onResult: (r) {
-        if (!r.finalResult && (r.recognizedWords).isEmpty) return;
+      onResult: (final r) {
+        if (!r.finalResult && r.recognizedWords.isEmpty) return;
         onResult(r.recognizedWords);
       },
     );
@@ -64,9 +61,6 @@ class EnhancedVoiceService {
 /// A compact FAB button that starts/stops listening and returns the transcript
 /// via onCommand callback.
 class VoiceCommandButton extends StatefulWidget {
-  final ValueChanged<String> onCommand;
-  final String prompt;
-  final String? tooltip;
 
   const VoiceCommandButton({
     super.key,
@@ -74,6 +68,9 @@ class VoiceCommandButton extends StatefulWidget {
     required this.prompt,
     this.tooltip,
   });
+  final ValueChanged<String> onCommand;
+  final String prompt;
+  final String? tooltip;
 
   @override
   State<VoiceCommandButton> createState() => _VoiceCommandButtonState();
@@ -113,14 +110,14 @@ class _VoiceCommandButtonState extends State<VoiceCommandButton>
       return;
     }
     _buffer = '';
-    await _voice.start(onResult: (text) {
+    await _voice.start(onResult: (final text) {
       setState(() => _buffer = text);
     });
     setState(() {});
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final listening = _voice.isListening;
     return Tooltip(
       message: widget.tooltip ?? 'Voice',
@@ -133,15 +130,13 @@ class _VoiceCommandButtonState extends State<VoiceCommandButton>
               height: 72,
               child: AnimatedBuilder(
                 animation: _pulseController,
-                builder: (context, child) {
-                  return Container(
+                builder: (final context, final child) => Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.red
-                          .withOpacity(0.2 + 0.2 * _pulseController.value),
+                          .withValues(alpha: 0.2 + 0.2 * _pulseController.value),
                     ),
-                  );
-                },
+                  ),
               ),
             ),
           FloatingActionButton(

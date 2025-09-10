@@ -4,10 +4,10 @@ import 'dart:convert';
 
 /// Advanced gamification service implementing 2025 engagement trends
 class AdvancedGamificationService {
-  static final AdvancedGamificationService _instance =
-      AdvancedGamificationService._internal();
   factory AdvancedGamificationService() => _instance;
   AdvancedGamificationService._internal();
+  static final AdvancedGamificationService _instance =
+      AdvancedGamificationService._internal();
 
   // Achievement system
   final Map<String, Achievement> _achievements = {
@@ -94,7 +94,7 @@ class AdvancedGamificationService {
   List<LeaderboardEntry> get leaderboard => _leaderboard;
 
   /// Award points for an action
-  Future<void> awardPoints(String action, {int? customPoints}) async {
+  Future<void> awardPoints(final String action, {final int? customPoints}) async {
     final points = customPoints ?? _getPointsForAction(action);
     if (points > 0) {
       _userProgress.totalPoints += points;
@@ -115,7 +115,7 @@ class AdvancedGamificationService {
   }
 
   /// Complete a goal
-  Future<void> completeGoal(String goalId, String goalName) async {
+  Future<void> completeGoal(final String goalId, final String goalName) async {
     _userProgress.completedGoals++;
     _userProgress.currentStreak++;
 
@@ -129,9 +129,9 @@ class AdvancedGamificationService {
   }
 
   /// Join a social challenge
-  Future<void> joinChallenge(String challengeId) async {
+  Future<void> joinChallenge(final String challengeId) async {
     final challenge = _activeChallenges.firstWhere(
-      (c) => c.id == challengeId,
+      (final c) => c.id == challengeId,
       orElse: () => throw Exception('Challenge not found'),
     );
 
@@ -142,9 +142,9 @@ class AdvancedGamificationService {
   }
 
   /// Submit challenge progress
-  Future<void> submitChallengeProgress(String challengeId, int progress) async {
+  Future<void> submitChallengeProgress(final String challengeId, final int progress) async {
     final challenge = _activeChallenges.firstWhere(
-      (c) => c.id == challengeId,
+      (final c) => c.id == challengeId,
       orElse: () => throw Exception('Challenge not found'),
     );
 
@@ -253,7 +253,8 @@ class AdvancedGamificationService {
     final prefs = await SharedPreferences.getInstance();
     final progressJson = prefs.getString('user_progress');
     if (progressJson != null) {
-      _userProgress = UserProgress.fromJson(jsonDecode(progressJson));
+      _userProgress = UserProgress.fromJson(
+          jsonDecode(progressJson) as Map<String, dynamic>);
     } else {
       _userProgress = UserProgress();
     }
@@ -268,16 +269,18 @@ class AdvancedGamificationService {
     final prefs = await SharedPreferences.getInstance();
     final achievementsJson = prefs.getString('unlocked_achievements');
     if (achievementsJson != null) {
-      final List<dynamic> achievementsList = jsonDecode(achievementsJson);
-      _unlockedAchievements =
-          achievementsList.map((json) => Achievement.fromJson(json)).toList();
+      final List<dynamic> achievementsList =
+          jsonDecode(achievementsJson) as List<dynamic>;
+      _unlockedAchievements = achievementsList
+          .map((final json) => Achievement.fromJson(json as Map<String, dynamic>))
+          .toList();
     }
   }
 
   Future<void> _saveAchievements() async {
     final prefs = await SharedPreferences.getInstance();
     final achievementsJson =
-        jsonEncode(_unlockedAchievements.map((a) => a.toJson()).toList());
+        jsonEncode(_unlockedAchievements.map((final a) => a.toJson()).toList());
     await prefs.setString('unlocked_achievements', achievementsJson);
   }
 
@@ -341,7 +344,7 @@ class AdvancedGamificationService {
     ];
   }
 
-  int _getPointsForAction(String action) {
+  int _getPointsForAction(final String action) {
     switch (action) {
       case 'login':
         return 10;
@@ -358,7 +361,7 @@ class AdvancedGamificationService {
     }
   }
 
-  int _getPointsForLevel(int level) {
+  int _getPointsForLevel(final int level) {
     return level * level * 100; // Exponential growth
   }
 
@@ -391,7 +394,7 @@ class AdvancedGamificationService {
     }
   }
 
-  Future<void> _checkAchievements(String action) async {
+  Future<void> _checkAchievements(final String action) async {
     switch (action) {
       case 'login':
         if (!_hasAchievement('first_login')) {
@@ -421,11 +424,9 @@ class AdvancedGamificationService {
     }
   }
 
-  bool _hasAchievement(String achievementId) {
-    return _unlockedAchievements.any((a) => a.id == achievementId);
-  }
+  bool _hasAchievement(final String achievementId) => _unlockedAchievements.any((final a) => a.id == achievementId);
 
-  Future<void> _unlockAchievement(String achievementId) async {
+  Future<void> _unlockAchievement(final String achievementId) async {
     if (!_hasAchievement(achievementId)) {
       final achievement = _achievements[achievementId];
       if (achievement != null) {
@@ -437,8 +438,8 @@ class AdvancedGamificationService {
     }
   }
 
-  Future<void> _completeChallenge(String challengeId) async {
-    final challenge = _activeChallenges.firstWhere((c) => c.id == challengeId);
+  Future<void> _completeChallenge(final String challengeId) async {
+    final challenge = _activeChallenges.firstWhere((final c) => c.id == challengeId);
     await awardPoints('challenge_completed', customPoints: challenge.reward);
   }
 }
@@ -446,17 +447,6 @@ class AdvancedGamificationService {
 // Data models
 
 class UserProgress {
-  String userId;
-  int totalPoints;
-  int dailyPoints;
-  int weeklyPoints;
-  int level;
-  int currentStreak;
-  int completedGoals;
-  int budgetTrackingDays;
-  int appointmentsAttended;
-  int socialInteractions;
-  DateTime? lastActivityDate;
 
   UserProgress({
     this.userId = 'default_user',
@@ -472,6 +462,33 @@ class UserProgress {
     this.lastActivityDate,
   });
 
+  factory UserProgress.fromJson(final Map<String, dynamic> json) => UserProgress(
+        userId: (json['userId'] as String?) ?? 'default_user',
+        totalPoints: (json['totalPoints'] as int?) ?? 0,
+        dailyPoints: (json['dailyPoints'] as int?) ?? 0,
+        weeklyPoints: (json['weeklyPoints'] as int?) ?? 0,
+        level: (json['level'] as int?) ?? 1,
+        currentStreak: (json['currentStreak'] as int?) ?? 0,
+        completedGoals: (json['completedGoals'] as int?) ?? 0,
+        budgetTrackingDays: (json['budgetTrackingDays'] as int?) ?? 0,
+        appointmentsAttended: (json['appointmentsAttended'] as int?) ?? 0,
+        socialInteractions: (json['socialInteractions'] as int?) ?? 0,
+        lastActivityDate: json['lastActivityDate'] != null
+            ? DateTime.parse(json['lastActivityDate'] as String)
+            : null,
+      );
+  String userId;
+  int totalPoints;
+  int dailyPoints;
+  int weeklyPoints;
+  int level;
+  int currentStreak;
+  int completedGoals;
+  int budgetTrackingDays;
+  int appointmentsAttended;
+  int socialInteractions;
+  DateTime? lastActivityDate;
+
   Map<String, dynamic> toJson() => {
         'userId': userId,
         'totalPoints': totalPoints,
@@ -485,32 +502,9 @@ class UserProgress {
         'socialInteractions': socialInteractions,
         'lastActivityDate': lastActivityDate?.toIso8601String(),
       };
-
-  factory UserProgress.fromJson(Map<String, dynamic> json) => UserProgress(
-        userId: json['userId'] ?? 'default_user',
-        totalPoints: json['totalPoints'] ?? 0,
-        dailyPoints: json['dailyPoints'] ?? 0,
-        weeklyPoints: json['weeklyPoints'] ?? 0,
-        level: json['level'] ?? 1,
-        currentStreak: json['currentStreak'] ?? 0,
-        completedGoals: json['completedGoals'] ?? 0,
-        budgetTrackingDays: json['budgetTrackingDays'] ?? 0,
-        appointmentsAttended: json['appointmentsAttended'] ?? 0,
-        socialInteractions: json['socialInteractions'] ?? 0,
-        lastActivityDate: json['lastActivityDate'] != null
-            ? DateTime.parse(json['lastActivityDate'])
-            : null,
-      );
 }
 
 class Achievement {
-  final String id;
-  final String title;
-  final String description;
-  final IconData icon;
-  final int points;
-  final AchievementRarity rarity;
-  final AchievementCategory category;
 
   Achievement({
     required this.id,
@@ -522,6 +516,29 @@ class Achievement {
     required this.category,
   });
 
+  factory Achievement.fromJson(final Map<String, dynamic> json) => Achievement(
+        id: json['id'] as String,
+        title: json['title'] as String,
+        description: json['description'] as String,
+        icon: IconData(json['icon'] as int, fontFamily: 'MaterialIcons'),
+        points: json['points'] as int,
+        rarity: AchievementRarity.values.firstWhere(
+          (final r) => r.name == json['rarity'] as String,
+          orElse: () => AchievementRarity.common,
+        ),
+        category: AchievementCategory.values.firstWhere(
+          (final c) => c.name == json['category'] as String,
+          orElse: () => AchievementCategory.milestone,
+        ),
+      );
+  final String id;
+  final String title;
+  final String description;
+  final IconData icon;
+  final int points;
+  final AchievementRarity rarity;
+  final AchievementCategory category;
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'title': title,
@@ -531,22 +548,6 @@ class Achievement {
         'rarity': rarity.name,
         'category': category.name,
       };
-
-  factory Achievement.fromJson(Map<String, dynamic> json) => Achievement(
-        id: json['id'],
-        title: json['title'],
-        description: json['description'],
-        icon: IconData(json['icon'], fontFamily: 'MaterialIcons'),
-        points: json['points'],
-        rarity: AchievementRarity.values.firstWhere(
-          (r) => r.name == json['rarity'],
-          orElse: () => AchievementRarity.common,
-        ),
-        category: AchievementCategory.values.firstWhere(
-          (c) => c.name == json['category'],
-          orElse: () => AchievementCategory.milestone,
-        ),
-      );
 }
 
 enum AchievementRarity {
@@ -567,14 +568,6 @@ enum AchievementCategory {
 }
 
 class SocialChallenge {
-  final String id;
-  final String title;
-  final String description;
-  final int target;
-  final List<String> participants;
-  final Map<String, int> userProgress;
-  final DateTime endDate;
-  final int reward;
 
   SocialChallenge({
     required this.id,
@@ -586,15 +579,17 @@ class SocialChallenge {
     required this.endDate,
     required this.reward,
   });
+  final String id;
+  final String title;
+  final String description;
+  final int target;
+  final List<String> participants;
+  final Map<String, int> userProgress;
+  final DateTime endDate;
+  final int reward;
 }
 
 class LeaderboardEntry {
-  final String userId;
-  final String username;
-  final int points;
-  final int level;
-  final String avatar;
-  final int rank;
 
   LeaderboardEntry({
     required this.userId,
@@ -604,14 +599,15 @@ class LeaderboardEntry {
     required this.avatar,
     required this.rank,
   });
+  final String userId;
+  final String username;
+  final int points;
+  final int level;
+  final String avatar;
+  final int rank;
 }
 
 class Recommendation {
-  final String title;
-  final String description;
-  final String action;
-  final RecommendationPriority priority;
-  final int points;
 
   Recommendation({
     required this.title,
@@ -620,6 +616,11 @@ class Recommendation {
     required this.priority,
     required this.points,
   });
+  final String title;
+  final String description;
+  final String action;
+  final RecommendationPriority priority;
+  final int points;
 }
 
 enum RecommendationPriority {
@@ -629,12 +630,6 @@ enum RecommendationPriority {
 }
 
 class LevelInfo {
-  final int currentLevel;
-  final int nextLevel;
-  final int currentPoints;
-  final int requiredPoints;
-  final double progress;
-  final int pointsToNext;
 
   LevelInfo({
     required this.currentLevel,
@@ -644,4 +639,10 @@ class LevelInfo {
     required this.progress,
     required this.pointsToNext,
   });
+  final int currentLevel;
+  final int nextLevel;
+  final int currentPoints;
+  final int requiredPoints;
+  final double progress;
+  final int pointsToNext;
 }

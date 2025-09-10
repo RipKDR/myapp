@@ -10,9 +10,9 @@ import 'analytics_service.dart';
 /// This service handles user support, feedback collection,
 /// and help system functionality.
 class SupportService {
-  static final SupportService _instance = SupportService._internal();
   factory SupportService() => _instance;
   SupportService._internal();
+  static final SupportService _instance = SupportService._internal();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -20,12 +20,12 @@ class SupportService {
 
   /// Submit user feedback
   Future<bool> submitFeedback({
-    required String feedbackType,
-    required String feedback,
-    int? rating,
-    String? category,
-    List<String>? attachments,
-    Map<String, dynamic>? additionalData,
+    required final String feedbackType,
+    required final String feedback,
+    final int? rating,
+    final String? category,
+    final List<String>? attachments,
+    final Map<String, dynamic>? additionalData,
   }) async {
     try {
       final user = _auth.currentUser;
@@ -69,7 +69,7 @@ class SupportService {
   }
 
   /// Get priority level for feedback
-  String _getPriority(String feedbackType, int? rating) {
+  String _getPriority(final String feedbackType, final int? rating) {
     if (feedbackType == 'bug_report' || (rating != null && rating <= 2)) {
       return 'high';
     } else if (feedbackType == 'feature_request' ||
@@ -82,16 +82,15 @@ class SupportService {
 
   /// Submit bug report
   Future<bool> submitBugReport({
-    required String description,
-    required String stepsToReproduce,
-    required String expectedBehavior,
-    required String actualBehavior,
-    String? deviceInfo,
-    String? appVersion,
-    List<String>? screenshots,
-    Map<String, dynamic>? additionalData,
-  }) async {
-    return await submitFeedback(
+    required final String description,
+    required final String stepsToReproduce,
+    required final String expectedBehavior,
+    required final String actualBehavior,
+    final String? deviceInfo,
+    final String? appVersion,
+    final List<String>? screenshots,
+    final Map<String, dynamic>? additionalData,
+  }) async => submitFeedback(
       feedbackType: 'bug_report',
       feedback: description,
       category: 'bug',
@@ -105,18 +104,16 @@ class SupportService {
         ...?additionalData,
       },
     );
-  }
 
   /// Submit feature request
   Future<bool> submitFeatureRequest({
-    required String title,
-    required String description,
-    required String useCase,
-    String? priority,
-    List<String>? attachments,
-    Map<String, dynamic>? additionalData,
-  }) async {
-    return await submitFeedback(
+    required final String title,
+    required final String description,
+    required final String useCase,
+    final String? priority,
+    final List<String>? attachments,
+    final Map<String, dynamic>? additionalData,
+  }) async => submitFeedback(
       feedbackType: 'feature_request',
       feedback: description,
       category: 'feature',
@@ -128,17 +125,15 @@ class SupportService {
         ...?additionalData,
       },
     );
-  }
 
   /// Submit accessibility feedback
   Future<bool> submitAccessibilityFeedback({
-    required String issue,
-    required String impact,
-    required String suggestedSolution,
-    String? accessibilityFeature,
-    Map<String, dynamic>? additionalData,
-  }) async {
-    return await submitFeedback(
+    required final String issue,
+    required final String impact,
+    required final String suggestedSolution,
+    final String? accessibilityFeature,
+    final Map<String, dynamic>? additionalData,
+  }) async => submitFeedback(
       feedbackType: 'accessibility_feedback',
       feedback: issue,
       category: 'accessibility',
@@ -149,7 +144,6 @@ class SupportService {
         ...?additionalData,
       },
     );
-  }
 
   /// Get device information
   Future<String> _getDeviceInfo() async {
@@ -162,8 +156,8 @@ class SupportService {
 
   /// Get help articles
   Future<List<Map<String, dynamic>>> getHelpArticles({
-    String? category,
-    String? searchTerm,
+    final String? category,
+    final String? searchTerm,
   }) async {
     try {
       Query query = _firestore.collection('help_articles');
@@ -179,7 +173,7 @@ class SupportService {
 
       final snapshot = await query.get();
       return snapshot.docs
-          .map((doc) => {
+          .map((final doc) => {
                 'id': doc.id,
                 ...doc.data() as Map<String, dynamic>,
               })
@@ -195,7 +189,7 @@ class SupportService {
 
   /// Get FAQ items
   Future<List<Map<String, dynamic>>> getFAQItems({
-    String? category,
+    final String? category,
   }) async {
     try {
       Query query = _firestore.collection('faq');
@@ -206,7 +200,7 @@ class SupportService {
 
       final snapshot = await query.get();
       return snapshot.docs
-          .map((doc) => {
+          .map((final doc) => {
                 'id': doc.id,
                 ...doc.data() as Map<String, dynamic>,
               })
@@ -222,11 +216,11 @@ class SupportService {
 
   /// Contact support
   Future<bool> contactSupport({
-    required String subject,
-    required String message,
-    String? category,
-    String? priority,
-    List<String>? attachments,
+    required final String subject,
+    required final String message,
+    final String? category,
+    final String? priority,
+    final List<String>? attachments,
   }) async {
     try {
       final user = _auth.currentUser;
@@ -265,12 +259,12 @@ class SupportService {
 
   /// Launch email support
   Future<bool> launchEmailSupport({
-    String? subject,
-    String? body,
+    final String? subject,
+    final String? body,
   }) async {
     try {
       final user = _auth.currentUser;
-      final email = 'support@ndisconnect.app';
+      const email = 'support@ndisconnect.app';
       final defaultSubject = subject ?? 'NDIS Connect Support Request';
       final defaultBody = body ??
           '''
@@ -360,19 +354,16 @@ Best regards,
   }
 
   /// Get support contact information
-  Map<String, String> getSupportContacts() {
-    return {
+  Map<String, String> getSupportContacts() => {
       'email': 'support@ndisconnect.app',
       'phone': '1800-NDIS-APP',
       'website': 'https://ndisconnect.app/support',
       'hours': 'Monday - Friday, 9:00 AM - 5:00 PM AEST',
       'emergency': '000 (for emergencies)',
     };
-  }
 
   /// Get support categories
-  List<Map<String, String>> getSupportCategories() {
-    return [
+  List<Map<String, String>> getSupportCategories() => [
       {
         'id': 'general',
         'name': 'General Support',
@@ -409,11 +400,9 @@ Best regards,
         'description': 'General feedback and suggestions'
       },
     ];
-  }
 
   /// Get feedback types
-  List<Map<String, String>> getFeedbackTypes() {
-    return [
+  List<Map<String, String>> getFeedbackTypes() => [
       {
         'id': 'bug_report',
         'name': 'Bug Report',
@@ -445,13 +434,12 @@ Best regards,
         'description': 'Report a concern or complaint'
       },
     ];
-  }
 
   /// Rate app
   Future<bool> rateApp({
-    required int rating,
-    String? review,
-    String? category,
+    required final int rating,
+    final String? review,
+    final String? category,
   }) async {
     try {
       final user = _auth.currentUser;
@@ -498,7 +486,7 @@ Best regards,
           .get();
 
       return snapshot.docs
-          .map((doc) => {
+          .map((final doc) => {
                 'id': doc.id,
                 ...doc.data(),
               })
@@ -513,7 +501,7 @@ Best regards,
   }
 
   /// Get support ticket status
-  Future<Map<String, dynamic>?> getSupportTicketStatus(String ticketId) async {
+  Future<Map<String, dynamic>?> getSupportTicketStatus(final String ticketId) async {
     try {
       final doc =
           await _firestore.collection('support_tickets').doc(ticketId).get();

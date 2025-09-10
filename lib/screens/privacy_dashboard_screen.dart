@@ -8,8 +8,7 @@ class PrivacyDashboardScreen extends StatelessWidget {
   const PrivacyDashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ModernDashboardLayout(
+  Widget build(final BuildContext context) => ModernDashboardLayout(
       title: 'Privacy & Data Control',
       subtitle: 'Your data, your choices',
       children: [
@@ -21,13 +20,12 @@ class PrivacyDashboardScreen extends StatelessWidget {
         _DataRetentionSettings(),
       ],
     );
-  }
 }
 
 /// Clear overview of how user data is being used
 class _DataUsageOverview extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return InteractiveCard(
@@ -113,14 +111,13 @@ class _DataUsageOverview extends StatelessWidget {
   }
 
   Widget _buildDataUsageItem(
-    BuildContext context,
-    String title,
-    String description,
-    IconData icon,
-    Color iconColor,
-    bool isEnabled,
-  ) {
-    return Row(
+    final BuildContext context,
+    final String title,
+    final String description,
+    final IconData icon,
+    final Color iconColor,
+    final bool isEnabled,
+  ) => Row(
       children: [
         Icon(
           icon,
@@ -154,7 +151,6 @@ class _DataUsageOverview extends StatelessWidget {
         ),
       ],
     );
-  }
 }
 
 /// Granular permission controls for different data types
@@ -174,8 +170,7 @@ class _PermissionControlsState extends State<_PermissionControls> {
   };
 
   @override
-  Widget build(BuildContext context) {
-    return InteractiveCard(
+  Widget build(final BuildContext context) => InteractiveCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -204,13 +199,12 @@ class _PermissionControlsState extends State<_PermissionControls> {
           ),
           const SizedBox(height: 16),
           ..._permissions.entries
-              .map((entry) => _buildPermissionToggle(entry.key, entry.value)),
+              .map((final entry) => _buildPermissionToggle(entry.key, entry.value)),
         ],
       ),
     );
-  }
 
-  Widget _buildPermissionToggle(String permission, bool isEnabled) {
+  Widget _buildPermissionToggle(final String permission, final bool isEnabled) {
     final permissionData = _getPermissionData(permission);
 
     return Padding(
@@ -244,7 +238,7 @@ class _PermissionControlsState extends State<_PermissionControls> {
           ),
           Switch.adaptive(
             value: isEnabled,
-            onChanged: (value) {
+            onChanged: (final value) {
               setState(() {
                 _permissions[permission] = value;
               });
@@ -258,7 +252,7 @@ class _PermissionControlsState extends State<_PermissionControls> {
     );
   }
 
-  Map<String, dynamic> _getPermissionData(String permission) {
+  Map<String, dynamic> _getPermissionData(final String permission) {
     final data = {
       'location': {
         'title': 'Location',
@@ -304,8 +298,7 @@ class _PermissionControlsState extends State<_PermissionControls> {
 /// Easy data export functionality
 class _DataExportCard extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return InteractiveCard(
+  Widget build(final BuildContext context) => InteractiveCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -342,29 +335,28 @@ class _DataExportCard extends StatelessWidget {
             isPrimary: true,
             backgroundColor: AppTheme.hopeBlue,
             onPressed: () => _exportData(context),
-            child: Row(
+            child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.file_download, size: 18),
-                const SizedBox(width: 8),
-                const Text('Download My Data'),
+                Icon(Icons.file_download, size: 18),
+                SizedBox(width: 8),
+                Text('Download My Data'),
               ],
             ),
           ),
         ],
       ),
     );
-  }
 
-  Future<void> _exportData(BuildContext context) async {
+  Future<void> _exportData(final BuildContext context) async {
     HapticUtils.successFeedback(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Row(
+        content: const Row(
           children: [
-            const Icon(Icons.check_circle, color: AppTheme.trustGreen),
-            const SizedBox(width: 8),
-            const Text(
+            Icon(Icons.check_circle, color: AppTheme.trustGreen),
+            SizedBox(width: 8),
+            Text(
                 'Data export started. You\'ll receive an email shortly.'),
           ],
         ),
@@ -377,8 +369,7 @@ class _DataExportCard extends StatelessWidget {
 /// Privacy education and tips
 class _PrivacyEducationCard extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return InteractiveCard(
+  Widget build(final BuildContext context) => InteractiveCard(
       onTap: () => _showPrivacyEducation(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -446,13 +437,12 @@ class _PrivacyEducationCard extends StatelessWidget {
         ],
       ),
     );
-  }
 
-  void _showPrivacyEducation(BuildContext context) {
+  void _showPrivacyEducation(final BuildContext context) {
     HapticUtils.lightImpact(context);
     // Implementation would show detailed privacy education
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Privacy education feature coming soon!')),
+      const SnackBar(content: Text('Privacy education feature coming soon!')),
     );
   }
 }
@@ -470,8 +460,7 @@ class _ContactPreferencesState extends State<_ContactPreferences> {
   bool _emergencyContacts = true;
 
   @override
-  Widget build(BuildContext context) {
-    return InteractiveCard(
+  Widget build(final BuildContext context) => InteractiveCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -519,26 +508,25 @@ class _ContactPreferencesState extends State<_ContactPreferences> {
             'Appointment Reminders',
             'Get notified about upcoming appointments',
             _appointmentReminders,
-            (value) => setState(() => _appointmentReminders = value),
+            (final value) => setState(() => _appointmentReminders = value),
           ),
           _buildTogglePreference(
             'Emergency Contacts',
             'Allow emergency services to contact you',
             _emergencyContacts,
-            (value) => setState(() => _emergencyContacts = value),
+            (final value) => setState(() => _emergencyContacts = value),
           ),
           _buildTogglePreference(
             'Marketing Emails',
             'Receive updates about new NDIS services',
             _marketingEmails,
-            (value) => setState(() => _marketingEmails = value),
+            (final value) => setState(() => _marketingEmails = value),
           ),
         ],
       ),
     );
-  }
 
-  Widget _buildContactChoice(String value, String label, IconData icon) {
+  Widget _buildContactChoice(final String value, final String label, final IconData icon) {
     final isSelected = _preferredContact == value;
 
     return FilterChip(
@@ -551,7 +539,7 @@ class _ContactPreferencesState extends State<_ContactPreferences> {
         ],
       ),
       selected: isSelected,
-      onSelected: (selected) {
+      onSelected: (final selected) {
         if (selected) {
           setState(() => _preferredContact = value);
           HapticUtils.selectionClick(context);
@@ -563,12 +551,11 @@ class _ContactPreferencesState extends State<_ContactPreferences> {
   }
 
   Widget _buildTogglePreference(
-    String title,
-    String description,
-    bool value,
-    ValueChanged<bool> onChanged,
-  ) {
-    return Padding(
+    final String title,
+    final String description,
+    final bool value,
+    final ValueChanged<bool> onChanged,
+  ) => Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
@@ -593,7 +580,7 @@ class _ContactPreferencesState extends State<_ContactPreferences> {
           ),
           Switch.adaptive(
             value: value,
-            onChanged: (newValue) {
+            onChanged: (final newValue) {
               onChanged(newValue);
               HapticUtils.selectionClick(context);
             },
@@ -603,14 +590,12 @@ class _ContactPreferencesState extends State<_ContactPreferences> {
         ],
       ),
     );
-  }
 }
 
 /// Data retention and deletion settings
 class _DataRetentionSettings extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return InteractiveCard(
+  Widget build(final BuildContext context) => InteractiveCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -686,25 +671,24 @@ class _DataRetentionSettings extends StatelessWidget {
           HapticButton(
             isDestructive: true,
             onPressed: () => _showDeleteAccount(context),
-            child: Row(
+            child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.delete_forever, size: 18),
-                const SizedBox(width: 8),
-                const Text('Delete All My Data'),
+                Icon(Icons.delete_forever, size: 18),
+                SizedBox(width: 8),
+                Text('Delete All My Data'),
               ],
             ),
           ),
         ],
       ),
     );
-  }
 
-  void _showDeleteAccount(BuildContext context) {
+  void _showDeleteAccount(final BuildContext context) {
     HapticUtils.errorFeedback(context);
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (final context) => AlertDialog(
         title: const Text('Delete All Data'),
         content: const Text(
           'This will permanently delete all your data including your NDIS plan, appointments, and preferences. This action cannot be undone.',

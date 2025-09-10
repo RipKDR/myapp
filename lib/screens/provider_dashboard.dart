@@ -10,8 +10,7 @@ class ProviderDashboardScreen extends StatelessWidget {
   const ProviderDashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(final BuildContext context) => Scaffold(
       appBar: AppBar(
         title: const Text('Provider Hub'),
         actions: [
@@ -81,7 +80,7 @@ class ProviderDashboardScreen extends StatelessWidget {
           const SizedBox(height: 16),
           // Compliance Status Card
           Card(
-            color: AppTheme.ndisGreen.withOpacity(0.08),
+            color: AppTheme.ndisGreen.withValues(alpha: 0.08),
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -92,7 +91,7 @@ class ProviderDashboardScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: AppTheme.ndisGreen.withOpacity(0.2),
+                          color: AppTheme.ndisGreen.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Icon(
@@ -207,16 +206,14 @@ class ProviderDashboardScreen extends StatelessWidget {
         ],
       ),
     );
-  }
 
-  void _openSettings(BuildContext context) {
+  void _openSettings(final BuildContext context) {
     final settings = context.read<SettingsController>();
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
+      builder: (final context) => Padding(
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,7 +243,7 @@ class ProviderDashboardScreen extends StatelessWidget {
                         child: Text('Dark'),
                       ),
                     ],
-                    onChanged: (m) =>
+                    onChanged: (final m) =>
                         m != null ? settings.setThemeMode(m) : null,
                   ),
                 ],
@@ -269,7 +266,7 @@ class ProviderDashboardScreen extends StatelessWidget {
                       min: 0.8,
                       max: 1.8,
                       value: settings.textScale,
-                      onChanged: (v) => settings.setTextScale(v),
+                      onChanged: settings.setTextScale,
                     ),
                   ),
                   Text('${(settings.textScale * 100).round()}%'),
@@ -277,23 +274,22 @@ class ProviderDashboardScreen extends StatelessWidget {
               ),
             ],
           ),
-        );
-      },
+        ),
     );
   }
 }
 
 class _SectionHeader extends StatelessWidget {
-  final String title;
-  final IconData icon;
 
   const _SectionHeader({
     required this.title,
     required this.icon,
   });
+  final String title;
+  final IconData icon;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
     return Padding(
@@ -317,7 +313,7 @@ class _SectionHeader extends StatelessWidget {
           Container(
             height: 1,
             width: 40,
-            color: scheme.outline.withOpacity(0.3),
+            color: scheme.outline.withValues(alpha: 0.3),
           ),
         ],
       ),

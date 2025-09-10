@@ -7,14 +7,16 @@ import 'controllers/gamification_controller.dart';
 import 'services/firebase_service.dart';
 import 'services/purchase_service.dart';
 import 'services/error_service.dart';
-import 'theme/google_theme.dart';
-import 'routes.dart';
+import 'services/performance_service.dart';
+import 'ui/theme/app_theme.dart';
+import 'app/router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize services in order
   await ErrorService.initialize();
+  await PerformanceService().initialize();
   await FirebaseService.tryInitialize();
   await PurchaseService.initialize();
 
@@ -34,16 +36,16 @@ class NDISConnectApp extends StatelessWidget {
   const NDISConnectApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final settings = context.watch<SettingsController>();
 
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'NDIS Connect',
-      theme: GoogleTheme.lightTheme(highContrast: settings.highContrast),
-      darkTheme: GoogleTheme.darkTheme(highContrast: settings.highContrast),
+      theme: NDISAppTheme.lightTheme(highContrast: settings.highContrast),
+      darkTheme: NDISAppTheme.darkTheme(highContrast: settings.highContrast),
       themeMode: settings.themeMode,
-      builder: (context, child) {
+      builder: (final context, final child) {
         // Apply user-selected text scale and reduced motion globally.
         final media = MediaQuery.of(context);
         return MediaQuery(
@@ -55,8 +57,7 @@ class NDISConnectApp extends StatelessWidget {
           child: child ?? const SizedBox.shrink(),
         );
       },
-      initialRoute: Routes.bootstrap,
-      routes: Routes.routes,
+      routerConfig: AppRouter.router,
     );
   }
 }

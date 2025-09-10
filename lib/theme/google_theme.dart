@@ -29,32 +29,30 @@ class GoogleTheme {
   static const Color ndisOrange = Color(0xFFFF9800);
   static const Color ndisPurple = Color(0xFF9C27B0);
 
-  static ThemeData lightTheme({bool highContrast = false}) {
+  static ThemeData lightTheme({final bool highContrast = false}) {
     final colorScheme = ColorScheme.light(
       primary: highContrast ? const Color(0xFF0D47A1) : googleBlue,
-      onPrimary: Colors.white,
-      primaryContainer: googleBlue.withOpacity(0.1),
+      primaryContainer: googleBlue.withValues(alpha: 0.1),
       onPrimaryContainer: googleBlue,
       secondary: googleGreen,
       onSecondary: Colors.white,
-      secondaryContainer: googleGreen.withOpacity(0.1),
+      secondaryContainer: googleGreen.withValues(alpha: 0.1),
       onSecondaryContainer: googleGreen,
       tertiary: googleYellow,
       onTertiary: Colors.black,
-      tertiaryContainer: googleYellow.withOpacity(0.1),
-      onTertiaryContainer: googleYellow.withOpacity(0.8),
+      tertiaryContainer: googleYellow.withValues(alpha: 0.1),
+      onTertiaryContainer: googleYellow.withValues(alpha: 0.8),
       error: googleRed,
-      onError: Colors.white,
-      errorContainer: googleRed.withOpacity(0.1),
+      errorContainer: googleRed.withValues(alpha: 0.1),
       onErrorContainer: googleRed,
       surface: highContrast ? Colors.white : surfaceLight,
       onSurface: highContrast ? Colors.black : const Color(0xFF202124),
       surfaceContainerHighest:
           highContrast ? Colors.grey[100] : surfaceContainer,
-      outline: googleGrey.withOpacity(0.2),
-      outlineVariant: googleGrey.withOpacity(0.1),
-      shadow: Colors.black.withOpacity(0.1),
-      surfaceTint: googleBlue.withOpacity(0.05),
+      outline: googleGrey.withValues(alpha: 0.2),
+      outlineVariant: googleGrey.withValues(alpha: 0.1),
+      shadow: Colors.black.withValues(alpha: 0.1),
+      surfaceTint: googleBlue.withValues(alpha: 0.05),
     );
 
     return ThemeData(
@@ -201,7 +199,7 @@ class GoogleTheme {
           fontFamily: 'Roboto',
         ),
         hintStyle: TextStyle(
-          color: colorScheme.onSurfaceVariant.withOpacity(0.6),
+          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
           fontSize: 16,
           fontFamily: 'Roboto',
         ),
@@ -211,7 +209,7 @@ class GoogleTheme {
       chipTheme: ChipThemeData(
         backgroundColor: colorScheme.surfaceContainerHighest,
         selectedColor: colorScheme.secondaryContainer,
-        disabledColor: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+        disabledColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         labelStyle: TextStyle(
           color: colorScheme.onSurface,
           fontSize: 14,
@@ -271,13 +269,13 @@ class GoogleTheme {
 
       // Switch theme
       switchTheme: SwitchThemeData(
-        thumbColor: WidgetStateProperty.resolveWith((states) {
+        thumbColor: WidgetStateProperty.resolveWith((final states) {
           if (states.contains(WidgetState.selected)) {
             return colorScheme.onPrimary;
           }
           return colorScheme.outline;
         }),
-        trackColor: WidgetStateProperty.resolveWith((states) {
+        trackColor: WidgetStateProperty.resolveWith((final states) {
           if (states.contains(WidgetState.selected)) {
             return colorScheme.primary;
           }
@@ -287,32 +285,31 @@ class GoogleTheme {
     );
   }
 
-  static ThemeData darkTheme({bool highContrast = false}) {
+  static ThemeData darkTheme({final bool highContrast = false}) {
     final colorScheme = ColorScheme.dark(
       primary: highContrast ? googleBlueLight : googleBlue,
       onPrimary: Colors.white,
-      primaryContainer: googleBlue.withOpacity(0.2),
+      primaryContainer: googleBlue.withValues(alpha: 0.2),
       onPrimaryContainer: googleBlueLight,
       secondary: googleGreen,
-      onSecondary: Colors.black,
-      secondaryContainer: googleGreen.withOpacity(0.2),
+      secondaryContainer: googleGreen.withValues(alpha: 0.2),
       onSecondaryContainer: googleGreen,
       tertiary: googleYellow,
       onTertiary: Colors.black,
-      tertiaryContainer: googleYellow.withOpacity(0.2),
+      tertiaryContainer: googleYellow.withValues(alpha: 0.2),
       onTertiaryContainer: googleYellow,
       error: googleRed,
       onError: Colors.white,
-      errorContainer: googleRed.withOpacity(0.2),
+      errorContainer: googleRed.withValues(alpha: 0.2),
       onErrorContainer: googleRed,
       surface: highContrast ? Colors.black : surfaceDark,
       onSurface: highContrast ? Colors.white : Colors.white,
       surfaceContainerHighest:
           highContrast ? Colors.grey[800] : surfaceContainerDark,
-      outline: googleGreyLight.withOpacity(0.3),
-      outlineVariant: googleGreyLight.withOpacity(0.2),
-      shadow: Colors.black.withOpacity(0.3),
-      surfaceTint: googleBlue.withOpacity(0.1),
+      outline: googleGreyLight.withValues(alpha: 0.3),
+      outlineVariant: googleGreyLight.withValues(alpha: 0.2),
+      shadow: Colors.black.withValues(alpha: 0.3),
+      surfaceTint: googleBlue.withValues(alpha: 0.1),
     );
 
     return lightTheme(highContrast: highContrast).copyWith(
@@ -336,8 +333,7 @@ class GoogleTheme {
     );
   }
 
-  static TextTheme _buildTextTheme(ColorScheme colorScheme, bool highContrast) {
-    return TextTheme(
+  static TextTheme _buildTextTheme(final ColorScheme colorScheme, final bool highContrast) => TextTheme(
       // Display styles
       displayLarge: TextStyle(
         fontSize: 57,
@@ -456,5 +452,4 @@ class GoogleTheme {
         fontFamily: 'Roboto',
       ),
     );
-  }
 }

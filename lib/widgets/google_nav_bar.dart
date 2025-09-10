@@ -2,12 +2,6 @@ import 'package:flutter/material.dart';
 
 /// Google-style navigation bar with clean design and smooth animations
 class GoogleNavBar extends StatefulWidget {
-  final List<GoogleNavItem> items;
-  final int selectedIndex;
-  final ValueChanged<int>? onTap;
-  final Color? backgroundColor;
-  final double elevation;
-  final EdgeInsetsGeometry? margin;
 
   const GoogleNavBar({
     super.key,
@@ -18,6 +12,12 @@ class GoogleNavBar extends StatefulWidget {
     this.elevation = 3.0,
     this.margin,
   });
+  final List<GoogleNavItem> items;
+  final int selectedIndex;
+  final ValueChanged<int>? onTap;
+  final Color? backgroundColor;
+  final double elevation;
+  final EdgeInsetsGeometry? margin;
 
   @override
   State<GoogleNavBar> createState() => _GoogleNavBarState();
@@ -37,17 +37,15 @@ class _GoogleNavBarState extends State<GoogleNavBar>
   void _initializeAnimations() {
     _animationControllers = List.generate(
       widget.items.length,
-      (index) => AnimationController(
+      (final index) => AnimationController(
         duration: const Duration(milliseconds: 200),
         vsync: this,
       ),
     );
 
-    _animations = _animationControllers.map((controller) {
-      return Tween<double>(begin: 0.0, end: 1.0).animate(
+    _animations = _animationControllers.map((final controller) => Tween<double>(begin: 0, end: 1).animate(
         CurvedAnimation(parent: controller, curve: Curves.easeInOut),
-      );
-    }).toList();
+      )).toList();
 
     // Animate the initially selected item
     if (widget.selectedIndex < _animationControllers.length) {
@@ -56,7 +54,7 @@ class _GoogleNavBarState extends State<GoogleNavBar>
   }
 
   @override
-  void didUpdateWidget(GoogleNavBar oldWidget) {
+  void didUpdateWidget(final GoogleNavBar oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.selectedIndex != widget.selectedIndex) {
@@ -81,7 +79,7 @@ class _GoogleNavBarState extends State<GoogleNavBar>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -103,7 +101,7 @@ class _GoogleNavBarState extends State<GoogleNavBar>
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: widget.items.asMap().entries.map((entry) {
+            children: widget.items.asMap().entries.map((final entry) {
               final index = entry.key;
               final item = entry.value;
               final isSelected = index == widget.selectedIndex;
@@ -125,10 +123,6 @@ class _GoogleNavBarState extends State<GoogleNavBar>
 }
 
 class _GoogleNavBarItem extends StatelessWidget {
-  final GoogleNavItem item;
-  final bool isSelected;
-  final Animation<double> animation;
-  final VoidCallback? onTap;
 
   const _GoogleNavBarItem({
     required this.item,
@@ -136,16 +130,19 @@ class _GoogleNavBarItem extends StatelessWidget {
     required this.animation,
     this.onTap,
   });
+  final GoogleNavItem item;
+  final bool isSelected;
+  final Animation<double> animation;
+  final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return AnimatedBuilder(
       animation: animation,
-      builder: (context, child) {
-        return GestureDetector(
+      builder: (final context, final child) => GestureDetector(
           onTap: onTap,
           behavior: HitTestBehavior.opaque,
           child: Container(
@@ -159,7 +156,7 @@ class _GoogleNavBarItem extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isSelected
                         ? colorScheme.secondaryContainer
-                            .withOpacity(0.3 + (animation.value * 0.7))
+                            .withValues(alpha: 0.3 + (animation.value * 0.7))
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -194,18 +191,13 @@ class _GoogleNavBarItem extends StatelessWidget {
               ],
             ),
           ),
-        );
-      },
+        ),
     );
   }
 }
 
 /// Navigation item data model
 class GoogleNavItem {
-  final IconData icon;
-  final IconData? activeIcon;
-  final String label;
-  final String? tooltip;
 
   const GoogleNavItem({
     required this.icon,
@@ -213,20 +205,14 @@ class GoogleNavItem {
     required this.label,
     this.tooltip,
   });
+  final IconData icon;
+  final IconData? activeIcon;
+  final String label;
+  final String? tooltip;
 }
 
 /// Google-style app bar with search functionality
 class GoogleAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String? title;
-  final Widget? titleWidget;
-  final List<Widget>? actions;
-  final bool showSearch;
-  final VoidCallback? onSearchTap;
-  final String? searchHint;
-  final bool centerTitle;
-  final Widget? leading;
-  final double elevation;
-  final Color? backgroundColor;
 
   const GoogleAppBar({
     super.key,
@@ -241,9 +227,19 @@ class GoogleAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.elevation = 0,
     this.backgroundColor,
   });
+  final String? title;
+  final Widget? titleWidget;
+  final List<Widget>? actions;
+  final bool showSearch;
+  final VoidCallback? onSearchTap;
+  final String? searchHint;
+  final bool centerTitle;
+  final Widget? leading;
+  final double elevation;
+  final Color? backgroundColor;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -278,13 +274,6 @@ class GoogleAppBar extends StatelessWidget implements PreferredSizeWidget {
 
 /// Google-style search bar
 class GoogleSearchBar extends StatefulWidget {
-  final String? hintText;
-  final ValueChanged<String>? onChanged;
-  final ValueChanged<String>? onSubmitted;
-  final VoidCallback? onTap;
-  final bool enabled;
-  final TextEditingController? controller;
-  final EdgeInsetsGeometry? margin;
 
   const GoogleSearchBar({
     super.key,
@@ -296,6 +285,13 @@ class GoogleSearchBar extends StatefulWidget {
     this.controller,
     this.margin,
   });
+  final String? hintText;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
+  final VoidCallback? onTap;
+  final bool enabled;
+  final TextEditingController? controller;
+  final EdgeInsetsGeometry? margin;
 
   @override
   State<GoogleSearchBar> createState() => _GoogleSearchBarState();
@@ -326,7 +322,7 @@ class _GoogleSearchBarState extends State<GoogleSearchBar> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -337,11 +333,11 @@ class _GoogleSearchBarState extends State<GoogleSearchBar> {
         borderRadius: BorderRadius.circular(28),
         border: _isFocused
             ? Border.all(color: colorScheme.primary, width: 2)
-            : Border.all(color: colorScheme.outline, width: 1),
+            : Border.all(color: colorScheme.outline),
         boxShadow: _isFocused
             ? [
                 BoxShadow(
-                  color: colorScheme.primary.withOpacity(0.1),
+                  color: colorScheme.primary.withValues(alpha: 0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -358,7 +354,7 @@ class _GoogleSearchBarState extends State<GoogleSearchBar> {
         decoration: InputDecoration(
           hintText: widget.hintText,
           hintStyle: TextStyle(
-            color: colorScheme.onSurfaceVariant.withOpacity(0.6),
+            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
             fontSize: 16,
           ),
           prefixIcon: Icon(
@@ -366,7 +362,7 @@ class _GoogleSearchBarState extends State<GoogleSearchBar> {
             color: colorScheme.onSurfaceVariant,
             size: 20,
           ),
-          suffixIcon: widget.controller?.text.isNotEmpty == true
+          suffixIcon: widget.controller?.text.isNotEmpty ?? false
               ? IconButton(
                   onPressed: () {
                     widget.controller?.clear();

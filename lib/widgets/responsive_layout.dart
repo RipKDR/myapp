@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 
 /// Responsive layout system for adaptive UI design across different screen sizes
 class ResponsiveLayout extends StatelessWidget {
-  final Widget mobile;
-  final Widget? tablet;
-  final Widget? desktop;
-  final Widget? largeDesktop;
 
   const ResponsiveLayout({
     super.key,
@@ -14,11 +10,14 @@ class ResponsiveLayout extends StatelessWidget {
     this.desktop,
     this.largeDesktop,
   });
+  final Widget mobile;
+  final Widget? tablet;
+  final Widget? desktop;
+  final Widget? largeDesktop;
 
   @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
+  Widget build(final BuildContext context) => LayoutBuilder(
+      builder: (final context, final constraints) {
         final breakpoint = ScreenBreakpoint.fromWidth(constraints.maxWidth);
 
         switch (breakpoint) {
@@ -33,7 +32,6 @@ class ResponsiveLayout extends StatelessWidget {
         }
       },
     );
-  }
 }
 
 /// Screen breakpoint definitions following Material Design guidelines
@@ -43,7 +41,7 @@ enum ScreenBreakpoint {
   desktop, // 1024px - 1440px
   largeDesktop; // > 1440px
 
-  static ScreenBreakpoint fromWidth(double width) {
+  static ScreenBreakpoint fromWidth(final double width) {
     if (width < 600) return ScreenBreakpoint.mobile;
     if (width < 1024) return ScreenBreakpoint.tablet;
     if (width < 1440) return ScreenBreakpoint.desktop;
@@ -61,11 +59,6 @@ enum ScreenBreakpoint {
 
 /// Responsive padding that adapts to screen size
 class ResponsivePadding extends StatelessWidget {
-  final Widget child;
-  final EdgeInsets? mobile;
-  final EdgeInsets? tablet;
-  final EdgeInsets? desktop;
-  final EdgeInsets? largeDesktop;
 
   const ResponsivePadding({
     super.key,
@@ -75,11 +68,15 @@ class ResponsivePadding extends StatelessWidget {
     this.desktop,
     this.largeDesktop,
   });
+  final Widget child;
+  final EdgeInsets? mobile;
+  final EdgeInsets? tablet;
+  final EdgeInsets? desktop;
+  final EdgeInsets? largeDesktop;
 
   @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
+  Widget build(final BuildContext context) => LayoutBuilder(
+      builder: (final context, final constraints) {
         final breakpoint = ScreenBreakpoint.fromWidth(constraints.maxWidth);
 
         EdgeInsets padding;
@@ -108,19 +105,10 @@ class ResponsivePadding extends StatelessWidget {
         );
       },
     );
-  }
 }
 
 /// Responsive grid that adapts column count based on screen size
 class ResponsiveGrid extends StatelessWidget {
-  final List<Widget> children;
-  final int? mobileColumns;
-  final int? tabletColumns;
-  final int? desktopColumns;
-  final int? largeDesktopColumns;
-  final double spacing;
-  final double runSpacing;
-  final EdgeInsets? padding;
 
   const ResponsiveGrid({
     super.key,
@@ -133,11 +121,18 @@ class ResponsiveGrid extends StatelessWidget {
     this.runSpacing = 16.0,
     this.padding,
   });
+  final List<Widget> children;
+  final int? mobileColumns;
+  final int? tabletColumns;
+  final int? desktopColumns;
+  final int? largeDesktopColumns;
+  final double spacing;
+  final double runSpacing;
+  final EdgeInsets? padding;
 
   @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
+  Widget build(final BuildContext context) => LayoutBuilder(
+      builder: (final context, final constraints) {
         final breakpoint = ScreenBreakpoint.fromWidth(constraints.maxWidth);
 
         int columns;
@@ -168,24 +163,18 @@ class ResponsiveGrid extends StatelessWidget {
             crossAxisCount: columns,
             crossAxisSpacing: spacing,
             mainAxisSpacing: runSpacing,
-            childAspectRatio: 1.0,
           ),
           itemCount: children.length,
-          itemBuilder: (context, index) => children[index],
+          itemBuilder: (final context, final index) => children[index],
         );
 
         return content;
       },
     );
-  }
 }
 
 /// Responsive width container that constrains content width on large screens
 class ResponsiveContainer extends StatelessWidget {
-  final Widget child;
-  final double? maxWidth;
-  final bool center;
-  final EdgeInsets? padding;
 
   const ResponsiveContainer({
     super.key,
@@ -194,11 +183,14 @@ class ResponsiveContainer extends StatelessWidget {
     this.center = true,
     this.padding,
   });
+  final Widget child;
+  final double? maxWidth;
+  final bool center;
+  final EdgeInsets? padding;
 
   @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
+  Widget build(final BuildContext context) => LayoutBuilder(
+      builder: (final context, final constraints) {
         final shouldConstrain =
             maxWidth != null && constraints.maxWidth > maxWidth!;
 
@@ -225,15 +217,10 @@ class ResponsiveContainer extends StatelessWidget {
         return content;
       },
     );
-  }
 }
 
 /// Utility class for responsive values
 class ResponsiveValue<T> {
-  final T mobile;
-  final T? tablet;
-  final T? desktop;
-  final T? largeDesktop;
 
   const ResponsiveValue({
     required this.mobile,
@@ -241,12 +228,14 @@ class ResponsiveValue<T> {
     this.desktop,
     this.largeDesktop,
   });
+  final T mobile;
+  final T? tablet;
+  final T? desktop;
+  final T? largeDesktop;
 
-  T getValue(BuildContext context) {
-    return getValueForWidth(MediaQuery.of(context).size.width);
-  }
+  T getValue(final BuildContext context) => getValueForWidth(MediaQuery.of(context).size.width);
 
-  T getValueForWidth(double width) {
+  T getValueForWidth(final double width) {
     final breakpoint = ScreenBreakpoint.fromWidth(width);
 
     switch (breakpoint) {
@@ -264,9 +253,7 @@ class ResponsiveValue<T> {
 
 /// Extension methods for responsive design
 extension ResponsiveContext on BuildContext {
-  ScreenBreakpoint get breakpoint {
-    return ScreenBreakpoint.fromWidth(MediaQuery.of(this).size.width);
-  }
+  ScreenBreakpoint get breakpoint => ScreenBreakpoint.fromWidth(MediaQuery.of(this).size.width);
 
   bool get isMobile => breakpoint.isMobile;
   bool get isTablet => breakpoint.isTablet;
@@ -282,12 +269,6 @@ extension ResponsiveContext on BuildContext {
 
 /// Responsive text that scales with screen size
 class ResponsiveText extends StatelessWidget {
-  final String text;
-  final TextStyle? style;
-  final ResponsiveValue<double>? fontSize;
-  final TextAlign? textAlign;
-  final int? maxLines;
-  final TextOverflow? overflow;
 
   const ResponsiveText(
     this.text, {
@@ -298,9 +279,15 @@ class ResponsiveText extends StatelessWidget {
     this.maxLines,
     this.overflow,
   });
+  final String text;
+  final TextStyle? style;
+  final ResponsiveValue<double>? fontSize;
+  final TextAlign? textAlign;
+  final int? maxLines;
+  final TextOverflow? overflow;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final responsiveFontSize = fontSize?.getValue(context);
 
     return Text(

@@ -11,10 +11,10 @@ import 'analytics_service.dart';
 /// Advanced Security Service with military-grade encryption,
 /// comprehensive audit logging, and compliance features
 class AdvancedSecurityService {
-  static final AdvancedSecurityService _instance =
-      AdvancedSecurityService._internal();
   factory AdvancedSecurityService() => _instance;
   AdvancedSecurityService._internal();
+  static final AdvancedSecurityService _instance =
+      AdvancedSecurityService._internal();
 
   final AnalyticsService _analytics = AnalyticsService();
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
@@ -101,22 +101,22 @@ class AdvancedSecurityService {
   }
 
   /// Derive user-specific encryption key
-  Future<SecretKey> _deriveUserKey(String userId) async {
+  Future<SecretKey> _deriveUserKey(final String userId) async {
     final salt = await _getOrCreateSalt('user_salt_$userId');
-    return await _pbkdf2Algorithm.deriveKey(
+    return _pbkdf2Algorithm.deriveKey(
       secretKey: _masterKey,
       nonce: salt,
     );
   }
 
   /// Get or create salt for key derivation
-  Future<Uint8List> _getOrCreateSalt(String saltKey) async {
+  Future<Uint8List> _getOrCreateSalt(final String saltKey) async {
     final saltData = await _secureStorage.read(key: saltKey);
     if (saltData != null) {
       return base64Decode(saltData);
     } else {
       final salt =
-          Uint8List.fromList(List.generate(32, (i) => Random().nextInt(256)));
+          Uint8List.fromList(List.generate(32, (final i) => Random().nextInt(256)));
       await _secureStorage.write(key: saltKey, value: base64Encode(salt));
       return salt;
     }
@@ -213,7 +213,10 @@ class AdvancedSecurityService {
         final auditList = jsonDecode(auditData) as List;
         _auditLog.clear();
         _auditLog.addAll(
-          auditList.map((json) => SecurityEvent.fromJson(json)).toList(),
+          auditList
+              .map((final json) =>
+                  SecurityEvent.fromJson(json as Map<String, dynamic>))
+              .toList(),
         );
       }
     } catch (e) {
@@ -224,7 +227,7 @@ class AdvancedSecurityService {
   /// Start security monitoring
   Future<void> _startSecurityMonitoring() async {
     // Monitor authentication events
-    _auth.authStateChanges().listen((user) {
+    _auth.authStateChanges().listen((final user) {
       if (user != null) {
         _logSecurityEvent(SecurityEvent(
           type: SecurityEventType.authentication,
@@ -244,8 +247,8 @@ class AdvancedSecurityService {
   }
 
   /// Encrypt sensitive data with end-to-end encryption
-  Future<EncryptedData> encryptSensitiveData(String data,
-      {String? recipientId}) async {
+  Future<EncryptedData> encryptSensitiveData(final String data,
+      {final String? recipientId}) async {
     try {
       final key =
           recipientId != null ? await _deriveUserKey(recipientId) : _userKey;
@@ -260,7 +263,7 @@ class AdvancedSecurityService {
       // Create message authentication code (HMAC over ciphertext)
       final macBytes = await _macAlgorithm
           .calculateMac(encrypted.cipherText, secretKey: key)
-          .then((mac) => mac.bytes);
+          .then((final mac) => mac.bytes);
 
       final encryptedData = EncryptedData(
         cipherText: Uint8List.fromList(encrypted.cipherText),
@@ -294,8 +297,8 @@ class AdvancedSecurityService {
   }
 
   /// Decrypt sensitive data
-  Future<String> decryptSensitiveData(EncryptedData encryptedData,
-      {String? senderId}) async {
+  Future<String> decryptSensitiveData(final EncryptedData encryptedData,
+      {final String? senderId}) async {
     try {
       final key = senderId != null ? await _deriveUserKey(senderId) : _userKey;
 
@@ -373,7 +376,7 @@ class AdvancedSecurityService {
           severity: SecuritySeverity.info,
           details: {
             'available_biometrics':
-                availableBiometrics.map((b) => b.name).toList(),
+                availableBiometrics.map((final b) => b.name).toList(),
           },
         ));
 
@@ -479,7 +482,7 @@ class AdvancedSecurityService {
   }
 
   /// Log security event
-  Future<void> _logSecurityEvent(SecurityEvent event) async {
+  Future<void> _logSecurityEvent(final SecurityEvent event) async {
     _auditLog.add(event);
 
     // Keep only last 1000 events in memory
@@ -503,7 +506,7 @@ class AdvancedSecurityService {
   /// Save audit log to secure storage
   Future<void> _saveAuditLog() async {
     try {
-      final auditJson = _auditLog.map((event) => event.toJson()).toList();
+      final auditJson = _auditLog.map((final event) => event.toJson()).toList();
       await _secureStorage.write(
           key: 'audit_log', value: jsonEncode(auditJson));
     } catch (e) {
@@ -512,19 +515,13 @@ class AdvancedSecurityService {
   }
 
   /// Get audit log
-  List<SecurityEvent> getAuditLog() {
-    return List.unmodifiable(_auditLog);
-  }
+  List<SecurityEvent> getAuditLog() => List.unmodifiable(_auditLog);
 
   /// Get security events by type
-  List<SecurityEvent> getSecurityEventsByType(SecurityEventType type) {
-    return _auditLog.where((event) => event.type == type).toList();
-  }
+  List<SecurityEvent> getSecurityEventsByType(final SecurityEventType type) => _auditLog.where((final event) => event.type == type).toList();
 
   /// Get security events by severity
-  List<SecurityEvent> getSecurityEventsBySeverity(SecuritySeverity severity) {
-    return _auditLog.where((event) => event.severity == severity).toList();
-  }
+  List<SecurityEvent> getSecurityEventsBySeverity(final SecuritySeverity severity) => _auditLog.where((final event) => event.severity == severity).toList();
 
   /// Generate compliance report
   Future<ComplianceReport> generateComplianceReport() async {
@@ -562,7 +559,7 @@ class AdvancedSecurityService {
   }
 
   /// Request privacy consent
-  Future<bool> requestPrivacyConsent(String purpose, String description) async {
+  Future<bool> requestPrivacyConsent(final String purpose, final String description) async {
     try {
       final consent = PrivacyConsent(
         purpose: purpose,
@@ -597,7 +594,7 @@ class AdvancedSecurityService {
   }
 
   /// Check privacy consent
-  bool hasPrivacyConsent(String purpose) {
+  bool hasPrivacyConsent(final String purpose) {
     final consent = _privacyConsents[purpose];
     if (consent == null) return false;
 
@@ -605,7 +602,7 @@ class AdvancedSecurityService {
   }
 
   /// Revoke privacy consent
-  Future<void> revokePrivacyConsent(String purpose) async {
+  Future<void> revokePrivacyConsent(final String purpose) async {
     _privacyConsents.remove(purpose);
 
     await _logSecurityEvent(SecurityEvent(
@@ -684,11 +681,6 @@ class AdvancedSecurityService {
 
 /// Encrypted data model
 class EncryptedData {
-  final Uint8List cipherText;
-  final List<int> nonce;
-  final Uint8List mac;
-  final String algorithm;
-  final DateTime timestamp;
 
   EncryptedData({
     required this.cipherText,
@@ -697,23 +689,49 @@ class EncryptedData {
     required this.algorithm,
     required this.timestamp,
   });
+  final Uint8List cipherText;
+  final List<int> nonce;
+  final Uint8List mac;
+  final String algorithm;
+  final DateTime timestamp;
 }
 
 /// Security event model
 class SecurityEvent {
-  final SecurityEventType type;
-  final String action;
-  final SecuritySeverity severity;
-  final Map<String, dynamic> details;
-  final DateTime timestamp;
 
   SecurityEvent({
     required this.type,
     required this.action,
     required this.severity,
     required this.details,
-    DateTime? timestamp,
+    final DateTime? timestamp,
   }) : timestamp = timestamp ?? DateTime.now();
+
+  factory SecurityEvent.fromJson(final Map<String, dynamic> json) {
+    try {
+      return SecurityEvent(
+        type: SecurityEventType.values.firstWhere(
+          (final e) => e.name == json['type'],
+          orElse: () => SecurityEventType.system,
+        ),
+        action: json['action'] as String? ?? '',
+        severity: SecuritySeverity.values.firstWhere(
+          (final e) => e.name == json['severity'],
+          orElse: () => SecuritySeverity.info,
+        ),
+        details: Map<String, dynamic>.from(
+            (json['details'] as Map<dynamic, dynamic>?) ?? {}),
+        timestamp: DateTime.parse(json['timestamp'] as String),
+      );
+    } catch (e) {
+      throw ArgumentError('Invalid security event data: $e');
+    }
+  }
+  final SecurityEventType type;
+  final String action;
+  final SecuritySeverity severity;
+  final Map<String, dynamic> details;
+  final DateTime timestamp;
 
   Map<String, dynamic> toJson() => {
         'type': type.name,
@@ -722,26 +740,6 @@ class SecurityEvent {
         'details': details,
         'timestamp': timestamp.toIso8601String(),
       };
-
-  factory SecurityEvent.fromJson(Map<String, dynamic> json) {
-    try {
-      return SecurityEvent(
-        type: SecurityEventType.values.firstWhere(
-          (e) => e.name == json['type'],
-          orElse: () => SecurityEventType.system,
-        ),
-        action: json['action'] as String? ?? '',
-        severity: SecuritySeverity.values.firstWhere(
-          (e) => e.name == json['severity'],
-          orElse: () => SecuritySeverity.info,
-        ),
-        details: Map<String, dynamic>.from(json['details'] ?? {}),
-        timestamp: DateTime.parse(json['timestamp'] as String),
-      );
-    } catch (e) {
-      throw ArgumentError('Invalid security event data: $e');
-    }
-  }
 }
 
 /// Security event type enum
@@ -764,22 +762,17 @@ enum SecuritySeverity {
 
 /// Security policy model
 class SecurityPolicy {
-  final String name;
-  final Map<String, dynamic> rules;
 
   SecurityPolicy({
     required this.name,
     required this.rules,
   });
+  final String name;
+  final Map<String, dynamic> rules;
 }
 
 /// Compliance record model
 class ComplianceRecord {
-  final String framework;
-  final ComplianceStatus status;
-  final DateTime lastAssessment;
-  final DateTime nextAssessment;
-  final List<String> requirements;
 
   ComplianceRecord({
     required this.framework,
@@ -788,6 +781,11 @@ class ComplianceRecord {
     required this.nextAssessment,
     required this.requirements,
   });
+  final String framework;
+  final ComplianceStatus status;
+  final DateTime lastAssessment;
+  final DateTime nextAssessment;
+  final List<String> requirements;
 }
 
 /// Compliance status enum
@@ -800,11 +798,6 @@ enum ComplianceStatus {
 
 /// Privacy consent model
 class PrivacyConsent {
-  final String purpose;
-  final String description;
-  final DateTime grantedAt;
-  final DateTime expiresAt;
-  final String version;
 
   PrivacyConsent({
     required this.purpose,
@@ -813,15 +806,15 @@ class PrivacyConsent {
     required this.expiresAt,
     required this.version,
   });
+  final String purpose;
+  final String description;
+  final DateTime grantedAt;
+  final DateTime expiresAt;
+  final String version;
 }
 
 /// Compliance report model
 class ComplianceReport {
-  final DateTime generatedAt;
-  final List<String> frameworks;
-  final ComplianceStatus overallStatus;
-  final List<ComplianceFinding> findings;
-  final List<String> recommendations;
 
   ComplianceReport({
     required this.generatedAt,
@@ -830,14 +823,15 @@ class ComplianceReport {
     required this.findings,
     required this.recommendations,
   });
+  final DateTime generatedAt;
+  final List<String> frameworks;
+  final ComplianceStatus overallStatus;
+  final List<ComplianceFinding> findings;
+  final List<String> recommendations;
 }
 
 /// Compliance finding model
 class ComplianceFinding {
-  final String framework;
-  final ComplianceSeverity severity;
-  final String description;
-  final String recommendation;
 
   ComplianceFinding({
     required this.framework,
@@ -845,6 +839,10 @@ class ComplianceFinding {
     required this.description,
     required this.recommendation,
   });
+  final String framework;
+  final ComplianceSeverity severity;
+  final String description;
+  final String recommendation;
 }
 
 /// Compliance severity enum
@@ -857,10 +855,6 @@ enum ComplianceSeverity {
 
 /// Security audit model
 class SecurityAudit {
-  final DateTime performedAt;
-  final List<SecurityFinding> findings;
-  final List<String> recommendations;
-  int overallScore;
 
   SecurityAudit({
     required this.performedAt,
@@ -868,14 +862,14 @@ class SecurityAudit {
     required this.recommendations,
     required this.overallScore,
   });
+  final DateTime performedAt;
+  final List<SecurityFinding> findings;
+  final List<String> recommendations;
+  int overallScore;
 }
 
 /// Security finding model
 class SecurityFinding {
-  final String category;
-  final SecuritySeverity severity;
-  final String description;
-  final String recommendation;
 
   SecurityFinding({
     required this.category,
@@ -883,12 +877,16 @@ class SecurityFinding {
     required this.description,
     required this.recommendation,
   });
+  final String category;
+  final SecuritySeverity severity;
+  final String description;
+  final String recommendation;
 }
 
 /// Security exception class
 class SecurityException implements Exception {
-  final String message;
   SecurityException(this.message);
+  final String message;
 
   @override
   String toString() => 'SecurityException: $message';

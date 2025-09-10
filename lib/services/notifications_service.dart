@@ -25,14 +25,17 @@ class NotificationsService {
       tz.initializeTimeZones();
 
       // Request permission
-      await _messaging.requestPermission(alert: true, badge: true, sound: true);
+      await _messaging.requestPermission();
 
       // Foreground presentation
       await _messaging.setForegroundNotificationPresentationOptions(
-          alert: true, badge: true, sound: true);
+        alert: true,
+        badge: true,
+        sound: true,
+      );
       FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      FirebaseMessaging.onMessage.listen((final message) {
         final notif = message.notification;
         if (notif != null) {
           _fln.show(
@@ -51,25 +54,26 @@ class NotificationsService {
     }
   }
 
-  static Future<void> scheduleAt(DateTime when,
-      {required int id, required String title, required String body}) async {
+  static Future<void> scheduleAt(
+    final DateTime when, {
+    required final int id,
+    required final String title,
+    required final String body,
+  }) async {
     if (kIsWeb) {
       // No-op on web
       return;
     }
     const android = AndroidNotificationDetails('reminders', 'Reminders');
     const ios = DarwinNotificationDetails();
-    final details = NotificationDetails(android: android, iOS: ios);
+    const details = NotificationDetails(android: android, iOS: ios);
     await _fln.zonedSchedule(
       id,
       title,
       body,
       tz.TZDateTime.from(when, tz.local),
       details,
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: null,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
   }
 }

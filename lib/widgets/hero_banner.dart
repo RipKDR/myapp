@@ -5,12 +5,6 @@ import '../controllers/settings_controller.dart';
 import '../theme/app_theme.dart';
 
 class HeroBanner extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String? actionText;
-  final VoidCallback? onAction;
-  final IconData? icon;
-  final bool showGamification;
 
   const HeroBanner({
     super.key,
@@ -21,15 +15,21 @@ class HeroBanner extends StatelessWidget {
     this.icon,
     this.showGamification = true,
   });
+  final String title;
+  final String subtitle;
+  final String? actionText;
+  final VoidCallback? onAction;
+  final IconData? icon;
+  final bool showGamification;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final settings = context.watch<SettingsController>();
     final reduceMotion = settings.reduceMotion;
-    final points = context.select<GamificationController, int>((g) => g.points);
+    final points = context.select<GamificationController, int>((final g) => g.points);
     final streak =
-        context.select<GamificationController, int>((g) => g.streakDays);
+        context.select<GamificationController, int>((final g) => g.streakDays);
 
     // Use NDIS brand colors for gradient
     const gradient = LinearGradient(
@@ -47,7 +47,7 @@ class HeroBanner extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: scheme.primary.withOpacity(0.2),
+            color: scheme.primary.withValues(alpha: 0.2),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -62,7 +62,7 @@ class HeroBanner extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Icon(
@@ -89,7 +89,7 @@ class HeroBanner extends StatelessWidget {
                     Text(
                       subtitle,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                             height: 1.4,
                           ),
                     ),
@@ -105,7 +105,7 @@ class HeroBanner extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.15),
+                color: Colors.white.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -120,7 +120,7 @@ class HeroBanner extends StatelessWidget {
                   Container(
                     width: 1,
                     height: 32,
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                   ),
                   _StatItem(
                     icon: Icons.emoji_events,
@@ -162,10 +162,6 @@ class HeroBanner extends StatelessWidget {
 }
 
 class _StatItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color color;
 
   const _StatItem({
     required this.icon,
@@ -173,10 +169,13 @@ class _StatItem extends StatelessWidget {
     required this.value,
     required this.color,
   });
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color color;
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(final BuildContext context) => Column(
       children: [
         Icon(icon, color: color, size: 20),
         const SizedBox(height: 4),
@@ -190,18 +189,17 @@ class _StatItem extends StatelessWidget {
         Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: color.withOpacity(0.8),
+                color: color.withValues(alpha: 0.8),
               ),
         ),
       ],
     );
-  }
 }
 
 class _AnimatedBanner extends StatefulWidget {
-  final Widget child;
 
   const _AnimatedBanner({required this.child});
+  final Widget child;
 
   @override
   State<_AnimatedBanner> createState() => _AnimatedBannerState();
@@ -222,11 +220,11 @@ class _AnimatedBannerState extends State<_AnimatedBanner>
     );
 
     _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0,
+      end: 1,
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      curve: const Interval(0, 0.6, curve: Curves.easeOut),
     ));
 
     _slideAnimation = Tween<Offset>(
@@ -247,18 +245,14 @@ class _AnimatedBannerState extends State<_AnimatedBanner>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
+  Widget build(final BuildContext context) => AnimatedBuilder(
       animation: _controller,
-      builder: (context, child) {
-        return FadeTransition(
+      builder: (final context, final child) => FadeTransition(
           opacity: _fadeAnimation,
           child: SlideTransition(
             position: _slideAnimation,
             child: widget.child,
           ),
-        );
-      },
+        ),
     );
-  }
 }

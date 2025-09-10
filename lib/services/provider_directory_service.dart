@@ -15,7 +15,7 @@ class ProviderDirectoryService {
         if (decoded is List) {
           final list = decoded.cast<Map<String, dynamic>>();
           return list
-              .map((json) {
+              .map((final json) {
                 try {
                   return ProviderLocation.fromMap(json);
                 } catch (e) {
@@ -23,7 +23,7 @@ class ProviderDirectoryService {
                   return null;
                 }
               })
-              .where((provider) => provider != null)
+              .where((final provider) => provider != null)
               .cast<ProviderLocation>()
               .toList();
         }
@@ -64,10 +64,10 @@ class ProviderDirectoryService {
     }
   }
 
-  static Future<void> saveCache(List<ProviderLocation> list) async {
+  static Future<void> saveCache(final List<ProviderLocation> list) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final jsonList = list.map((e) => e.toMap()).toList();
+      final jsonList = list.map((final e) => e.toMap()).toList();
       await prefs.setString(_cacheKey, jsonEncode(jsonList));
     } catch (e) {
       // Handle save error gracefully

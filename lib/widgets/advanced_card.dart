@@ -4,25 +4,6 @@ import 'package:flutter/services.dart';
 /// Advanced card component with sophisticated animations, accessibility features,
 /// and responsive design patterns following Material 3 design principles.
 class AdvancedCard extends StatefulWidget {
-  final Widget child;
-  final VoidCallback? onTap;
-  final VoidCallback? onLongPress;
-  final bool isSelected;
-  final bool isLoading;
-  final bool isDisabled;
-  final String? semanticLabel;
-  final String? tooltip;
-  final EdgeInsetsGeometry? padding;
-  final EdgeInsetsGeometry? margin;
-  final Color? backgroundColor;
-  final Color? borderColor;
-  final double? elevation;
-  final BorderRadius? borderRadius;
-  final Widget? badge;
-  final AnimationDuration animationDuration;
-  final bool enableHoverEffects;
-  final bool enablePressEffects;
-  final bool enableFocusEffects;
 
   const AdvancedCard({
     super.key,
@@ -46,6 +27,25 @@ class AdvancedCard extends StatefulWidget {
     this.enablePressEffects = true,
     this.enableFocusEffects = true,
   });
+  final Widget child;
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+  final bool isSelected;
+  final bool isLoading;
+  final bool isDisabled;
+  final String? semanticLabel;
+  final String? tooltip;
+  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? margin;
+  final Color? backgroundColor;
+  final Color? borderColor;
+  final double? elevation;
+  final BorderRadius? borderRadius;
+  final Widget? badge;
+  final AnimationDuration animationDuration;
+  final bool enableHoverEffects;
+  final bool enablePressEffects;
+  final bool enableFocusEffects;
 
   @override
   State<AdvancedCard> createState() => _AdvancedCardState();
@@ -99,7 +99,7 @@ class _AdvancedCardState extends State<AdvancedCard>
     );
 
     _scaleAnimation = Tween<double>(
-      begin: 1.0,
+      begin: 1,
       end: 0.96,
     ).animate(CurvedAnimation(
       parent: _pressController,
@@ -107,24 +107,24 @@ class _AdvancedCardState extends State<AdvancedCard>
     ));
 
     _elevationAnimation = Tween<double>(
-      begin: 0.0,
-      end: 4.0,
+      begin: 0,
+      end: 4,
     ).animate(CurvedAnimation(
       parent: _hoverController,
       curve: Curves.easeOutCubic,
     ));
 
     _borderAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0,
+      end: 1,
     ).animate(CurvedAnimation(
       parent: _focusController,
       curve: Curves.easeOut,
     ));
 
     _rotationAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0,
+      end: 1,
     ).animate(CurvedAnimation(
       parent: _loadingController,
       curve: Curves.linear,
@@ -147,7 +147,7 @@ class _AdvancedCardState extends State<AdvancedCard>
   }
 
   @override
-  void didUpdateWidget(AdvancedCard oldWidget) {
+  void didUpdateWidget(final AdvancedCard oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isLoading != oldWidget.isLoading) {
       if (widget.isLoading) {
@@ -167,7 +167,7 @@ class _AdvancedCardState extends State<AdvancedCard>
     super.dispose();
   }
 
-  void _handleTapDown(TapDownDetails details) {
+  void _handleTapDown(final TapDownDetails details) {
     if (widget.isDisabled || !widget.enablePressEffects) return;
     
     setState(() => _isPressed = true);
@@ -175,7 +175,7 @@ class _AdvancedCardState extends State<AdvancedCard>
     HapticFeedback.lightImpact();
   }
 
-  void _handleTapUp(TapUpDetails details) {
+  void _handleTapUp(final TapUpDetails details) {
     _handleTapEnd();
   }
 
@@ -190,21 +190,21 @@ class _AdvancedCardState extends State<AdvancedCard>
     }
   }
 
-  void _handleHoverEnter(PointerEnterEvent event) {
+  void _handleHoverEnter(final PointerEnterEvent event) {
     if (widget.isDisabled || !widget.enableHoverEffects) return;
     
     setState(() => _isHovered = true);
     _hoverController.forward();
   }
 
-  void _handleHoverExit(PointerExitEvent event) {
+  void _handleHoverExit(final PointerExitEvent event) {
     if (_isHovered) {
       setState(() => _isHovered = false);
       _hoverController.reverse();
     }
   }
 
-  void _handleFocusChange(bool hasFocus) {
+  void _handleFocusChange(final bool hasFocus) {
     if (widget.isDisabled || !widget.enableFocusEffects) return;
     
     setState(() => _isFocused = hasFocus);
@@ -216,7 +216,7 @@ class _AdvancedCardState extends State<AdvancedCard>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final isHighContrast = Theme.of(context).brightness == Brightness.light
         ? scheme.primary == const Color(0xFF000080)
@@ -229,7 +229,7 @@ class _AdvancedCardState extends State<AdvancedCard>
         _focusController,
         _loadingController,
       ]),
-      builder: (context, child) {
+      builder: (final context, final child) {
         final scale = widget.enablePressEffects ? _scaleAnimation.value : 1.0;
         final elevation = (widget.elevation ?? 0) + 
             (widget.enableHoverEffects ? _elevationAnimation.value : 0);
@@ -259,14 +259,14 @@ class _AdvancedCardState extends State<AdvancedCard>
                                   : scheme.surface),
                           elevation: elevation,
                           borderRadius: widget.borderRadius ?? BorderRadius.circular(16),
-                          child: Container(
+                          child: DecoratedBox(
                             decoration: BoxDecoration(
                               borderRadius: widget.borderRadius ?? BorderRadius.circular(16),
                               border: Border.all(
                                 color: widget.borderColor ??
                                     (widget.isSelected
                                         ? scheme.primary
-                                        : scheme.primary.withOpacity(borderOpacity)),
+                                        : scheme.primary.withValues(alpha: borderOpacity)),
                                 width: widget.isSelected || borderOpacity > 0 
                                     ? (isHighContrast ? 3 : 2) 
                                     : 0,
@@ -297,9 +297,9 @@ class _AdvancedCardState extends State<AdvancedCard>
                 // Loading overlay
                 if (widget.isLoading)
                   Positioned.fill(
-                    child: Container(
+                    child: DecoratedBox(
                       decoration: BoxDecoration(
-                        color: scheme.surface.withOpacity(0.8),
+                        color: scheme.surface.withValues(alpha: 0.8),
                         borderRadius: widget.borderRadius ?? BorderRadius.circular(16),
                       ),
                       child: Center(
@@ -332,11 +332,6 @@ class _AdvancedCardState extends State<AdvancedCard>
 
 /// Status badge for advanced cards
 class StatusBadge extends StatelessWidget {
-  final String text;
-  final Color? backgroundColor;
-  final Color? textColor;
-  final IconData? icon;
-  final BadgeStyle style;
 
   const StatusBadge({
     super.key,
@@ -346,9 +341,14 @@ class StatusBadge extends StatelessWidget {
     this.icon,
     this.style = BadgeStyle.filled,
   });
+  final String text;
+  final Color? backgroundColor;
+  final Color? textColor;
+  final IconData? icon;
+  final BadgeStyle style;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     
     return Container(

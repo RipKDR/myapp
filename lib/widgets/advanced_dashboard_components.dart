@@ -7,17 +7,6 @@ import '../theme/google_theme.dart';
 
 /// Enhanced metric card with trend visualization and animations
 class MetricCard extends StatefulWidget {
-  final String title;
-  final String value;
-  final String? subtitle;
-  final IconData icon;
-  final Color color;
-  final double? trendValue;
-  final TrendDirection? trendDirection;
-  final List<double>? sparklineData;
-  final VoidCallback? onTap;
-  final Widget? customContent;
-  final bool isLoading;
 
   const MetricCard({
     super.key,
@@ -33,6 +22,17 @@ class MetricCard extends StatefulWidget {
     this.customContent,
     this.isLoading = false,
   });
+  final String title;
+  final String value;
+  final String? subtitle;
+  final IconData icon;
+  final Color color;
+  final double? trendValue;
+  final TrendDirection? trendDirection;
+  final List<double>? sparklineData;
+  final VoidCallback? onTap;
+  final Widget? customContent;
+  final bool isLoading;
 
   @override
   State<MetricCard> createState() => _MetricCardState();
@@ -59,7 +59,7 @@ class _MetricCardState extends State<MetricCard>
     );
 
     _scaleAnimation = Tween<double>(
-      begin: 1.0,
+      begin: 1,
       end: 1.02,
     ).animate(CurvedAnimation(
       parent: _animationController,
@@ -67,11 +67,11 @@ class _MetricCardState extends State<MetricCard>
     ));
 
     _sparklineAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0,
+      end: 1,
     ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: const Interval(0.3, 1.0, curve: Curves.easeOutCubic),
+      curve: const Interval(0.3, 1, curve: Curves.easeOutCubic),
     ));
 
     // Start animation after a brief delay
@@ -89,14 +89,13 @@ class _MetricCardState extends State<MetricCard>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return AnimatedBuilder(
       animation: _animationController,
-      builder: (context, child) {
-        return Transform.scale(
+      builder: (final context, final child) => Transform.scale(
           scale: _isHovered ? _scaleAnimation.value : 1.0,
           child: MouseRegion(
             onEnter: (_) => setState(() => _isHovered = true),
@@ -108,19 +107,19 @@ class _MetricCardState extends State<MetricCard>
                       widget.onTap!();
                     }
                   : null,
-              child: Container(
+              child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: colorScheme.surface,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: _isHovered
-                        ? widget.color.withOpacity(0.3)
-                        : colorScheme.outline.withOpacity(0.1),
+                        ? widget.color.withValues(alpha: 0.3)
+                        : colorScheme.outline.withValues(alpha: 0.1),
                     width: _isHovered ? 2 : 1,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(_isHovered ? 0.1 : 0.05),
+                      color: Colors.black.withValues(alpha: _isHovered ? 0.1 : 0.05),
                       blurRadius: _isHovered ? 12 : 6,
                       offset: Offset(0, _isHovered ? 4 : 2),
                     ),
@@ -134,8 +133,8 @@ class _MetricCardState extends State<MetricCard>
                         borderRadius: BorderRadius.circular(16),
                         gradient: LinearGradient(
                           colors: [
-                            widget.color.withOpacity(0.05),
-                            widget.color.withOpacity(0.02),
+                            widget.color.withValues(alpha: 0.05),
+                            widget.color.withValues(alpha: 0.02),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -155,7 +154,7 @@ class _MetricCardState extends State<MetricCard>
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: widget.color.withOpacity(0.1),
+                                  color: widget.color.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(
@@ -220,9 +219,9 @@ class _MetricCardState extends State<MetricCard>
 
                     // Loading overlay
                     if (widget.isLoading)
-                      Container(
+                      DecoratedBox(
                         decoration: BoxDecoration(
-                          color: colorScheme.surface.withOpacity(0.8),
+                          color: colorScheme.surface.withValues(alpha: 0.8),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Center(
@@ -234,8 +233,7 @@ class _MetricCardState extends State<MetricCard>
               ),
             ),
           ),
-        );
-      },
+        ),
     );
   }
 
@@ -247,7 +245,7 @@ class _MetricCardState extends State<MetricCard>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -278,8 +276,7 @@ class _MetricCardState extends State<MetricCard>
 
     return AnimatedBuilder(
       animation: _sparklineAnimation,
-      builder: (context, child) {
-        return SizedBox(
+      builder: (final context, final child) => SizedBox(
           height: 40,
           child: CustomPaint(
             painter: SparklinePainter(
@@ -289,13 +286,11 @@ class _MetricCardState extends State<MetricCard>
             ),
             child: const SizedBox.expand(),
           ),
-        );
-      },
+        ),
     );
   }
 
-  Widget _buildLoadingSkeleton() {
-    return Column(
+  Widget _buildLoadingSkeleton() => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
@@ -317,23 +312,22 @@ class _MetricCardState extends State<MetricCard>
         ),
       ],
     );
-  }
 }
 
 /// Custom painter for sparkline visualization
 class SparklinePainter extends CustomPainter {
-  final List<double> data;
-  final Color color;
-  final double progress;
 
   SparklinePainter({
     required this.data,
     required this.color,
     required this.progress,
   });
+  final List<double> data;
+  final Color color;
+  final double progress;
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(final Canvas canvas, final Size size) {
     if (data.isEmpty) return;
 
     final paint = Paint()
@@ -343,14 +337,14 @@ class SparklinePainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final fillPaint = Paint()
-      ..color = color.withOpacity(0.1)
+      ..color = color.withValues(alpha: 0.1)
       ..style = PaintingStyle.fill;
 
     final path = Path();
     final fillPath = Path();
 
-    final minValue = data.reduce((a, b) => a < b ? a : b);
-    final maxValue = data.reduce((a, b) => a > b ? a : b);
+    final minValue = data.reduce((final a, final b) => a < b ? a : b);
+    final maxValue = data.reduce((final a, final b) => a > b ? a : b);
     final range = maxValue - minValue;
 
     if (range == 0) return;
@@ -399,22 +393,13 @@ class SparklinePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(SparklinePainter oldDelegate) {
-    return oldDelegate.progress != progress ||
+  bool shouldRepaint(final SparklinePainter oldDelegate) => oldDelegate.progress != progress ||
         oldDelegate.data != data ||
         oldDelegate.color != color;
-  }
 }
 
 /// Quick action button with enhanced styling
 class QuickActionCard extends StatefulWidget {
-  final IconData icon;
-  final String title;
-  final String? subtitle;
-  final Color color;
-  final VoidCallback onTap;
-  final Widget? badge;
-  final bool isEnabled;
 
   const QuickActionCard({
     super.key,
@@ -426,6 +411,13 @@ class QuickActionCard extends StatefulWidget {
     this.badge,
     this.isEnabled = true,
   });
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final Color color;
+  final VoidCallback onTap;
+  final Widget? badge;
+  final bool isEnabled;
 
   @override
   State<QuickActionCard> createState() => _QuickActionCardState();
@@ -446,7 +438,7 @@ class _QuickActionCardState extends State<QuickActionCard>
       vsync: this,
     );
     _scaleAnimation = Tween<double>(
-      begin: 1.0,
+      begin: 1,
       end: 0.95,
     ).animate(_animationController);
   }
@@ -458,14 +450,13 @@ class _QuickActionCardState extends State<QuickActionCard>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return AnimatedBuilder(
       animation: _scaleAnimation,
-      builder: (context, child) {
-        return Transform.scale(
+      builder: (final context, final child) => Transform.scale(
           scale: _scaleAnimation.value,
           child: GestureDetector(
             onTapDown: (_) {
@@ -476,20 +467,20 @@ class _QuickActionCardState extends State<QuickActionCard>
               }
             },
             onTapUp: (_) => _handleTapEnd(),
-            onTapCancel: () => _handleTapEnd(),
+            onTapCancel: _handleTapEnd,
             onTap: widget.isEnabled ? widget.onTap : null,
-            child: Container(
+            child: DecoratedBox(
               decoration: BoxDecoration(
                 color: widget.isEnabled
                     ? colorScheme.surface
-                    : colorScheme.surface.withOpacity(0.5),
+                    : colorScheme.surface.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: colorScheme.outline.withOpacity(0.1),
+                  color: colorScheme.outline.withValues(alpha: 0.1),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -504,14 +495,14 @@ class _QuickActionCardState extends State<QuickActionCard>
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: widget.color.withOpacity(0.1),
+                            color: widget.color.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
                             widget.icon,
                             color: widget.isEnabled
                                 ? widget.color
-                                : widget.color.withOpacity(0.5),
+                                : widget.color.withValues(alpha: 0.5),
                             size: 24,
                           ),
                         ),
@@ -522,7 +513,7 @@ class _QuickActionCardState extends State<QuickActionCard>
                             fontWeight: FontWeight.w600,
                             color: widget.isEnabled
                                 ? colorScheme.onSurface
-                                : colorScheme.onSurface.withOpacity(0.5),
+                                : colorScheme.onSurface.withValues(alpha: 0.5),
                           ),
                           textAlign: TextAlign.center,
                           maxLines: 2,
@@ -536,7 +527,7 @@ class _QuickActionCardState extends State<QuickActionCard>
                               color: widget.isEnabled
                                   ? colorScheme.onSurfaceVariant
                                   : colorScheme.onSurfaceVariant
-                                      .withOpacity(0.5),
+                                      .withValues(alpha: 0.5),
                             ),
                             textAlign: TextAlign.center,
                             maxLines: 2,
@@ -558,8 +549,7 @@ class _QuickActionCardState extends State<QuickActionCard>
               ),
             ),
           ),
-        );
-      },
+        ),
     );
   }
 
@@ -573,14 +563,6 @@ class _QuickActionCardState extends State<QuickActionCard>
 
 /// Activity feed item with rich content support
 class ActivityFeedItem extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
-  final String title;
-  final String subtitle;
-  final DateTime timestamp;
-  final Widget? trailing;
-  final VoidCallback? onTap;
-  final bool isRead;
 
   const ActivityFeedItem({
     super.key,
@@ -593,9 +575,17 @@ class ActivityFeedItem extends StatelessWidget {
     this.onTap,
     this.isRead = true,
   });
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String subtitle;
+  final DateTime timestamp;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+  final bool isRead;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -613,7 +603,7 @@ class ActivityFeedItem extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: iconColor.withOpacity(0.1),
+                  color: iconColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -688,7 +678,7 @@ class ActivityFeedItem extends StatelessWidget {
     );
   }
 
-  String _formatTimestamp(DateTime timestamp) {
+  String _formatTimestamp(final DateTime timestamp) {
     final now = DateTime.now();
     final difference = now.difference(timestamp);
 
@@ -708,11 +698,6 @@ class ActivityFeedItem extends StatelessWidget {
 
 /// Progress ring with animated fill
 class ProgressRing extends StatefulWidget {
-  final double progress;
-  final Color color;
-  final double size;
-  final double strokeWidth;
-  final Widget? child;
 
   const ProgressRing({
     super.key,
@@ -722,6 +707,11 @@ class ProgressRing extends StatefulWidget {
     this.strokeWidth = 4,
     this.child,
   });
+  final double progress;
+  final Color color;
+  final double size;
+  final double strokeWidth;
+  final Widget? child;
 
   @override
   State<ProgressRing> createState() => _ProgressRingState();
@@ -740,7 +730,7 @@ class _ProgressRingState extends State<ProgressRing>
       vsync: this,
     );
     _progressAnimation = Tween<double>(
-      begin: 0.0,
+      begin: 0,
       end: widget.progress,
     ).animate(CurvedAnimation(
       parent: _animationController,
@@ -751,7 +741,7 @@ class _ProgressRingState extends State<ProgressRing>
   }
 
   @override
-  void didUpdateWidget(ProgressRing oldWidget) {
+  void didUpdateWidget(final ProgressRing oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.progress != widget.progress) {
       _progressAnimation = Tween<double>(
@@ -772,11 +762,9 @@ class _ProgressRingState extends State<ProgressRing>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
+  Widget build(final BuildContext context) => AnimatedBuilder(
       animation: _progressAnimation,
-      builder: (context, child) {
-        return SizedBox(
+      builder: (final context, final child) => SizedBox(
           width: widget.size,
           height: widget.size,
           child: Stack(
@@ -787,24 +775,18 @@ class _ProgressRingState extends State<ProgressRing>
                   progress: _progressAnimation.value,
                   color: widget.color,
                   strokeWidth: widget.strokeWidth,
-                  backgroundColor: widget.color.withOpacity(0.1),
+                  backgroundColor: widget.color.withValues(alpha: 0.1),
                 ),
               ),
-              if (widget.child != null) Center(child: widget.child!),
+              if (widget.child != null) Center(child: widget.child),
             ],
           ),
-        );
-      },
+        ),
     );
-  }
 }
 
 /// Custom painter for progress ring
 class ProgressRingPainter extends CustomPainter {
-  final double progress;
-  final Color color;
-  final Color backgroundColor;
-  final double strokeWidth;
 
   ProgressRingPainter({
     required this.progress,
@@ -812,9 +794,13 @@ class ProgressRingPainter extends CustomPainter {
     required this.backgroundColor,
     required this.strokeWidth,
   });
+  final double progress;
+  final Color color;
+  final Color backgroundColor;
+  final double strokeWidth;
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(final Canvas canvas, final Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = (size.width - strokeWidth) / 2;
 
@@ -845,12 +831,10 @@ class ProgressRingPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(ProgressRingPainter oldDelegate) {
-    return oldDelegate.progress != progress ||
+  bool shouldRepaint(final ProgressRingPainter oldDelegate) => oldDelegate.progress != progress ||
         oldDelegate.color != color ||
         oldDelegate.backgroundColor != backgroundColor ||
         oldDelegate.strokeWidth != strokeWidth;
-  }
 }
 
 /// Trend direction enum

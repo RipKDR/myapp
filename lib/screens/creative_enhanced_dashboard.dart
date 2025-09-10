@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'dart:math' as math;
 
@@ -77,22 +76,22 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: Stack(
         children: [
           // Animated mesh gradient background
           Positioned.fill(
             child: AnimatedMeshGradient(
               colors: [
-                GoogleTheme.googleBlue.withOpacity(0.1),
-                GoogleTheme.googleGreen.withOpacity(0.1),
-                GoogleTheme.googleYellow.withOpacity(0.1),
-                GoogleTheme.googleRed.withOpacity(0.1),
+                GoogleTheme.googleBlue.withValues(alpha: 0.1),
+                GoogleTheme.googleGreen.withValues(alpha: 0.1),
+                GoogleTheme.googleYellow.withValues(alpha: 0.1),
+                GoogleTheme.googleRed.withValues(alpha: 0.1),
               ],
               child: Container(),
             ),
@@ -132,7 +131,7 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
     );
   }
 
-  Widget _buildCreativeSliverAppBar(BuildContext context) {
+  Widget _buildCreativeSliverAppBar(final BuildContext context) {
     final theme = Theme.of(context);
 
     return SliverAppBar(
@@ -152,8 +151,8 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      GoogleTheme.googleBlue.withOpacity(0.8),
-                      GoogleTheme.googleGreen.withOpacity(0.8),
+                      GoogleTheme.googleBlue.withValues(alpha: 0.8),
+                      GoogleTheme.googleGreen.withValues(alpha: 0.8),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -190,7 +189,7 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
                       Text(
                         'Your NDIS journey continues',
                         style: theme.textTheme.bodyLarge?.copyWith(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                         ),
                       ),
                     ],
@@ -204,13 +203,12 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
     );
   }
 
-  Widget _buildWelcomeSection(BuildContext context) {
+  Widget _buildWelcomeSection(final BuildContext context) {
     final gamification = context.watch<GamificationController>();
 
     return AnimatedBuilder(
       animation: _floatingController,
-      builder: (context, child) {
-        return Transform.translate(
+      builder: (final context, final child) => Transform.translate(
           offset: Offset(0, 5 * math.sin(_floatingController.value * math.pi)),
           child: GlassmorphicContainer(
             padding: const EdgeInsets.all(20),
@@ -222,7 +220,7 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
                   height: 60,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                       colors: [
                         GoogleTheme.googleBlue,
                         GoogleTheme.googleGreen,
@@ -230,7 +228,7 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: GoogleTheme.googleBlue.withOpacity(0.5),
+                        color: GoogleTheme.googleBlue.withValues(alpha: 0.5),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),
@@ -277,23 +275,21 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
               ],
             ),
           ),
-        );
-      },
+        ),
     );
   }
 
   Widget _buildStatChip({
-    required IconData icon,
-    required String label,
-    required Color color,
-  }) {
-    return Container(
+    required final IconData icon,
+    required final String label,
+    required final Color color,
+  }) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -312,10 +308,8 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
         ],
       ),
     );
-  }
 
-  Widget _buildQuickActionsSection(BuildContext context) {
-    return Column(
+  Widget _buildQuickActionsSection(final BuildContext context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -359,15 +353,13 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
         ),
       ],
     );
-  }
 
   Widget _buildQuickActionCard({
-    required IconData icon,
-    required String label,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return Padding(
+    required final IconData icon,
+    required final String label,
+    required final Color color,
+    required final VoidCallback onTap,
+  }) => Padding(
       padding: const EdgeInsets.only(right: 12),
       child: LiquidButton(
         text: label,
@@ -378,10 +370,8 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
         onPressed: onTap,
       ),
     );
-  }
 
-  Widget _buildInsightsSection(BuildContext context) {
-    return Column(
+  Widget _buildInsightsSection(final BuildContext context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -395,7 +385,6 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
           mobileColumns: 1,
           tabletColumns: 2,
           desktopColumns: 3,
-          spacing: 16,
           children: [
             // Budget overview with glassmorphism
             GlassmorphicContainer(
@@ -408,10 +397,10 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: GoogleTheme.googleGreen.withOpacity(0.1),
+                          color: GoogleTheme.googleGreen.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.account_balance_wallet,
                           color: GoogleTheme.googleGreen,
                           size: 20,
@@ -432,7 +421,7 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        BudgetDonutChart(
+                        const BudgetDonutChart(
                           categories: [
                             BudgetCategory(
                               name: 'Core',
@@ -506,7 +495,7 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.trending_up,
                       color: GoogleTheme.ndisPurple,
                       size: 32,
@@ -550,7 +539,7 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
                     Text(
                       'Keep up the great work',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                           ),
                     ),
                   ],
@@ -561,10 +550,8 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
         ),
       ],
     );
-  }
 
-  Widget _buildInteractiveCardsSection(BuildContext context) {
-    return Column(
+  Widget _buildInteractiveCardsSection(final BuildContext context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -600,16 +587,14 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
         ),
       ],
     );
-  }
 
   Widget _buildServiceCard(
-    BuildContext context, {
-    required String title,
-    required String provider,
-    required String nextSession,
-    required bool isActive,
-  }) {
-    return GlassmorphicContainer(
+    final BuildContext context, {
+    required final String title,
+    required final String provider,
+    required final String nextSession,
+    required final bool isActive,
+  }) => GlassmorphicContainer(
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
@@ -655,17 +640,15 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
           ),
           NeumorphicSwitch(
             value: isActive,
-            onChanged: (value) {
+            onChanged: (final value) {
               // Handle service toggle
             },
           ),
         ],
       ),
     );
-  }
 
-  Widget _buildOrbitalMenu(BuildContext context) {
-    return OrbitalActionMenu(
+  Widget _buildOrbitalMenu(final BuildContext context) => OrbitalActionMenu(
       actions: [
         OrbitalAction(
           icon: Icons.add,
@@ -698,13 +681,13 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
         width: 56,
         height: 56,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [GoogleTheme.googleBlue, GoogleTheme.googleGreen],
           ),
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: GoogleTheme.googleBlue.withOpacity(0.5),
+              color: GoogleTheme.googleBlue.withValues(alpha: 0.5),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -717,5 +700,4 @@ class _CreativeEnhancedDashboardState extends State<CreativeEnhancedDashboard>
         ),
       ),
     );
-  }
 }

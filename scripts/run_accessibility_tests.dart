@@ -1,13 +1,14 @@
 #!/usr/bin/env dart
 
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:path/path.dart' as path;
 
 /// Accessibility Testing Script for NDIS Connect
 /// Runs comprehensive accessibility tests and generates reports
-void main(List<String> arguments) async {
-  print('🔍 Starting NDIS Connect Accessibility Testing...\n');
+void main(final List<String> arguments) async {
+  debugPrint('🔍 Starting NDIS Connect Accessibility Testing...\n');
 
   try {
     // Parse command line arguments
@@ -20,17 +21,17 @@ void main(List<String> arguments) async {
     await _generateReports(results, options);
 
     // Print summary
-    _printSummary(results);
+    _debugPrintSummary(results);
 
-    print('\n✅ Accessibility testing completed successfully!');
+    debugPrint('\n✅ Accessibility testing completed successfully!');
   } catch (e) {
-    print('❌ Accessibility testing failed: $e');
+    debugPrint('❌ Accessibility testing failed: $e');
     exit(1);
   }
 }
 
 /// Parse command line arguments
-Map<String, dynamic> _parseArguments(List<String> arguments) {
+Map<String, dynamic> _parseArguments(final List<String> arguments) {
   final options = <String, dynamic>{
     'verbose': false,
     'outputDir': 'accessibility_reports',
@@ -71,11 +72,11 @@ Map<String, dynamic> _parseArguments(List<String> arguments) {
         break;
       case '--help':
       case '-h':
-        _printHelp();
+        _debugPrintHelp();
         exit(0);
       default:
-        print('Unknown argument: $arg');
-        _printHelp();
+        debugPrint('Unknown argument: $arg');
+        _debugPrintHelp();
         exit(1);
     }
   }
@@ -84,8 +85,8 @@ Map<String, dynamic> _parseArguments(List<String> arguments) {
 }
 
 /// Print help information
-void _printHelp() {
-  print('''
+void _debugPrintHelp() {
+  debugPrint('''
 NDIS Connect Accessibility Testing Script
 
 Usage: dart run_accessibility_tests.dart [options]
@@ -108,7 +109,7 @@ Examples:
 
 /// Run accessibility tests
 Future<Map<String, dynamic>> _runAccessibilityTests(
-    Map<String, dynamic> options) async {
+    final Map<String, dynamic> options) async {
   final results = <String, dynamic>{
     'timestamp': DateTime.now().toIso8601String(),
     'testLevel': options['testLevel'],
@@ -116,39 +117,39 @@ Future<Map<String, dynamic>> _runAccessibilityTests(
     'summary': <String, dynamic>{},
   };
 
-  print('📋 Running accessibility tests...');
+  debugPrint('📋 Running accessibility tests...');
 
   // Test 1: WCAG 2.2 AA Compliance
-  print('  🔍 Testing WCAG 2.2 AA compliance...');
+  debugPrint('  🔍 Testing WCAG 2.2 AA compliance...');
   results['tests']['wcagCompliance'] = await _testWCAGCompliance(options);
 
   // Test 2: Screen Reader Compatibility
-  print('  🔍 Testing screen reader compatibility...');
+  debugPrint('  🔍 Testing screen reader compatibility...');
   results['tests']['screenReaderCompatibility'] =
       await _testScreenReaderCompatibility(options);
 
   // Test 3: High Contrast Support
-  print('  🔍 Testing high contrast support...');
+  debugPrint('  🔍 Testing high contrast support...');
   results['tests']['highContrastSupport'] =
       await _testHighContrastSupport(options);
 
   // Test 4: Text Scaling Support
-  print('  🔍 Testing text scaling support...');
+  debugPrint('  🔍 Testing text scaling support...');
   results['tests']['textScalingSupport'] =
       await _testTextScalingSupport(options);
 
   // Test 5: Keyboard Navigation
-  print('  🔍 Testing keyboard navigation...');
+  debugPrint('  🔍 Testing keyboard navigation...');
   results['tests']['keyboardNavigation'] =
       await _testKeyboardNavigation(options);
 
   // Test 6: Voice Control Support
-  print('  🔍 Testing voice control support...');
+  debugPrint('  🔍 Testing voice control support...');
   results['tests']['voiceControlSupport'] =
       await _testVoiceControlSupport(options);
 
   // Test 7: Assistive Technology Support
-  print('  🔍 Testing assistive technology support...');
+  debugPrint('  🔍 Testing assistive technology support...');
   results['tests']['assistiveTechnologySupport'] =
       await _testAssistiveTechnologySupport(options);
 
@@ -160,7 +161,7 @@ Future<Map<String, dynamic>> _runAccessibilityTests(
 
 /// Test WCAG 2.2 AA compliance
 Future<Map<String, dynamic>> _testWCAGCompliance(
-    Map<String, dynamic> options) async {
+    final Map<String, dynamic> options) async {
   final results = <String, dynamic>{
     'levelA': <String, bool>{},
     'levelAA': <String, bool>{},
@@ -216,9 +217,11 @@ Future<Map<String, dynamic>> _testWCAGCompliance(
   };
 
   // Calculate overall score
-  final totalCriteria = results['levelA'].length + results['levelAA'].length;
-  final passedCriteria = (results['levelA'].values.where((v) => v).length) +
-      (results['levelAA'].values.where((v) => v).length);
+  final totalCriteria =
+      (results['levelA'] as Map).length + (results['levelAA'] as Map).length;
+  final passedCriteria =
+      (results['levelA'].values.where((final v) => v as bool).length) +
+          (results['levelAA'].values.where((final v) => v as bool).length);
   results['overallScore'] =
       totalCriteria > 0 ? (passedCriteria / totalCriteria) * 100 : 0.0;
 
@@ -227,7 +230,7 @@ Future<Map<String, dynamic>> _testWCAGCompliance(
 
 /// Test screen reader compatibility
 Future<Map<String, dynamic>> _testScreenReaderCompatibility(
-    Map<String, dynamic> options) async {
+    final Map<String, dynamic> options) async {
   final results = <String, dynamic>{
     'semanticStructure': true,
     'interactiveElements': true,
@@ -246,7 +249,7 @@ Future<Map<String, dynamic>> _testScreenReaderCompatibility(
     results['navigation'],
     results['liveRegions'],
   ];
-  final passedTests = tests.where((v) => v).length;
+  final passedTests = tests.where((final v) => v as bool).length;
   results['overallScore'] = (passedTests / tests.length) * 100;
 
   return results;
@@ -254,7 +257,7 @@ Future<Map<String, dynamic>> _testScreenReaderCompatibility(
 
 /// Test high contrast support
 Future<Map<String, dynamic>> _testHighContrastSupport(
-    Map<String, dynamic> options) async {
+    final Map<String, dynamic> options) async {
   final results = <String, dynamic>{
     'contrastRatios': true,
     'focusIndicators': true,
@@ -271,7 +274,7 @@ Future<Map<String, dynamic>> _testHighContrastSupport(
     results['colorIndependence'],
     results['highContrastMode'],
   ];
-  final passedTests = tests.where((v) => v).length;
+  final passedTests = tests.where((final v) => v as bool).length;
   results['overallScore'] = (passedTests / tests.length) * 100;
 
   return results;
@@ -279,7 +282,7 @@ Future<Map<String, dynamic>> _testHighContrastSupport(
 
 /// Test text scaling support
 Future<Map<String, dynamic>> _testTextScalingSupport(
-    Map<String, dynamic> options) async {
+    final Map<String, dynamic> options) async {
   final results = <String, dynamic>{
     'scalingLevels': true,
     'layoutReflow': true,
@@ -296,7 +299,7 @@ Future<Map<String, dynamic>> _testTextScalingSupport(
     results['contentAccessibility'],
     results['navigationAccessibility'],
   ];
-  final passedTests = tests.where((v) => v).length;
+  final passedTests = tests.where((final v) => v as bool).length;
   results['overallScore'] = (passedTests / tests.length) * 100;
 
   return results;
@@ -304,7 +307,7 @@ Future<Map<String, dynamic>> _testTextScalingSupport(
 
 /// Test keyboard navigation
 Future<Map<String, dynamic>> _testKeyboardNavigation(
-    Map<String, dynamic> options) async {
+    final Map<String, dynamic> options) async {
   final results = <String, dynamic>{
     'tabOrder': true,
     'skipLinks': true,
@@ -325,7 +328,7 @@ Future<Map<String, dynamic>> _testKeyboardNavigation(
     results['escapeKey'],
     results['arrowKeys'],
   ];
-  final passedTests = tests.where((v) => v).length;
+  final passedTests = tests.where((final v) => v as bool).length;
   results['overallScore'] = (passedTests / tests.length) * 100;
 
   return results;
@@ -333,7 +336,7 @@ Future<Map<String, dynamic>> _testKeyboardNavigation(
 
 /// Test voice control support
 Future<Map<String, dynamic>> _testVoiceControlSupport(
-    Map<String, dynamic> options) async {
+    final Map<String, dynamic> options) async {
   final results = <String, dynamic>{
     'voiceCommands': true,
     'speechRecognition': true,
@@ -350,7 +353,7 @@ Future<Map<String, dynamic>> _testVoiceControlSupport(
     results['voiceFeedback'],
     results['errorHandling'],
   ];
-  final passedTests = tests.where((v) => v).length;
+  final passedTests = tests.where((final v) => v as bool).length;
   results['overallScore'] = (passedTests / tests.length) * 100;
 
   return results;
@@ -358,7 +361,7 @@ Future<Map<String, dynamic>> _testVoiceControlSupport(
 
 /// Test assistive technology support
 Future<Map<String, dynamic>> _testAssistiveTechnologySupport(
-    Map<String, dynamic> options) async {
+    final Map<String, dynamic> options) async {
   final results = <String, dynamic>{
     'switchControl': true,
     'eyeTracking': true,
@@ -375,14 +378,14 @@ Future<Map<String, dynamic>> _testAssistiveTechnologySupport(
     results['headTracking'],
     results['customDevices'],
   ];
-  final passedTests = tests.where((v) => v).length;
+  final passedTests = tests.where((final v) => v as bool).length;
   results['overallScore'] = (passedTests / tests.length) * 100;
 
   return results;
 }
 
 /// Calculate summary statistics
-Map<String, dynamic> _calculateSummary(Map<String, dynamic> tests) {
+Map<String, dynamic> _calculateSummary(final Map<String, dynamic> tests) {
   final summary = <String, dynamic>{
     'overallScore': 0.0,
     'totalTests': 0,
@@ -391,10 +394,10 @@ Map<String, dynamic> _calculateSummary(Map<String, dynamic> tests) {
     'categories': <String, dynamic>{},
   };
 
-  double totalScore = 0.0;
+  double totalScore = 0;
   int categoryCount = 0;
 
-  tests.forEach((category, results) {
+  tests.forEach((final category, final results) {
     if (results is Map<String, dynamic> &&
         results.containsKey('overallScore')) {
       final score = results['overallScore'] as double;
@@ -427,7 +430,7 @@ Map<String, dynamic> _calculateSummary(Map<String, dynamic> tests) {
 
 /// Generate reports
 Future<void> _generateReports(
-    Map<String, dynamic> results, Map<String, dynamic> options) async {
+    final Map<String, dynamic> results, final Map<String, dynamic> options) async {
   final outputDir = options['outputDir'] as String;
   final format = options['format'] as String;
 
@@ -437,7 +440,7 @@ Future<void> _generateReports(
     await dir.create(recursive: true);
   }
 
-  print('📄 Generating reports...');
+  debugPrint('📄 Generating reports...');
 
   // Generate JSON report
   if (format == 'json' || format == 'all') {
@@ -457,32 +460,32 @@ Future<void> _generateReports(
 
 /// Generate JSON report
 Future<void> _generateJSONReport(
-    Map<String, dynamic> results, String outputDir) async {
+    final Map<String, dynamic> results, final String outputDir) async {
   final file = File(path.join(outputDir, 'accessibility_report.json'));
   await file.writeAsString(jsonEncode(results));
-  print('  📄 JSON report generated: ${file.path}');
+  debugPrint('  📄 JSON report generated: ${file.path}');
 }
 
 /// Generate HTML report
 Future<void> _generateHTMLReport(
-    Map<String, dynamic> results, String outputDir) async {
+    final Map<String, dynamic> results, final String outputDir) async {
   final html = _generateHTMLContent(results);
   final file = File(path.join(outputDir, 'accessibility_report.html'));
   await file.writeAsString(html);
-  print('  📄 HTML report generated: ${file.path}');
+  debugPrint('  📄 HTML report generated: ${file.path}');
 }
 
 /// Generate Markdown report
 Future<void> _generateMarkdownReport(
-    Map<String, dynamic> results, String outputDir) async {
+    final Map<String, dynamic> results, final String outputDir) async {
   final markdown = _generateMarkdownContent(results);
   final file = File(path.join(outputDir, 'accessibility_report.md'));
   await file.writeAsString(markdown);
-  print('  📄 Markdown report generated: ${file.path}');
+  debugPrint('  📄 Markdown report generated: ${file.path}');
 }
 
 /// Generate HTML content
-String _generateHTMLContent(Map<String, dynamic> results) {
+String _generateHTMLContent(final Map<String, dynamic> results) {
   final summary = results['summary'] as Map<String, dynamic>;
   final overallScore = summary['overallScore'] as double;
 
@@ -524,10 +527,10 @@ String _generateHTMLContent(Map<String, dynamic> results) {
 }
 
 /// Generate category HTML
-String _generateCategoryHTML(Map<String, dynamic> tests) {
+String _generateCategoryHTML(final Map<String, dynamic> tests) {
   final buffer = StringBuffer();
 
-  tests.forEach((category, results) {
+  tests.forEach((final category, final results) {
     if (results is Map<String, dynamic> &&
         results.containsKey('overallScore')) {
       final score = results['overallScore'] as double;
@@ -556,7 +559,7 @@ String _generateCategoryHTML(Map<String, dynamic> tests) {
 }
 
 /// Generate Markdown content
-String _generateMarkdownContent(Map<String, dynamic> results) {
+String _generateMarkdownContent(final Map<String, dynamic> results) {
   final summary = results['summary'] as Map<String, dynamic>;
   final overallScore = summary['overallScore'] as double;
 
@@ -575,7 +578,7 @@ String _generateMarkdownContent(Map<String, dynamic> results) {
   buffer.writeln();
 
   final tests = results['tests'] as Map<String, dynamic>;
-  tests.forEach((category, results) {
+  tests.forEach((final category, final results) {
     if (results is Map<String, dynamic> &&
         results.containsKey('overallScore')) {
       final score = results['overallScore'] as double;
@@ -603,21 +606,21 @@ String _generateMarkdownContent(Map<String, dynamic> results) {
 }
 
 /// Print summary to console
-void _printSummary(Map<String, dynamic> results) {
+void _debugPrintSummary(final Map<String, dynamic> results) {
   final summary = results['summary'] as Map<String, dynamic>;
   final overallScore = summary['overallScore'] as double;
 
-  print('\n📊 Accessibility Testing Summary');
-  print('=' * 50);
-  print('Overall Score: ${overallScore.toStringAsFixed(1)}%');
-  print('Total Tests: ${summary['totalTests']}');
-  print('Passed: ${summary['passedTests']}');
-  print('Failed: ${summary['failedTests']}');
-  print('');
+  debugPrint('\n📊 Accessibility Testing Summary');
+  debugPrint('=' * 50);
+  debugPrint('Overall Score: ${overallScore.toStringAsFixed(1)}%');
+  debugPrint('Total Tests: ${summary['totalTests']}');
+  debugPrint('Passed: ${summary['passedTests']}');
+  debugPrint('Failed: ${summary['failedTests']}');
+  debugPrint('');
 
-  print('Category Results:');
+  debugPrint('Category Results:');
   final categories = summary['categories'] as Map<String, dynamic>;
-  categories.forEach((category, data) {
+  categories.forEach((final category, final data) {
     final score = data['score'] as double;
     final status = data['status'] as String;
     final emoji = status == 'PASS'
@@ -625,6 +628,6 @@ void _printSummary(Map<String, dynamic> results) {
         : status == 'WARNING'
             ? '⚠️'
             : '❌';
-    print('  $emoji $category: ${score.toStringAsFixed(1)}%');
+    debugPrint('  $emoji $category: ${score.toStringAsFixed(1)}%');
   });
 }

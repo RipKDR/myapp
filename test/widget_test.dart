@@ -11,11 +11,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ndis_connect/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Counter increments smoke test', (final tester) async {
+    // Arrange: Build the app and trigger a frame.
+    await tester.pumpWidget(const NDISConnectApp());
 
-    // Verify that our counter starts at 0.
+    // Assert: Counter starts at 0.
     expect(find.text('0'), findsOneWidget);
     expect(find.text('1'), findsNothing);
 

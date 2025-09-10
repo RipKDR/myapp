@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 import '../theme/google_theme.dart';
 
 /// Dynamic AI-powered color system that adapts to user mood, time, and context
@@ -7,9 +6,9 @@ import '../theme/google_theme.dart';
 class DynamicAIColorSystem {
   /// Generates mood-responsive colors based on user interaction patterns
   static ColorScheme generateMoodBasedColors({
-    required BuildContext context,
-    required MoodState userMood,
-    Brightness brightness = Brightness.light,
+    required final BuildContext context,
+    required final MoodState userMood,
+    final Brightness brightness = Brightness.light,
   }) {
     Color primaryColor;
     Color secondaryColor;
@@ -47,7 +46,6 @@ class DynamicAIColorSystem {
         break;
 
       case MoodState.neutral:
-      default:
         primaryColor = GoogleTheme.googleBlue;
         secondaryColor = GoogleTheme.googleGreen;
         tertiaryColor = GoogleTheme.ndisTeal;
@@ -64,8 +62,8 @@ class DynamicAIColorSystem {
 
   /// Creates time-based adaptive color palettes
   static ColorScheme generateTimeBasedColors({
-    required DateTime currentTime,
-    Brightness brightness = Brightness.light,
+    required final DateTime currentTime,
+    final Brightness brightness = Brightness.light,
   }) {
     final hour = currentTime.hour;
     Color primaryColor;
@@ -102,9 +100,9 @@ class DynamicAIColorSystem {
 
   /// Generates context-aware theme colors based on app section
   static ColorScheme generateContextualColors({
-    required AppContext context,
-    Brightness brightness = Brightness.light,
-    bool isAccessibilityMode = false,
+    required final AppContext context,
+    final Brightness brightness = Brightness.light,
+    final bool isAccessibilityMode = false,
   }) {
     Color primaryColor;
     Color secondaryColor;
@@ -146,7 +144,6 @@ class DynamicAIColorSystem {
         break;
 
       case AppContext.dashboard:
-      default:
         primaryColor = isAccessibilityMode
             ? const Color(0xFF0D47A1) // High contrast blue
             : GoogleTheme.googleBlue;
@@ -163,12 +160,11 @@ class DynamicAIColorSystem {
 
   /// Creates animated color transitions between different states
   static AnimatedContainer buildColorTransitionContainer({
-    required Widget child,
-    required ColorScheme colorScheme,
-    Duration duration = const Duration(milliseconds: 800),
-    Curve curve = Curves.easeInOutCubic,
-  }) {
-    return AnimatedContainer(
+    required final Widget child,
+    required final ColorScheme colorScheme,
+    final Duration duration = const Duration(milliseconds: 800),
+    final Curve curve = Curves.easeInOutCubic,
+  }) => AnimatedContainer(
       duration: duration,
       curve: curve,
       decoration: BoxDecoration(
@@ -176,21 +172,20 @@ class DynamicAIColorSystem {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            colorScheme.primary.withOpacity(0.1),
-            colorScheme.secondary.withOpacity(0.05),
-            colorScheme.tertiary.withOpacity(0.1),
+            colorScheme.primary.withValues(alpha: 0.1),
+            colorScheme.secondary.withValues(alpha: 0.05),
+            colorScheme.tertiary.withValues(alpha: 0.1),
           ],
         ),
       ),
       child: child,
     );
-  }
 
   /// Generates harmonious color combinations using color theory
   static List<Color> generateHarmoniousColors({
-    required Color baseColor,
-    ColorHarmony harmony = ColorHarmony.complementary,
-    int count = 5,
+    required final Color baseColor,
+    final ColorHarmony harmony = ColorHarmony.complementary,
+    final int count = 5,
   }) {
     final hsl = HSLColor.fromColor(baseColor);
     final colors = <Color>[];
@@ -250,18 +245,17 @@ class DynamicAIColorSystem {
 
   /// Creates a smart color picker that suggests optimal colors
   static Widget buildSmartColorPicker({
-    required BuildContext context,
-    required Color currentColor,
-    required ValueChanged<Color> onColorChanged,
-    bool showHarmonyOptions = true,
-  }) {
-    return Container(
+    required final BuildContext context,
+    required final Color currentColor,
+    required final ValueChanged<Color> onColorChanged,
+    final bool showHarmonyOptions = true,
+  }) => Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.1),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
         ),
       ),
       child: Column(
@@ -284,7 +278,7 @@ class DynamicAIColorSystem {
               color: currentColor,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
               ),
             ),
           ),
@@ -304,7 +298,7 @@ class DynamicAIColorSystem {
             // Color harmony options
             Wrap(
               spacing: 8,
-              children: ColorHarmony.values.map((harmony) {
+              children: ColorHarmony.values.map((final harmony) {
                 final colors = generateHarmoniousColors(
                   baseColor: currentColor,
                   harmony: harmony,
@@ -322,7 +316,7 @@ class DynamicAIColorSystem {
                       ),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                       ),
                     ),
                     child: Center(
@@ -350,7 +344,6 @@ class DynamicAIColorSystem {
         ],
       ),
     );
-  }
 }
 
 /// Enumeration for different mood states

@@ -8,11 +8,6 @@ import '../theme/google_theme.dart';
 
 /// Enhanced budget donut chart with interactive segments
 class BudgetDonutChart extends StatefulWidget {
-  final List<BudgetCategory> categories;
-  final double size;
-  final double strokeWidth;
-  final bool showLabels;
-  final Function(BudgetCategory)? onSegmentTap;
 
   const BudgetDonutChart({
     super.key,
@@ -22,6 +17,11 @@ class BudgetDonutChart extends StatefulWidget {
     this.showLabels = true,
     this.onSegmentTap,
   });
+  final List<BudgetCategory> categories;
+  final double size;
+  final double strokeWidth;
+  final bool showLabels;
+  final void Function(BudgetCategory)? onSegmentTap;
 
   @override
   State<BudgetDonutChart> createState() => _BudgetDonutChartState();
@@ -41,8 +41,8 @@ class _BudgetDonutChartState extends State<BudgetDonutChart>
       vsync: this,
     );
     _animation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0,
+      end: 1,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeOutCubic,
@@ -58,13 +58,11 @@ class _BudgetDonutChartState extends State<BudgetDonutChart>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(final BuildContext context) => Column(
       children: [
         AnimatedBuilder(
           animation: _animation,
-          builder: (context, child) {
-            return SizedBox(
+          builder: (final context, final child) => SizedBox(
               width: widget.size,
               height: widget.size,
               child: CustomPaint(
@@ -76,13 +74,12 @@ class _BudgetDonutChartState extends State<BudgetDonutChart>
                 ),
                 child: widget.onSegmentTap != null
                     ? GestureDetector(
-                        onTapUp: (details) => _handleTap(details),
+                        onTapUp: _handleTap,
                         child: Container(),
                       )
                     : null,
               ),
-            );
-          },
+            ),
         ),
         if (widget.showLabels) ...[
           const SizedBox(height: 16),
@@ -90,13 +87,11 @@ class _BudgetDonutChartState extends State<BudgetDonutChart>
         ],
       ],
     );
-  }
 
-  Widget _buildLegend() {
-    return Wrap(
+  Widget _buildLegend() => Wrap(
       spacing: 16,
       runSpacing: 8,
-      children: widget.categories.asMap().entries.map((entry) {
+      children: widget.categories.asMap().entries.map((final entry) {
         final index = entry.key;
         final category = entry.value;
         final isHovered = _hoveredIndex == index;
@@ -113,12 +108,11 @@ class _BudgetDonutChartState extends State<BudgetDonutChart>
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: isHovered
-                    ? category.color.withOpacity(0.1)
+                    ? category.color.withValues(alpha: 0.1)
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: isHovered ? category.color : Colors.transparent,
-                  width: 1,
                 ),
               ),
               child: Row(
@@ -147,9 +141,8 @@ class _BudgetDonutChartState extends State<BudgetDonutChart>
         );
       }).toList(),
     );
-  }
 
-  void _handleTap(TapUpDetails details) {
+  void _handleTap(final TapUpDetails details) {
     if (widget.onSegmentTap == null) return;
 
     final center = Offset(widget.size / 2, widget.size / 2);
@@ -169,7 +162,7 @@ class _BudgetDonutChartState extends State<BudgetDonutChart>
 
       double currentAngle = 0;
       final total =
-          widget.categories.fold<double>(0, (sum, cat) => sum + cat.spent);
+          widget.categories.fold<double>(0, (final sum, final cat) => sum + cat.spent);
 
       for (int i = 0; i < widget.categories.length; i++) {
         final segmentAngle = (widget.categories[i].spent / total) * 2 * math.pi;
@@ -189,10 +182,6 @@ class _BudgetDonutChartState extends State<BudgetDonutChart>
 
 /// Custom painter for budget donut chart
 class BudgetDonutPainter extends CustomPainter {
-  final List<BudgetCategory> categories;
-  final double progress;
-  final double strokeWidth;
-  final int? hoveredIndex;
 
   BudgetDonutPainter({
     required this.categories,
@@ -200,13 +189,17 @@ class BudgetDonutPainter extends CustomPainter {
     required this.strokeWidth,
     this.hoveredIndex,
   });
+  final List<BudgetCategory> categories;
+  final double progress;
+  final double strokeWidth;
+  final int? hoveredIndex;
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(final Canvas canvas, final Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = (size.width / 2) - (strokeWidth / 2);
 
-    final total = categories.fold<double>(0, (sum, cat) => sum + cat.spent);
+    final total = categories.fold<double>(0, (final sum, final cat) => sum + cat.spent);
     if (total == 0) return;
 
     double startAngle = -math.pi / 2;
@@ -225,7 +218,7 @@ class BudgetDonutPainter extends CustomPainter {
       // Draw shadow for hovered segment
       if (isHovered) {
         final shadowPaint = Paint()
-          ..color = category.color.withOpacity(0.3)
+          ..color = category.color.withValues(alpha: 0.3)
           ..style = PaintingStyle.stroke
           ..strokeWidth = strokeWidth + 8
           ..strokeCap = StrokeCap.round
@@ -253,20 +246,13 @@ class BudgetDonutPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(BudgetDonutPainter oldDelegate) {
-    return oldDelegate.progress != progress ||
+  bool shouldRepaint(final BudgetDonutPainter oldDelegate) => oldDelegate.progress != progress ||
         oldDelegate.hoveredIndex != hoveredIndex ||
         oldDelegate.categories != categories;
-  }
 }
 
 /// Enhanced spending trend chart with multiple data series
 class SpendingTrendChart extends StatefulWidget {
-  final List<SpendingDataPoint> data;
-  final double height;
-  final Duration animationDuration;
-  final bool showGrid;
-  final bool showLabels;
 
   const SpendingTrendChart({
     super.key,
@@ -276,6 +262,11 @@ class SpendingTrendChart extends StatefulWidget {
     this.showGrid = true,
     this.showLabels = true,
   });
+  final List<SpendingDataPoint> data;
+  final double height;
+  final Duration animationDuration;
+  final bool showGrid;
+  final bool showLabels;
 
   @override
   State<SpendingTrendChart> createState() => _SpendingTrendChartState();
@@ -294,8 +285,8 @@ class _SpendingTrendChartState extends State<SpendingTrendChart>
       vsync: this,
     );
     _animation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0,
+      end: 1,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeOutCubic,
@@ -311,11 +302,9 @@ class _SpendingTrendChartState extends State<SpendingTrendChart>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
+  Widget build(final BuildContext context) => AnimatedBuilder(
       animation: _animation,
-      builder: (context, child) {
-        return SizedBox(
+      builder: (final context, final child) => SizedBox(
           height: widget.height,
           child: CustomPaint(
             painter: SpendingTrendPainter(
@@ -327,19 +316,12 @@ class _SpendingTrendChartState extends State<SpendingTrendChart>
             ),
             child: const SizedBox.expand(),
           ),
-        );
-      },
+        ),
     );
-  }
 }
 
 /// Custom painter for spending trend chart
 class SpendingTrendPainter extends CustomPainter {
-  final List<SpendingDataPoint> data;
-  final double progress;
-  final bool showGrid;
-  final bool showLabels;
-  final TextStyle? textStyle;
 
   SpendingTrendPainter({
     required this.data,
@@ -348,12 +330,17 @@ class SpendingTrendPainter extends CustomPainter {
     required this.showLabels,
     this.textStyle,
   });
+  final List<SpendingDataPoint> data;
+  final double progress;
+  final bool showGrid;
+  final bool showLabels;
+  final TextStyle? textStyle;
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(final Canvas canvas, final Size size) {
     if (data.isEmpty) return;
 
-    final padding = const EdgeInsets.all(20);
+    const padding = EdgeInsets.all(20);
     final chartRect = Rect.fromLTRB(
       padding.left,
       padding.top,
@@ -362,8 +349,8 @@ class SpendingTrendPainter extends CustomPainter {
     );
 
     // Find min/max values
-    final maxValue = data.map((d) => d.amount).reduce(math.max);
-    final minValue = data.map((d) => d.amount).reduce(math.min);
+    final maxValue = data.map((final d) => d.amount).reduce(math.max);
+    final minValue = data.map((final d) => d.amount).reduce(math.min);
     final range = maxValue - minValue;
 
     if (range == 0) return;
@@ -386,9 +373,9 @@ class SpendingTrendPainter extends CustomPainter {
   }
 
   void _drawGrid(
-      Canvas canvas, Rect chartRect, double maxValue, double minValue) {
+      final Canvas canvas, final Rect chartRect, final double maxValue, final double minValue) {
     final gridPaint = Paint()
-      ..color = Colors.grey.withOpacity(0.2)
+      ..color = Colors.grey.withValues(alpha: 0.2)
       ..strokeWidth = 0.5;
 
     // Horizontal grid lines
@@ -415,8 +402,8 @@ class SpendingTrendPainter extends CustomPainter {
     }
   }
 
-  void _drawTrendLine(Canvas canvas, Rect chartRect, double maxValue,
-      double minValue, double range) {
+  void _drawTrendLine(final Canvas canvas, final Rect chartRect, final double maxValue,
+      final double minValue, final double range) {
     final linePaint = Paint()
       ..color = GoogleTheme.googleBlue
       ..strokeWidth = 3
@@ -424,7 +411,7 @@ class SpendingTrendPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final fillPaint = Paint()
-      ..color = GoogleTheme.googleBlue.withOpacity(0.1)
+      ..color = GoogleTheme.googleBlue.withValues(alpha: 0.1)
       ..style = PaintingStyle.fill;
 
     final path = Path();
@@ -460,8 +447,8 @@ class SpendingTrendPainter extends CustomPainter {
     canvas.drawPath(path, linePaint);
   }
 
-  void _drawDataPoints(Canvas canvas, Rect chartRect, double maxValue,
-      double minValue, double range) {
+  void _drawDataPoints(final Canvas canvas, final Rect chartRect, final double maxValue,
+      final double minValue, final double range) {
     final pointPaint = Paint()
       ..color = GoogleTheme.googleBlue
       ..style = PaintingStyle.fill;
@@ -485,7 +472,7 @@ class SpendingTrendPainter extends CustomPainter {
   }
 
   void _drawLabels(
-      Canvas canvas, Rect chartRect, double maxValue, double minValue) {
+      final Canvas canvas, final Rect chartRect, final double maxValue, final double minValue) {
     if (textStyle == null) return;
 
     final textPainter = TextPainter(
@@ -511,20 +498,14 @@ class SpendingTrendPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(SpendingTrendPainter oldDelegate) {
-    return oldDelegate.progress != progress ||
+  bool shouldRepaint(final SpendingTrendPainter oldDelegate) => oldDelegate.progress != progress ||
         oldDelegate.data != data ||
         oldDelegate.showGrid != showGrid ||
         oldDelegate.showLabels != showLabels;
-  }
 }
 
 /// Budget category progress bar with enhanced styling
 class BudgetCategoryBar extends StatefulWidget {
-  final BudgetCategory category;
-  final bool showPercentage;
-  final bool isInteractive;
-  final VoidCallback? onTap;
 
   const BudgetCategoryBar({
     super.key,
@@ -533,6 +514,10 @@ class BudgetCategoryBar extends StatefulWidget {
     this.isInteractive = true,
     this.onTap,
   });
+  final BudgetCategory category;
+  final bool showPercentage;
+  final bool isInteractive;
+  final VoidCallback? onTap;
 
   @override
   State<BudgetCategoryBar> createState() => _BudgetCategoryBarState();
@@ -552,7 +537,7 @@ class _BudgetCategoryBarState extends State<BudgetCategoryBar>
       vsync: this,
     );
     _progressAnimation = Tween<double>(
-      begin: 0.0,
+      begin: 0,
       end: widget.category.spent / widget.category.allocated,
     ).animate(CurvedAnimation(
       parent: _animationController,
@@ -569,7 +554,7 @@ class _BudgetCategoryBarState extends State<BudgetCategoryBar>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final progress = widget.category.spent / widget.category.allocated;
@@ -587,12 +572,12 @@ class _BudgetCategoryBarState extends State<BudgetCategoryBar>
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: _isHovered && widget.isInteractive
-                ? displayColor.withOpacity(0.05)
+                ? displayColor.withValues(alpha: 0.05)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: _isHovered && widget.isInteractive
-                  ? displayColor.withOpacity(0.2)
+                  ? displayColor.withValues(alpha: 0.2)
                   : Colors.transparent,
             ),
           ),
@@ -636,14 +621,13 @@ class _BudgetCategoryBarState extends State<BudgetCategoryBar>
               // Progress bar
               AnimatedBuilder(
                 animation: _progressAnimation,
-                builder: (context, child) {
-                  return Column(
+                builder: (final context, final child) => Column(
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(4),
                         child: LinearProgressIndicator(
                           value: _progressAnimation.value,
-                          backgroundColor: displayColor.withOpacity(0.1),
+                          backgroundColor: displayColor.withValues(alpha: 0.1),
                           valueColor:
                               AlwaysStoppedAnimation<Color>(displayColor),
                           minHeight: 8,
@@ -671,8 +655,7 @@ class _BudgetCategoryBarState extends State<BudgetCategoryBar>
                         ],
                       ),
                     ],
-                  );
-                },
+                  ),
               ),
 
               // Over budget warning
@@ -682,13 +665,13 @@ class _BudgetCategoryBarState extends State<BudgetCategoryBar>
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: GoogleTheme.googleRed.withOpacity(0.1),
+                    color: GoogleTheme.googleRed.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.warning_amber,
                         size: 14,
                         color: GoogleTheme.googleRed,
@@ -715,11 +698,6 @@ class _BudgetCategoryBarState extends State<BudgetCategoryBar>
 
 /// Data models for financial components
 class BudgetCategory {
-  final String name;
-  final double allocated;
-  final double spent;
-  final Color color;
-  final String? description;
 
   const BudgetCategory({
     required this.name,
@@ -728,6 +706,11 @@ class BudgetCategory {
     required this.color,
     this.description,
   });
+  final String name;
+  final double allocated;
+  final double spent;
+  final Color color;
+  final String? description;
 
   double get remaining => allocated - spent;
   double get progress => spent / allocated;
@@ -735,13 +718,13 @@ class BudgetCategory {
 }
 
 class SpendingDataPoint {
-  final DateTime date;
-  final double amount;
-  final String? label;
 
   const SpendingDataPoint({
     required this.date,
     required this.amount,
     this.label,
   });
+  final DateTime date;
+  final double amount;
+  final String? label;
 }

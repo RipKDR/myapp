@@ -6,10 +6,6 @@ import 'dart:math' as math;
 
 /// Ripple animation widget that creates expanding circles
 class RippleAnimation extends StatefulWidget {
-  final Widget child;
-  final Color color;
-  final Duration duration;
-  final double maxRadius;
 
   const RippleAnimation({
     super.key,
@@ -18,6 +14,10 @@ class RippleAnimation extends StatefulWidget {
     this.duration = const Duration(seconds: 2),
     this.maxRadius = 100,
   });
+  final Widget child;
+  final Color color;
+  final Duration duration;
+  final double maxRadius;
 
   @override
   State<RippleAnimation> createState() => _RippleAnimationState();
@@ -40,8 +40,8 @@ class _RippleAnimationState extends State<RippleAnimation>
     for (int i = 0; i < 3; i++) {
       _ripples.add(
         Tween<double>(
-          begin: 0.0,
-          end: 1.0,
+          begin: 0,
+          end: 1,
         ).animate(
           CurvedAnimation(
             parent: _controller,
@@ -65,44 +65,35 @@ class _RippleAnimationState extends State<RippleAnimation>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Stack(
+  Widget build(final BuildContext context) => Stack(
       alignment: Alignment.center,
       children: [
         // Ripple effects
         ..._ripples
-            .map((ripple) => AnimatedBuilder(
+            .map((final ripple) => AnimatedBuilder(
                   animation: ripple,
-                  builder: (context, child) {
-                    return Container(
+                  builder: (final context, final child) => Container(
                       width: widget.maxRadius * 2 * ripple.value,
                       height: widget.maxRadius * 2 * ripple.value,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: widget.color.withOpacity(1 - ripple.value),
+                          color: widget.color.withValues(alpha: 1 - ripple.value),
                           width: 3 * (1 - ripple.value),
                         ),
                       ),
-                    );
-                  },
+                    ),
                 ))
-            .toList(),
+            ,
 
         // Child widget
         widget.child,
       ],
     );
-  }
 }
 
 /// Particle burst animation for celebratory moments
 class ParticleBurst extends StatefulWidget {
-  final Widget child;
-  final int particleCount;
-  final List<Color> colors;
-  final VoidCallback? onComplete;
-  final bool trigger;
 
   const ParticleBurst({
     super.key,
@@ -117,6 +108,11 @@ class ParticleBurst extends StatefulWidget {
     this.onComplete,
     this.trigger = false,
   });
+  final Widget child;
+  final int particleCount;
+  final List<Color> colors;
+  final VoidCallback? onComplete;
+  final bool trigger;
 
   @override
   State<ParticleBurst> createState() => _ParticleBurstState();
@@ -136,7 +132,7 @@ class _ParticleBurstState extends State<ParticleBurst>
       vsync: this,
     );
 
-    _controller.addStatusListener((status) {
+    _controller.addStatusListener((final status) {
       if (status == AnimationStatus.completed) {
         widget.onComplete?.call();
       }
@@ -146,7 +142,7 @@ class _ParticleBurstState extends State<ParticleBurst>
   }
 
   @override
-  void didUpdateWidget(ParticleBurst oldWidget) {
+  void didUpdateWidget(final ParticleBurst oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.trigger && !oldWidget.trigger) {
       _burst();
@@ -177,8 +173,7 @@ class _ParticleBurstState extends State<ParticleBurst>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Stack(
+  Widget build(final BuildContext context) => Stack(
       alignment: Alignment.center,
       children: [
         widget.child,
@@ -186,27 +181,20 @@ class _ParticleBurstState extends State<ParticleBurst>
           IgnorePointer(
             child: AnimatedBuilder(
               animation: _controller,
-              builder: (context, child) {
-                return CustomPaint(
+              builder: (final context, final child) => CustomPaint(
                   size: const Size(300, 300),
                   painter: _ParticlePainter(
                     particles: _particles,
                     progress: _controller.value,
                   ),
-                );
-              },
+                ),
             ),
           ),
       ],
     );
-  }
 }
 
 class _Particle {
-  final double angle;
-  final double velocity;
-  final Color color;
-  final double size;
 
   _Particle({
     required this.angle,
@@ -214,19 +202,23 @@ class _Particle {
     required this.color,
     required this.size,
   });
+  final double angle;
+  final double velocity;
+  final Color color;
+  final double size;
 }
 
 class _ParticlePainter extends CustomPainter {
-  final List<_Particle> particles;
-  final double progress;
 
   _ParticlePainter({
     required this.particles,
     required this.progress,
   });
+  final List<_Particle> particles;
+  final double progress;
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(final Canvas canvas, final Size size) {
     final center = Offset(size.width / 2, size.height / 2);
 
     for (final particle in particles) {
@@ -238,7 +230,7 @@ class _ParticlePainter extends CustomPainter {
 
       final opacity = 1 - progress;
       final paint = Paint()
-        ..color = particle.color.withOpacity(opacity)
+        ..color = particle.color.withValues(alpha: opacity)
         ..style = PaintingStyle.fill;
 
       canvas.drawCircle(
@@ -250,14 +242,11 @@ class _ParticlePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  bool shouldRepaint(covariant final CustomPainter oldDelegate) => true;
 }
 
 /// Morphing shape animation
 class MorphingShape extends StatefulWidget {
-  final double size;
-  final Color color;
-  final Duration duration;
 
   const MorphingShape({
     super.key,
@@ -265,6 +254,9 @@ class MorphingShape extends StatefulWidget {
     this.color = const Color(0xFF1A73E8),
     this.duration = const Duration(seconds: 3),
   });
+  final double size;
+  final Color color;
+  final Duration duration;
 
   @override
   State<MorphingShape> createState() => _MorphingShapeState();
@@ -299,33 +291,29 @@ class _MorphingShapeState extends State<MorphingShape>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
+  Widget build(final BuildContext context) => AnimatedBuilder(
       animation: _animation,
-      builder: (context, child) {
-        return CustomPaint(
+      builder: (final context, final child) => CustomPaint(
           size: Size(widget.size, widget.size),
           painter: _MorphingShapePainter(
             color: widget.color,
             progress: _animation.value,
           ),
-        );
-      },
+        ),
     );
-  }
 }
 
 class _MorphingShapePainter extends CustomPainter {
-  final Color color;
-  final double progress;
 
   _MorphingShapePainter({
     required this.color,
     required this.progress,
   });
+  final Color color;
+  final double progress;
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(final Canvas canvas, final Size size) {
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
@@ -375,7 +363,7 @@ class _MorphingShapePainter extends CustomPainter {
     // Add gradient effect
     final gradient = RadialGradient(
       colors: [
-        color.withOpacity(0.8),
+        color.withValues(alpha: 0.8),
         color,
       ],
       stops: const [0.0, 1.0],
@@ -389,7 +377,7 @@ class _MorphingShapePainter extends CustomPainter {
 
     // Add glow effect
     final glowPaint = Paint()
-      ..color = color.withOpacity(0.3)
+      ..color = color.withValues(alpha: 0.3)
       ..style = PaintingStyle.fill
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20);
 
@@ -397,15 +385,11 @@ class _MorphingShapePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  bool shouldRepaint(covariant final CustomPainter oldDelegate) => true;
 }
 
 /// Holographic effect widget
 class HolographicCard extends StatefulWidget {
-  final Widget child;
-  final double width;
-  final double height;
-  final BorderRadius? borderRadius;
 
   const HolographicCard({
     super.key,
@@ -414,6 +398,10 @@ class HolographicCard extends StatefulWidget {
     this.height = 200,
     this.borderRadius,
   });
+  final Widget child;
+  final double width;
+  final double height;
+  final BorderRadius? borderRadius;
 
   @override
   State<HolographicCard> createState() => _HolographicCardState();
@@ -441,9 +429,8 @@ class _HolographicCardState extends State<HolographicCard>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onPanUpdate: (details) {
+  Widget build(final BuildContext context) => GestureDetector(
+      onPanUpdate: (final details) {
         setState(() {
           _rotationY =
               (details.localPosition.dx - widget.width / 2) / widget.width;
@@ -470,7 +457,7 @@ class _HolographicCardState extends State<HolographicCard>
             borderRadius: widget.borderRadius ?? BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withValues(alpha: 0.2),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -486,16 +473,14 @@ class _HolographicCardState extends State<HolographicCard>
                 // Holographic overlay
                 AnimatedBuilder(
                   animation: _controller,
-                  builder: (context, child) {
-                    return CustomPaint(
+                  builder: (final context, final child) => CustomPaint(
                       size: Size(widget.width, widget.height),
                       painter: _HolographicPainter(
                         progress: _controller.value,
                         rotationX: _rotationX,
                         rotationY: _rotationY,
                       ),
-                    );
-                  },
+                    ),
                 ),
               ],
             ),
@@ -503,22 +488,21 @@ class _HolographicCardState extends State<HolographicCard>
         ),
       ),
     );
-  }
 }
 
 class _HolographicPainter extends CustomPainter {
-  final double progress;
-  final double rotationX;
-  final double rotationY;
 
   _HolographicPainter({
     required this.progress,
     required this.rotationX,
     required this.rotationY,
   });
+  final double progress;
+  final double rotationX;
+  final double rotationY;
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(final Canvas canvas, final Size size) {
     // Create holographic gradient effect
     final rect = Rect.fromLTWH(0, 0, size.width, size.height);
 
@@ -531,14 +515,14 @@ class _HolographicPainter extends CustomPainter {
       end: Alignment.bottomRight,
       transform: GradientRotation(angle + progress * 2 * math.pi),
       colors: [
-        Colors.red.withOpacity(0.3),
-        Colors.orange.withOpacity(0.3),
-        Colors.yellow.withOpacity(0.3),
-        Colors.green.withOpacity(0.3),
-        Colors.blue.withOpacity(0.3),
-        Colors.indigo.withOpacity(0.3),
-        Colors.purple.withOpacity(0.3),
-        Colors.red.withOpacity(0.3),
+        Colors.red.withValues(alpha: 0.3),
+        Colors.orange.withValues(alpha: 0.3),
+        Colors.yellow.withValues(alpha: 0.3),
+        Colors.green.withValues(alpha: 0.3),
+        Colors.blue.withValues(alpha: 0.3),
+        Colors.indigo.withValues(alpha: 0.3),
+        Colors.purple.withValues(alpha: 0.3),
+        Colors.red.withValues(alpha: 0.3),
       ],
       stops: const [0.0, 0.16, 0.33, 0.5, 0.66, 0.83, 0.95, 1.0],
     );
@@ -555,9 +539,9 @@ class _HolographicPainter extends CustomPainter {
       end: Alignment.bottomRight,
       transform: GradientRotation(progress * 2 * math.pi),
       colors: [
-        Colors.white.withOpacity(0),
-        Colors.white.withOpacity(0.2),
-        Colors.white.withOpacity(0),
+        Colors.white.withValues(alpha: 0),
+        Colors.white.withValues(alpha: 0.2),
+        Colors.white.withValues(alpha: 0),
       ],
       stops: const [0.0, 0.5, 1.0],
     );
@@ -570,14 +554,11 @@ class _HolographicPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  bool shouldRepaint(covariant final CustomPainter oldDelegate) => true;
 }
 
 /// Floating bubbles background animation
 class FloatingBubbles extends StatefulWidget {
-  final int bubbleCount;
-  final List<Color> colors;
-  final Widget child;
 
   const FloatingBubbles({
     super.key,
@@ -590,6 +571,9 @@ class FloatingBubbles extends StatefulWidget {
     ],
     required this.child,
   });
+  final int bubbleCount;
+  final List<Color> colors;
+  final Widget child;
 
   @override
   State<FloatingBubbles> createState() => _FloatingBubblesState();
@@ -617,7 +601,7 @@ class _FloatingBubblesState extends State<FloatingBubbles>
         controller: controller,
         size: 20 + _random.nextDouble() * 60,
         color: widget.colors[_random.nextInt(widget.colors.length)]
-            .withOpacity(0.3),
+            .withValues(alpha: 0.3),
         initialX: _random.nextDouble(),
         wobbleAmount: 50 + _random.nextDouble() * 100,
       ));
@@ -633,14 +617,13 @@ class _FloatingBubblesState extends State<FloatingBubbles>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Stack(
+  Widget build(final BuildContext context) => Stack(
       children: [
         // Bubbles
         ..._bubbles
-            .map((bubble) => AnimatedBuilder(
+            .map((final bubble) => AnimatedBuilder(
                   animation: bubble.controller,
-                  builder: (context, child) {
+                  builder: (final context, final child) {
                     final progress = bubble.controller.value;
                     final wobble =
                         math.sin(progress * 2 * math.pi) * bubble.wobbleAmount;
@@ -659,7 +642,7 @@ class _FloatingBubblesState extends State<FloatingBubbles>
                           color: bubble.color,
                           boxShadow: [
                             BoxShadow(
-                              color: bubble.color.withOpacity(0.3),
+                              color: bubble.color.withValues(alpha: 0.3),
                               blurRadius: 10,
                               spreadRadius: 2,
                             ),
@@ -669,21 +652,15 @@ class _FloatingBubblesState extends State<FloatingBubbles>
                     );
                   },
                 ))
-            .toList(),
+            ,
 
         // Child content
         widget.child,
       ],
     );
-  }
 }
 
 class _Bubble {
-  final AnimationController controller;
-  final double size;
-  final Color color;
-  final double initialX;
-  final double wobbleAmount;
 
   _Bubble({
     required this.controller,
@@ -692,4 +669,9 @@ class _Bubble {
     required this.initialX,
     required this.wobbleAmount,
   });
+  final AnimationController controller;
+  final double size;
+  final Color color;
+  final double initialX;
+  final double wobbleAmount;
 }

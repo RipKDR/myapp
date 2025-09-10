@@ -1,12 +1,4 @@
 class PlanTask {
-  final String id;
-  final String title;
-  final String? description;
-  final bool done;
-  final int priority; // 1=high, 2=med, 3=low
-  final DateTime? dueDate;
-  final String? category;
-  final DateTime? completedAt;
 
   const PlanTask({
     required this.id,
@@ -18,6 +10,14 @@ class PlanTask {
     this.category,
     this.completedAt,
   });
+  final String id;
+  final String title;
+  final String? description;
+  final bool done;
+  final int priority; // 1=high, 2=med, 3=low
+  final DateTime? dueDate;
+  final String? category;
+  final DateTime? completedAt;
 
   bool get isOverdue => (dueDate != null) && !done && DateTime.now().isAfter(dueDate!);
 
@@ -33,14 +33,14 @@ class PlanTask {
       );
 
   PlanTask copyWith({
-    String? id,
-    String? title,
-    String? description,
-    bool? done,
-    int? priority,
-    DateTime? dueDate,
-    String? category,
-    DateTime? completedAt,
+    final String? id,
+    final String? title,
+    final String? description,
+    final bool? done,
+    final int? priority,
+    final DateTime? dueDate,
+    final String? category,
+    final DateTime? completedAt,
   }) => PlanTask(
         id: id ?? this.id,
         title: title ?? this.title,
@@ -63,7 +63,7 @@ class PlanTask {
         'completedAt': completedAt?.toIso8601String(),
       };
 
-  static PlanTask fromMap(Map<String, dynamic> m) => PlanTask(
+  static PlanTask fromMap(final Map<String, dynamic> m) => PlanTask(
         id: m['id'] as String,
         title: m['title'] as String,
         description: m['description'] as String?,

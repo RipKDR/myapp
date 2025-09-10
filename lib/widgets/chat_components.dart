@@ -7,13 +7,6 @@ import '../theme/google_theme.dart';
 
 /// Enhanced chat message bubble with rich content support
 class ChatMessageBubble extends StatefulWidget {
-  final ChatMessage message;
-  final bool isUser;
-  final VoidCallback? onTap;
-  final VoidCallback? onLongPress;
-  final bool showTimestamp;
-  final bool showAvatar;
-  final Animation<double>? animation;
 
   const ChatMessageBubble({
     super.key,
@@ -25,6 +18,13 @@ class ChatMessageBubble extends StatefulWidget {
     this.showAvatar = true,
     this.animation,
   });
+  final ChatMessage message;
+  final bool isUser;
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+  final bool showTimestamp;
+  final bool showAvatar;
+  final Animation<double>? animation;
 
   @override
   State<ChatMessageBubble> createState() => _ChatMessageBubbleState();
@@ -34,7 +34,6 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-  bool _isPressed = false;
 
   @override
   void initState() {
@@ -48,7 +47,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
       vsync: this,
     );
     _scaleAnimation = Tween<double>(
-      begin: 1.0,
+      begin: 1,
       end: 0.98,
     ).animate(_animationController);
   }
@@ -60,15 +59,10 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
   }
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return AnimatedBuilder(
-      animation: widget.animation ?? const AlwaysStoppedAnimation(1.0),
-      builder: (context, child) {
-        return FadeTransition(
-          opacity: widget.animation ?? const AlwaysStoppedAnimation(1.0),
+  Widget build(final BuildContext context) => AnimatedBuilder(
+      animation: widget.animation ?? const AlwaysStoppedAnimation(1),
+      builder: (final context, final child) => FadeTransition(
+          opacity: widget.animation ?? const AlwaysStoppedAnimation(1),
           child: SlideTransition(
             position: widget.animation != null
                 ? Tween<Offset>(
@@ -80,13 +74,12 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                 : const AlwaysStoppedAnimation(Offset.zero),
             child: AnimatedBuilder(
               animation: _scaleAnimation,
-              builder: (context, child) {
-                return Transform.scale(
+              builder: (final context, final child) => Transform.scale(
                   scale: _scaleAnimation.value,
                   child: GestureDetector(
                     onTapDown: (_) => _handleTapDown(),
                     onTapUp: (_) => _handleTapUp(),
-                    onTapCancel: () => _handleTapUp(),
+                    onTapCancel: _handleTapUp,
                     onTap: widget.onTap,
                     onLongPress: widget.onLongPress,
                     child: Container(
@@ -126,32 +119,25 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                       ),
                     ),
                   ),
-                );
-              },
+                ),
             ),
           ),
-        );
-      },
+        ),
     );
-  }
 
-  Widget _buildAvatar(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return CircleAvatar(
+  Widget _buildAvatar(final BuildContext context) => CircleAvatar(
       radius: 16,
       backgroundColor: widget.isUser
-          ? GoogleTheme.googleBlue.withOpacity(0.1)
-          : GoogleTheme.googleGreen.withOpacity(0.1),
+          ? GoogleTheme.googleBlue.withValues(alpha: 0.1)
+          : GoogleTheme.googleGreen.withValues(alpha: 0.1),
       child: Icon(
         widget.isUser ? Icons.person : Icons.smart_toy,
         size: 16,
         color: widget.isUser ? GoogleTheme.googleBlue : GoogleTheme.googleGreen,
       ),
     );
-  }
 
-  Widget _buildMessageContent(BuildContext context) {
+  Widget _buildMessageContent(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -172,7 +158,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 1),
           ),
@@ -196,9 +182,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
             Wrap(
               spacing: 6,
               runSpacing: 6,
-              children: widget.message.quickActions.map((action) {
-                return _buildQuickActionChip(action);
-              }).toList(),
+              children: widget.message.quickActions.map(_buildQuickActionChip).toList(),
             ),
           ],
 
@@ -211,13 +195,13 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                 Icon(
                   _getStatusIcon(widget.message.status),
                   size: 12,
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                 ),
                 const SizedBox(width: 4),
                 Text(
                   _getStatusText(widget.message.status),
                   style: theme.textTheme.labelSmall?.copyWith(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -228,7 +212,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
     );
   }
 
-  Widget _buildQuickActionChip(QuickAction action) {
+  Widget _buildQuickActionChip(final QuickAction action) {
     final theme = Theme.of(context);
 
     return GestureDetector(
@@ -239,10 +223,10 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: GoogleTheme.googleBlue.withOpacity(0.1),
+          color: GoogleTheme.googleBlue.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: GoogleTheme.googleBlue.withOpacity(0.3),
+            color: GoogleTheme.googleBlue.withValues(alpha: 0.3),
           ),
         ),
         child: Row(
@@ -269,18 +253,18 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
     );
   }
 
-  Widget _buildTimestamp(BuildContext context) {
+  Widget _buildTimestamp(final BuildContext context) {
     final theme = Theme.of(context);
 
     return Text(
       _formatTimestamp(widget.message.timestamp),
       style: theme.textTheme.labelSmall?.copyWith(
-        color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
+        color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
       ),
     );
   }
 
-  String _formatTimestamp(DateTime timestamp) {
+  String _formatTimestamp(final DateTime timestamp) {
     final now = DateTime.now();
     final difference = now.difference(timestamp);
 
@@ -295,7 +279,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
     }
   }
 
-  IconData _getStatusIcon(MessageStatus status) {
+  IconData _getStatusIcon(final MessageStatus status) {
     switch (status) {
       case MessageStatus.sending:
         return Icons.schedule;
@@ -308,7 +292,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
     }
   }
 
-  String _getStatusText(MessageStatus status) {
+  String _getStatusText(final MessageStatus status) {
     switch (status) {
       case MessageStatus.sending:
         return 'Sending';
@@ -322,23 +306,16 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
   }
 
   void _handleTapDown() {
-    setState(() => _isPressed = true);
     _animationController.forward();
   }
 
   void _handleTapUp() {
-    setState(() => _isPressed = false);
     _animationController.reverse();
   }
 }
 
 /// Advanced chat input with voice support and suggestions
 class ChatInputField extends StatefulWidget {
-  final Function(String) onSendMessage;
-  final VoidCallback? onVoiceInput;
-  final bool isVoiceInputActive;
-  final bool isLoading;
-  final List<String> suggestions;
 
   const ChatInputField({
     super.key,
@@ -348,6 +325,11 @@ class ChatInputField extends StatefulWidget {
     this.isLoading = false,
     this.suggestions = const [],
   });
+  final void Function(String) onSendMessage;
+  final VoidCallback? onVoiceInput;
+  final bool isVoiceInputActive;
+  final bool isLoading;
+  final List<String> suggestions;
 
   @override
   State<ChatInputField> createState() => _ChatInputFieldState();
@@ -388,7 +370,7 @@ class _ChatInputFieldState extends State<ChatInputField>
   }
 
   @override
-  void didUpdateWidget(ChatInputField oldWidget) {
+  void didUpdateWidget(final ChatInputField oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isVoiceInputActive != oldWidget.isVoiceInputActive) {
       if (widget.isVoiceInputActive) {
@@ -416,7 +398,7 @@ class _ChatInputFieldState extends State<ChatInputField>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -435,7 +417,7 @@ class _ChatInputFieldState extends State<ChatInputField>
             color: colorScheme.surface,
             border: Border(
               top: BorderSide(
-                color: colorScheme.outline.withOpacity(0.2),
+                color: colorScheme.outline.withValues(alpha: 0.2),
               ),
             ),
           ),
@@ -443,12 +425,12 @@ class _ChatInputFieldState extends State<ChatInputField>
             child: Row(
               children: [
                 Expanded(
-                  child: Container(
+                  child: DecoratedBox(
                     decoration: BoxDecoration(
                       color: colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(
-                        color: colorScheme.outline.withOpacity(0.3),
+                        color: colorScheme.outline.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Row(
@@ -466,7 +448,7 @@ class _ChatInputFieldState extends State<ChatInputField>
                                   : 'Ask about NDIS, bookings, budget...',
                               hintStyle: TextStyle(
                                 color: colorScheme.onSurfaceVariant
-                                    .withOpacity(0.6),
+                                    .withValues(alpha: 0.6),
                               ),
                               border: InputBorder.none,
                               contentPadding: const EdgeInsets.symmetric(
@@ -482,8 +464,7 @@ class _ChatInputFieldState extends State<ChatInputField>
                         if (widget.onVoiceInput != null)
                           AnimatedBuilder(
                             animation: _voicePulseAnimation,
-                            builder: (context, child) {
-                              return Transform.scale(
+                            builder: (final context, final child) => Transform.scale(
                                 scale: widget.isVoiceInputActive
                                     ? _voicePulseAnimation.value
                                     : 1.0,
@@ -501,8 +482,7 @@ class _ChatInputFieldState extends State<ChatInputField>
                                       ? 'Stop recording'
                                       : 'Voice input',
                                 ),
-                              );
-                            },
+                              ),
                           ),
                       ],
                     ),
@@ -524,7 +504,7 @@ class _ChatInputFieldState extends State<ChatInputField>
                         _hasText ? Colors.white : colorScheme.onSurfaceVariant,
                     elevation: _hasText ? 2 : 0,
                     child: widget.isLoading
-                        ? SizedBox(
+                        ? const SizedBox(
                             width: 16,
                             height: 16,
                             child: CircularProgressIndicator(
@@ -543,16 +523,16 @@ class _ChatInputFieldState extends State<ChatInputField>
     );
   }
 
-  Widget _buildSuggestions(BuildContext context) {
+  Widget _buildSuggestions(final BuildContext context) {
     final theme = Theme.of(context);
 
-    return Container(
+    return SizedBox(
       height: 40,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
         itemCount: widget.suggestions.length,
-        itemBuilder: (context, index) {
+        itemBuilder: (final context, final index) {
           final suggestion = widget.suggestions[index];
 
           return Container(
@@ -569,7 +549,7 @@ class _ChatInputFieldState extends State<ChatInputField>
                   color: theme.colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: theme.colorScheme.outline.withOpacity(0.3),
+                    color: theme.colorScheme.outline.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(
@@ -587,7 +567,7 @@ class _ChatInputFieldState extends State<ChatInputField>
     );
   }
 
-  void _sendMessage([String? text]) {
+  void _sendMessage([final String? text]) {
     final message = text ?? _textController.text.trim();
     if (message.isEmpty) return;
 
@@ -600,14 +580,14 @@ class _ChatInputFieldState extends State<ChatInputField>
 
 /// Typing indicator for AI responses
 class TypingIndicator extends StatefulWidget {
-  final bool isVisible;
-  final String? typingText;
 
   const TypingIndicator({
     super.key,
     this.isVisible = false,
     this.typingText,
   });
+  final bool isVisible;
+  final String? typingText;
 
   @override
   State<TypingIndicator> createState() => _TypingIndicatorState();
@@ -630,10 +610,9 @@ class _TypingIndicatorState extends State<TypingIndicator>
       vsync: this,
     );
 
-    _dotAnimations = List.generate(3, (index) {
-      return Tween<double>(
+    _dotAnimations = List.generate(3, (final index) => Tween<double>(
         begin: 0.4,
-        end: 1.0,
+        end: 1,
       ).animate(CurvedAnimation(
         parent: _animationController,
         curve: Interval(
@@ -641,8 +620,7 @@ class _TypingIndicatorState extends State<TypingIndicator>
           (index * 0.2) + 0.4,
           curve: Curves.easeInOut,
         ),
-      ));
-    });
+      )));
 
     if (widget.isVisible) {
       _animationController.repeat();
@@ -650,7 +628,7 @@ class _TypingIndicatorState extends State<TypingIndicator>
   }
 
   @override
-  void didUpdateWidget(TypingIndicator oldWidget) {
+  void didUpdateWidget(final TypingIndicator oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isVisible != oldWidget.isVisible) {
       if (widget.isVisible) {
@@ -668,7 +646,7 @@ class _TypingIndicatorState extends State<TypingIndicator>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -681,8 +659,8 @@ class _TypingIndicatorState extends State<TypingIndicator>
           children: [
             CircleAvatar(
               radius: 16,
-              backgroundColor: GoogleTheme.googleGreen.withOpacity(0.1),
-              child: Icon(
+              backgroundColor: GoogleTheme.googleGreen.withValues(alpha: 0.1),
+              child: const Icon(
                 Icons.smart_toy,
                 size: 16,
                 color: GoogleTheme.googleGreen,
@@ -711,25 +689,21 @@ class _TypingIndicatorState extends State<TypingIndicator>
                     ),
                   ),
                   const SizedBox(width: 8),
-                  ...List.generate(3, (index) {
-                    return AnimatedBuilder(
+                  ...List.generate(3, (final index) => AnimatedBuilder(
                       animation: _dotAnimations[index],
-                      builder: (context, child) {
-                        return Transform.scale(
+                      builder: (final context, final child) => Transform.scale(
                           scale: _dotAnimations[index].value,
                           child: Container(
                             width: 4,
                             height: 4,
                             margin: const EdgeInsets.symmetric(horizontal: 1),
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: GoogleTheme.googleGreen,
                               shape: BoxShape.circle,
                             ),
                           ),
-                        );
-                      },
-                    );
-                  }),
+                        ),
+                    )),
                 ],
               ),
             ),
@@ -742,15 +716,15 @@ class _TypingIndicatorState extends State<TypingIndicator>
 
 /// Chat welcome banner with NDIS-specific quick actions
 class ChatWelcomeBanner extends StatelessWidget {
-  final Function(String) onQuickAction;
 
   const ChatWelcomeBanner({
     super.key,
     required this.onQuickAction,
   });
+  final void Function(String) onQuickAction;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -760,15 +734,15 @@ class ChatWelcomeBanner extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            GoogleTheme.googleBlue.withOpacity(0.1),
-            GoogleTheme.googleGreen.withOpacity(0.1),
+            GoogleTheme.googleBlue.withValues(alpha: 0.1),
+            GoogleTheme.googleGreen.withValues(alpha: 0.1),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: GoogleTheme.googleBlue.withOpacity(0.2),
+          color: GoogleTheme.googleBlue.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -779,10 +753,10 @@ class ChatWelcomeBanner extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: GoogleTheme.googleBlue.withOpacity(0.1),
+                  color: GoogleTheme.googleBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.smart_toy,
                   color: GoogleTheme.googleBlue,
                   size: 20,
@@ -837,7 +811,7 @@ class ChatWelcomeBanner extends StatelessWidget {
   }
 
   Widget _buildQuickActionButton(
-      BuildContext context, String text, IconData icon) {
+      final BuildContext context, final String text, final IconData icon) {
     final theme = Theme.of(context);
 
     return GestureDetector(
@@ -851,7 +825,7 @@ class ChatWelcomeBanner extends StatelessWidget {
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: GoogleTheme.googleBlue.withOpacity(0.3),
+            color: GoogleTheme.googleBlue.withValues(alpha: 0.3),
           ),
         ),
         child: Row(
@@ -879,13 +853,6 @@ class ChatWelcomeBanner extends StatelessWidget {
 
 // Data models for chat components
 class ChatMessage {
-  final String id;
-  final String text;
-  final DateTime timestamp;
-  final bool isUser;
-  final MessageStatus status;
-  final List<QuickAction> quickActions;
-  final MessageType type;
 
   const ChatMessage({
     required this.id,
@@ -896,18 +863,25 @@ class ChatMessage {
     this.quickActions = const [],
     this.type = MessageType.text,
   });
+  final String id;
+  final String text;
+  final DateTime timestamp;
+  final bool isUser;
+  final MessageStatus status;
+  final List<QuickAction> quickActions;
+  final MessageType type;
 }
 
 class QuickAction {
-  final String text;
-  final IconData? icon;
-  final VoidCallback onTap;
 
   const QuickAction({
     required this.text,
     this.icon,
     required this.onTap,
   });
+  final String text;
+  final IconData? icon;
+  final VoidCallback onTap;
 }
 
 enum MessageStatus { sending, sent, delivered, failed }

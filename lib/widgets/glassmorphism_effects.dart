@@ -6,17 +6,16 @@ import '../theme/app_theme.dart';
 class GlassmorphismEffects {
   /// Creates a glassmorphism container with blur and transparency
   static Widget glassContainer({
-    required Widget child,
-    double blur = 10.0,
-    double opacity = 0.1,
-    Color? color,
-    BorderRadius? borderRadius,
-    EdgeInsets? padding,
-    EdgeInsets? margin,
-    BoxBorder? border,
-    List<BoxShadow>? shadows,
-  }) {
-    return Container(
+    required final Widget child,
+    final double blur = 10.0,
+    final double opacity = 0.1,
+    final Color? color,
+    final BorderRadius? borderRadius,
+    final EdgeInsets? padding,
+    final EdgeInsets? margin,
+    final BoxBorder? border,
+    final List<BoxShadow>? shadows,
+  }) => Container(
       margin: margin,
       child: ClipRRect(
         borderRadius: borderRadius ?? BorderRadius.circular(16),
@@ -25,17 +24,16 @@ class GlassmorphismEffects {
           child: Container(
             padding: padding ?? const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: (color ?? Colors.white).withOpacity(opacity),
+              color: (color ?? Colors.white).withValues(alpha: opacity),
               borderRadius: borderRadius ?? BorderRadius.circular(16),
               border: border ??
                   Border.all(
-                    color: Colors.white.withOpacity(0.2),
-                    width: 1,
+                    color: Colors.white.withValues(alpha: 0.2),
                   ),
               boxShadow: shadows ??
                   [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -46,22 +44,19 @@ class GlassmorphismEffects {
         ),
       ),
     );
-  }
 
   /// Creates a glassmorphism card with subtle effects
   static Widget glassCard({
-    required Widget child,
-    VoidCallback? onTap,
-    double blur = 8.0,
-    double opacity = 0.15,
-    Color? color,
-    BorderRadius? borderRadius,
-    EdgeInsets? padding,
-    EdgeInsets? margin,
-    bool enableHover = true,
-  }) {
-    return _GlassCard(
-      child: child,
+    required final Widget child,
+    final VoidCallback? onTap,
+    final double blur = 8.0,
+    final double opacity = 0.15,
+    final Color? color,
+    final BorderRadius? borderRadius,
+    final EdgeInsets? padding,
+    final EdgeInsets? margin,
+    final bool enableHover = true,
+  }) => _GlassCard(
       onTap: onTap,
       blur: blur,
       opacity: opacity,
@@ -70,29 +65,27 @@ class GlassmorphismEffects {
       padding: padding,
       margin: margin,
       enableHover: enableHover,
+      child: child,
     );
-  }
 
   /// Creates a glassmorphism navigation bar
   static Widget glassNavigationBar({
-    required List<Widget> children,
-    double blur = 15.0,
-    double opacity = 0.2,
-    Color? backgroundColor,
-    EdgeInsets? padding,
-  }) {
-    return ClipRRect(
+    required final List<Widget> children,
+    final double blur = 15.0,
+    final double opacity = 0.2,
+    final Color? backgroundColor,
+    final EdgeInsets? padding,
+  }) => ClipRRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
         child: Container(
           padding: padding ??
               const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: (backgroundColor ?? Colors.white).withOpacity(opacity),
+            color: (backgroundColor ?? Colors.white).withValues(alpha: opacity),
             border: Border(
               top: BorderSide(
-                color: Colors.white.withOpacity(0.2),
-                width: 1,
+                color: Colors.white.withValues(alpha: 0.2),
               ),
             ),
           ),
@@ -103,56 +96,42 @@ class GlassmorphismEffects {
         ),
       ),
     );
-  }
 
   /// Creates a glassmorphism modal overlay
   static Widget glassModal({
-    required Widget child,
-    double blur = 20.0,
-    double opacity = 0.3,
-    Color? backgroundColor,
-    VoidCallback? onDismiss,
-  }) {
-    return _GlassModal(
-      child: child,
+    required final Widget child,
+    final double blur = 20.0,
+    final double opacity = 0.3,
+    final Color? backgroundColor,
+    final VoidCallback? onDismiss,
+  }) => _GlassModal(
       blur: blur,
       opacity: opacity,
       backgroundColor: backgroundColor,
       onDismiss: onDismiss,
+      child: child,
     );
-  }
 
   /// Creates a glassmorphism floating action button
   static Widget glassFloatingActionButton({
-    required VoidCallback onPressed,
-    required Widget child,
-    double blur = 12.0,
-    double opacity = 0.2,
-    Color? backgroundColor,
-    String? tooltip,
-  }) {
-    return _GlassFloatingActionButton(
+    required final VoidCallback onPressed,
+    required final Widget child,
+    final double blur = 12.0,
+    final double opacity = 0.2,
+    final Color? backgroundColor,
+    final String? tooltip,
+  }) => _GlassFloatingActionButton(
       onPressed: onPressed,
-      child: child,
       blur: blur,
       opacity: opacity,
       backgroundColor: backgroundColor,
       tooltip: tooltip,
+      child: child,
     );
-  }
 }
 
 /// Glassmorphism card with hover effects
 class _GlassCard extends StatefulWidget {
-  final Widget child;
-  final VoidCallback? onTap;
-  final double blur;
-  final double opacity;
-  final Color? color;
-  final BorderRadius? borderRadius;
-  final EdgeInsets? padding;
-  final EdgeInsets? margin;
-  final bool enableHover;
 
   const _GlassCard({
     required this.child,
@@ -165,6 +144,15 @@ class _GlassCard extends StatefulWidget {
     this.margin,
     this.enableHover = true,
   });
+  final Widget child;
+  final VoidCallback? onTap;
+  final double blur;
+  final double opacity;
+  final Color? color;
+  final BorderRadius? borderRadius;
+  final EdgeInsets? padding;
+  final EdgeInsets? margin;
+  final bool enableHover;
 
   @override
   State<_GlassCard> createState() => _GlassCardState();
@@ -186,7 +174,7 @@ class _GlassCardState extends State<_GlassCard>
     );
 
     _scaleAnimation = Tween<double>(
-      begin: 1.0,
+      begin: 1,
       end: 1.02,
     ).animate(CurvedAnimation(
       parent: _controller,
@@ -208,7 +196,7 @@ class _GlassCardState extends State<_GlassCard>
     super.dispose();
   }
 
-  void _handleHover(bool isHovered) {
+  void _handleHover(final bool isHovered) {
     if (!widget.enableHover) return;
 
     setState(() {
@@ -223,11 +211,9 @@ class _GlassCardState extends State<_GlassCard>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
+  Widget build(final BuildContext context) => AnimatedBuilder(
       animation: _controller,
-      builder: (context, child) {
-        return Transform.scale(
+      builder: (final context, final child) => Transform.scale(
           scale: _scaleAnimation.value,
           child: Container(
             margin: widget.margin,
@@ -249,23 +235,22 @@ class _GlassCardState extends State<_GlassCard>
                       padding: widget.padding ?? const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: (widget.color ?? Colors.white)
-                            .withOpacity(_opacityAnimation.value),
+                            .withValues(alpha: _opacityAnimation.value),
                         borderRadius:
                             widget.borderRadius ?? BorderRadius.circular(16),
                         border: Border.all(
                           color:
-                              Colors.white.withOpacity(_isHovered ? 0.3 : 0.2),
-                          width: 1,
+                              Colors.white.withValues(alpha: _isHovered ? 0.3 : 0.2),
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 20,
                             offset: const Offset(0, 10),
                           ),
                           if (_isHovered)
                             BoxShadow(
-                              color: AppTheme.calmingBlue.withOpacity(0.2),
+                              color: AppTheme.calmingBlue.withValues(alpha: 0.2),
                               blurRadius: 30,
                               offset: const Offset(0, 15),
                             ),
@@ -278,19 +263,12 @@ class _GlassCardState extends State<_GlassCard>
               ),
             ),
           ),
-        );
-      },
+        ),
     );
-  }
 }
 
 /// Glassmorphism modal overlay
 class _GlassModal extends StatelessWidget {
-  final Widget child;
-  final double blur;
-  final double opacity;
-  final Color? backgroundColor;
-  final VoidCallback? onDismiss;
 
   const _GlassModal({
     required this.child,
@@ -299,15 +277,19 @@ class _GlassModal extends StatelessWidget {
     this.backgroundColor,
     this.onDismiss,
   });
+  final Widget child;
+  final double blur;
+  final double opacity;
+  final Color? backgroundColor;
+  final VoidCallback? onDismiss;
 
   @override
-  Widget build(BuildContext context) {
-    return Material(
+  Widget build(final BuildContext context) => Material(
       color: Colors.transparent,
       child: GestureDetector(
         onTap: onDismiss,
-        child: Container(
-          color: Colors.black.withOpacity(0.3),
+        child: ColoredBox(
+          color: Colors.black.withValues(alpha: 0.3),
           child: Center(
             child: GestureDetector(
               onTap: () {}, // Prevent tap from bubbling up
@@ -315,18 +297,17 @@ class _GlassModal extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-                  child: Container(
+                  child: DecoratedBox(
                     decoration: BoxDecoration(
                       color: (backgroundColor ?? Colors.white)
-                          .withOpacity(opacity),
+                          .withValues(alpha: opacity),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.3),
-                        width: 1,
+                        color: Colors.white.withValues(alpha: 0.3),
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withValues(alpha: 0.2),
                           blurRadius: 40,
                           offset: const Offset(0, 20),
                         ),
@@ -341,17 +322,10 @@ class _GlassModal extends StatelessWidget {
         ),
       ),
     );
-  }
 }
 
 /// Glassmorphism floating action button
 class _GlassFloatingActionButton extends StatefulWidget {
-  final VoidCallback onPressed;
-  final Widget child;
-  final double blur;
-  final double opacity;
-  final Color? backgroundColor;
-  final String? tooltip;
 
   const _GlassFloatingActionButton({
     required this.onPressed,
@@ -361,6 +335,12 @@ class _GlassFloatingActionButton extends StatefulWidget {
     this.backgroundColor,
     this.tooltip,
   });
+  final VoidCallback onPressed;
+  final Widget child;
+  final double blur;
+  final double opacity;
+  final Color? backgroundColor;
+  final String? tooltip;
 
   @override
   State<_GlassFloatingActionButton> createState() =>
@@ -382,7 +362,7 @@ class _GlassFloatingActionButtonState extends State<_GlassFloatingActionButton>
     );
 
     _scaleAnimation = Tween<double>(
-      begin: 1.0,
+      begin: 1,
       end: 0.95,
     ).animate(CurvedAnimation(
       parent: _controller,
@@ -404,11 +384,11 @@ class _GlassFloatingActionButtonState extends State<_GlassFloatingActionButton>
     super.dispose();
   }
 
-  void _handleTapDown(TapDownDetails details) {
+  void _handleTapDown(final TapDownDetails details) {
     _controller.forward();
   }
 
-  void _handleTapUp(TapUpDetails details) {
+  void _handleTapUp(final TapUpDetails details) {
     _controller.reverse();
     widget.onPressed();
   }
@@ -418,11 +398,9 @@ class _GlassFloatingActionButtonState extends State<_GlassFloatingActionButton>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
+  Widget build(final BuildContext context) => AnimatedBuilder(
       animation: _controller,
-      builder: (context, child) {
-        return Transform.scale(
+      builder: (final context, final child) => Transform.scale(
           scale: _scaleAnimation.value,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(28),
@@ -441,15 +419,14 @@ class _GlassFloatingActionButtonState extends State<_GlassFloatingActionButton>
                     height: 56,
                     decoration: BoxDecoration(
                       color: (widget.backgroundColor ?? AppTheme.calmingBlue)
-                          .withOpacity(_opacityAnimation.value),
+                          .withValues(alpha: _opacityAnimation.value),
                       borderRadius: BorderRadius.circular(28),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.3),
-                        width: 1,
+                        color: Colors.white.withValues(alpha: 0.3),
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withValues(alpha: 0.2),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                         ),
@@ -461,21 +438,12 @@ class _GlassFloatingActionButtonState extends State<_GlassFloatingActionButton>
               ),
             ),
           ),
-        );
-      },
+        ),
     );
-  }
 }
 
 /// Glassmorphism app bar
 class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String? title;
-  final List<Widget>? actions;
-  final Widget? leading;
-  final double blur;
-  final double opacity;
-  final Color? backgroundColor;
-  final bool centerTitle;
 
   const GlassAppBar({
     super.key,
@@ -487,10 +455,16 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.backgroundColor,
     this.centerTitle = false,
   });
+  final String? title;
+  final List<Widget>? actions;
+  final Widget? leading;
+  final double blur;
+  final double opacity;
+  final Color? backgroundColor;
+  final bool centerTitle;
 
   @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
+  Widget build(final BuildContext context) => ClipRRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
         child: AppBar(
@@ -499,14 +473,13 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
           leading: leading,
           centerTitle: centerTitle,
           backgroundColor:
-              (backgroundColor ?? Colors.white).withOpacity(opacity),
+              (backgroundColor ?? Colors.white).withValues(alpha: opacity),
           elevation: 0,
           flexibleSpace: Container(
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color: Colors.white.withOpacity(0.2),
-                  width: 1,
+                  color: Colors.white.withValues(alpha: 0.2),
                 ),
               ),
             ),
@@ -514,7 +487,6 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
     );
-  }
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -522,11 +494,6 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
 
 /// Glassmorphism bottom sheet
 class GlassBottomSheet extends StatelessWidget {
-  final Widget child;
-  final double blur;
-  final double opacity;
-  final Color? backgroundColor;
-  final BorderRadius? borderRadius;
 
   const GlassBottomSheet({
     super.key,
@@ -536,23 +503,26 @@ class GlassBottomSheet extends StatelessWidget {
     this.backgroundColor,
     this.borderRadius,
   });
+  final Widget child;
+  final double blur;
+  final double opacity;
+  final Color? backgroundColor;
+  final BorderRadius? borderRadius;
 
   @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
+  Widget build(final BuildContext context) => ClipRRect(
       borderRadius:
           borderRadius ?? const BorderRadius.vertical(top: Radius.circular(20)),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-        child: Container(
+        child: DecoratedBox(
           decoration: BoxDecoration(
-            color: (backgroundColor ?? Colors.white).withOpacity(opacity),
+            color: (backgroundColor ?? Colors.white).withValues(alpha: opacity),
             borderRadius: borderRadius ??
                 const BorderRadius.vertical(top: Radius.circular(20)),
             border: Border(
               top: BorderSide(
-                color: Colors.white.withOpacity(0.2),
-                width: 1,
+                color: Colors.white.withValues(alpha: 0.2),
               ),
             ),
           ),
@@ -560,25 +530,23 @@ class GlassBottomSheet extends StatelessWidget {
         ),
       ),
     );
-  }
 
   /// Show glassmorphism bottom sheet
   static Future<T?> show<T>({
-    required BuildContext context,
-    required Widget child,
-    double blur = 15.0,
-    double opacity = 0.2,
-    Color? backgroundColor,
-    BorderRadius? borderRadius,
-    bool isDismissible = true,
-    bool enableDrag = true,
-  }) {
-    return showModalBottomSheet<T>(
+    required final BuildContext context,
+    required final Widget child,
+    final double blur = 15.0,
+    final double opacity = 0.2,
+    final Color? backgroundColor,
+    final BorderRadius? borderRadius,
+    final bool isDismissible = true,
+    final bool enableDrag = true,
+  }) => showModalBottomSheet<T>(
       context: context,
       isDismissible: isDismissible,
       enableDrag: enableDrag,
       backgroundColor: Colors.transparent,
-      builder: (context) => GlassBottomSheet(
+      builder: (final context) => GlassBottomSheet(
         blur: blur,
         opacity: opacity,
         backgroundColor: backgroundColor,
@@ -586,5 +554,4 @@ class GlassBottomSheet extends StatelessWidget {
         child: child,
       ),
     );
-  }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/budget.dart';
-import '../widgets/budget_pie.dart';
-import '../widgets/advanced_data_visualization.dart';
+import 'package:ndis_connect/models/budget.dart';
+import '../widgets/advanced_data_visualization.dart'
+    as advanced_data_visualization;
 import '../widgets/glassmorphism_effects.dart';
 import '../theme/app_theme.dart';
 
@@ -43,7 +43,7 @@ class _BudgetScreenState extends State<BudgetScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final overview = _mockBudget();
 
     return Scaffold(
@@ -51,30 +51,37 @@ class _BudgetScreenState extends State<BudgetScreen>
         title: const Text('Budget Tracker'),
         actions: [
           PopupMenuButton<String>(
-            onSelected: (value) => setState(() => _selectedView = value),
-            itemBuilder: (context) => _views.map((view) {
-              return PopupMenuItem(
-                value: view,
-                child: Row(
-                  children: [
-                    Icon(
-                      _getViewIcon(view),
-                      size: 18,
-                      color: _selectedView == view ? AppTheme.ndisBlue : null,
+            onSelected: (final value) => setState(() => _selectedView = value),
+            itemBuilder: (final context) => _views
+                .map(
+                  (final view) => PopupMenuItem(
+                    value: view,
+                    child: Row(
+                      children: [
+                        Icon(
+                          _getViewIcon(view),
+                          size: 18,
+                          color: _selectedView == view
+                              ? AppTheme.ndisBlue
+                              : null,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          view,
+                          style: TextStyle(
+                            color: _selectedView == view
+                                ? AppTheme.ndisBlue
+                                : null,
+                            fontWeight: _selectedView == view
+                                ? FontWeight.w600
+                                : null,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 8),
-                    Text(
-                      view,
-                      style: TextStyle(
-                        color: _selectedView == view ? AppTheme.ndisBlue : null,
-                        fontWeight:
-                            _selectedView == view ? FontWeight.w600 : null,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
+                  ),
+                )
+                .toList(),
           ),
         ],
       ),
@@ -83,87 +90,100 @@ class _BudgetScreenState extends State<BudgetScreen>
           children: [
             // Enhanced Budget Summary with Glassmorphism
             GlassmorphismEffects.glassContainer(
-              blur: 10.0,
               opacity: 0.15,
               margin: const EdgeInsets.all(16),
-              child: _buildEnhancedBudgetHeader(context, overview),
+              child: _buildEnhancedBudgetHeader(context, _mockBudget()),
             ),
-            
+
             // Advanced Data Visualizations
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
                   // Interactive Budget Flow Chart
-                  AdvancedDataVisualization.buildBudgetFlowChart(
-                    totalBudget: overview.totalAllocated,
-                    usedBudget: overview.totalSpent,
-                    categories: _getBudgetCategories(overview),
+                  _buildBudgetFlowChart(
+                    totalBudget: _mockBudget().totalAllocated,
+                    usedBudget: _mockBudget().totalSpent,
+                    categories: _getBudgetCategories(_mockBudget()),
                     title: 'Budget Flow Analysis',
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Health Progress Ring for Budget Health
                   GlassmorphismEffects.glassCard(
                     child: Column(
                       children: [
                         Text(
                           'Budget Health Score',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w600),
                         ),
                         const SizedBox(height: 16),
                         Center(
-                          child: AdvancedDataVisualization.buildHealthProgressRing(
-                            primaryValue: (overview.totalAllocated - overview.totalSpent) / overview.totalAllocated,
-                            secondaryValue: overview.totalSpent / overview.totalAllocated,
-                            primaryLabel: 'Available',
-                            secondaryLabel: 'Used',
-                            primaryColor: AppTheme.trustGreen,
-                            secondaryColor: AppTheme.warmAccent,
-                            size: 140,
+                          child: Container(
+                            width: 140,
+                            height: 140,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.blue.withValues(alpha: 0.1),
+                            ),
+                            child: const Center(
+                              child: Text('Progress Ring\nPlaceholder'),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Trend Chart for Spending
-                  AdvancedDataVisualization.buildTrendChart(
-                    data: _getSpendingTrendData(),
-                    title: 'Spending Trends',
-                    subtitle: 'Monthly spending patterns',
-                    accentColor: AppTheme.calmingBlue,
+                  Container(
+                    height: 200,
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Center(
+                      child: Text('Trend Chart\nPlaceholder'),
+                    ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Health Metrics Dashboard
-                  AdvancedDataVisualization.buildHealthScoreDashboard(
-                    metrics: _getBudgetHealthMetrics(overview),
-                    title: 'Budget Health Metrics',
-                    subtitle: 'Key indicators for your NDIS plan',
+                  Container(
+                    height: 200,
+                    decoration: BoxDecoration(
+                      color: Colors.green.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Center(
+                      child: Text('Health Metrics\nDashboard Placeholder'),
+                    ),
                   ),
-                  
+
                   const SizedBox(height: 16),
                 ],
               ),
             ),
 
             // Content based on selected view
-            Container(
+            SizedBox(
               height: 400,
               child: _selectedView == 'Overview'
                   ? _OverviewView(
-                      overview: overview, controller: _chartController)
+                      overview: overview,
+                      controller: _chartController,
+                    )
                   : _selectedView == 'Detailed'
-                      ? _DetailedView(
-                          overview: overview, controller: _progressController)
-                      : _TrendsView(overview: overview),
+                  ? _DetailedView(
+                      overview: overview,
+                      controller: _progressController,
+                    )
+                  : _TrendsView(overview: overview),
             ),
           ],
         ),
@@ -171,7 +191,7 @@ class _BudgetScreenState extends State<BudgetScreen>
     );
   }
 
-  IconData _getViewIcon(String view) {
+  IconData _getViewIcon(final String view) {
     switch (view) {
       case 'Overview':
         return Icons.pie_chart;
@@ -185,12 +205,21 @@ class _BudgetScreenState extends State<BudgetScreen>
   }
 
   /// Enhanced budget header with glassmorphism
-  Widget _buildEnhancedBudgetHeader(BuildContext context, BudgetOverview overview) {
-    final totalAllocated = overview.buckets.fold(0.0, (sum, bucket) => sum + bucket.allocated);
-    final totalSpent = overview.buckets.fold(0.0, (sum, bucket) => sum + bucket.spent);
+  Widget _buildEnhancedBudgetHeader(
+    final BuildContext context,
+    final BudgetOverview overview,
+  ) {
+    final totalAllocated = overview.buckets.fold(
+      0,
+      (final sum, final bucket) => sum + bucket.allocated,
+    );
+    final totalSpent = overview.buckets.fold(
+      0,
+      (final sum, final bucket) => sum + bucket.spent,
+    );
     final remaining = totalAllocated - totalSpent;
     final percentage = (remaining / totalAllocated * 100).round();
-    
+
     return Column(
       children: [
         Row(
@@ -198,10 +227,10 @@ class _BudgetScreenState extends State<BudgetScreen>
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppTheme.trustGreen.withOpacity(0.1),
+                color: AppTheme.trustGreen.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.account_balance_wallet,
                 color: AppTheme.trustGreen,
                 size: 24,
@@ -215,14 +244,14 @@ class _BudgetScreenState extends State<BudgetScreen>
                   Text(
                     'NDIS Budget Overview',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   Text(
                     'Plan period: 12 months remaining',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -230,15 +259,19 @@ class _BudgetScreenState extends State<BudgetScreen>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: percentage > 30 ? AppTheme.trustGreen.withOpacity(0.1) : AppTheme.warmAccent.withOpacity(0.1),
+                color: percentage > 30
+                    ? AppTheme.trustGreen.withValues(alpha: 0.1)
+                    : AppTheme.warmAccent.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Text(
                 '$percentage% remaining',
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: percentage > 30 ? AppTheme.trustGreen : AppTheme.warmAccent,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  color: percentage > 30
+                      ? AppTheme.trustGreen
+                      : AppTheme.warmAccent,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
@@ -281,82 +314,92 @@ class _BudgetScreenState extends State<BudgetScreen>
     );
   }
 
-  Widget _buildBudgetMetric(BuildContext context, String label, String value, Color color, IconData icon) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, color: color, size: 20),
+  Widget _buildBudgetMetric(
+    final BuildContext context,
+    final String label,
+    final String value,
+    final Color color,
+    final IconData icon,
+  ) => Column(
+    children: [
+      Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(8),
         ),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: color,
-              ),
+        child: Icon(icon, color: color, size: 20),
+      ),
+      const SizedBox(height: 8),
+      Text(
+        value,
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w700,
+          color: color,
         ),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-          textAlign: TextAlign.center,
+      ),
+      Text(
+        label,
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
-      ],
-    );
-  }
+        textAlign: TextAlign.center,
+      ),
+    ],
+  );
 
   /// Get budget categories for flow chart
-  List<BudgetCategory> _getBudgetCategories(BudgetOverview overview) {
-    return overview.buckets.map((bucket) {
-      Color color;
-      switch (bucket.name.toLowerCase()) {
-        case 'core':
-          color = AppTheme.trustGreen;
-          break;
-        case 'capacity':
-          color = AppTheme.calmingBlue;
-          break;
-        case 'capital':
-          color = AppTheme.warmAccent;
-          break;
-        default:
-          color = AppTheme.safetyGrey;
-      }
-      
-      return BudgetCategory(
-        name: bucket.name,
-        amount: bucket.spent,
-        color: color,
-      );
-    }).toList();
-  }
+  List<advanced_data_visualization.BudgetCategory> _getBudgetCategories(
+    final BudgetOverview overview,
+  ) => overview.buckets.map((final bucket) {
+    Color color;
+    switch (bucket.name.toLowerCase()) {
+      case 'trust':
+        color = AppTheme.trustGreen;
+        break;
+      case 'capacity':
+        color = AppTheme.calmingBlue;
+        break;
+      case 'capital':
+        color = AppTheme.warmAccent;
+        break;
+      default:
+        color = AppTheme.safetyGrey;
+    }
+
+    return advanced_data_visualization.BudgetCategory(
+      name: bucket.name,
+      amount: bucket.allocated,
+      color: color,
+    );
+  }).toList();
 
   /// Get spending trend data
-  List<ChartDataPoint> _getSpendingTrendData() {
-    return [
-      ChartDataPoint(value: 2500, label: 'Jan'),
-      ChartDataPoint(value: 3200, label: 'Feb'),
-      ChartDataPoint(value: 2800, label: 'Mar'),
-      ChartDataPoint(value: 3500, label: 'Apr'),
-      ChartDataPoint(value: 3100, label: 'May'),
-      ChartDataPoint(value: 2900, label: 'Jun'),
-    ];
-  }
+  List<advanced_data_visualization.ChartDataPoint> _getSpendingTrendData() => [
+    advanced_data_visualization.ChartDataPoint(value: 2500, label: 'Jan'),
+    advanced_data_visualization.ChartDataPoint(value: 3200, label: 'Feb'),
+    advanced_data_visualization.ChartDataPoint(value: 2800, label: 'Mar'),
+    advanced_data_visualization.ChartDataPoint(value: 3500, label: 'Apr'),
+    advanced_data_visualization.ChartDataPoint(value: 3100, label: 'May'),
+    advanced_data_visualization.ChartDataPoint(value: 2900, label: 'Jun'),
+  ];
 
   /// Get budget health metrics
-  List<HealthMetric> _getBudgetHealthMetrics(BudgetOverview overview) {
-    final totalAllocated = overview.buckets.fold(0.0, (sum, bucket) => sum + bucket.allocated);
-    final totalSpent = overview.buckets.fold(0.0, (sum, bucket) => sum + bucket.spent);
-    final utilizationRate = (totalSpent / totalAllocated * 100);
-    
+  List<advanced_data_visualization.HealthMetric> _getBudgetHealthMetrics(
+    final BudgetOverview overview,
+  ) {
+    final totalAllocated = overview.buckets.fold(
+      0,
+      (final sum, final bucket) => sum + bucket.allocated,
+    );
+    final totalSpent = overview.buckets.fold(
+      0,
+      (final sum, final bucket) => sum + bucket.spent,
+    );
+    final utilizationRate = totalSpent / totalAllocated * 100;
+
     return [
-      HealthMetric(
+      advanced_data_visualization.HealthMetric(
         title: 'Utilization Rate',
         subtitle: 'Percentage of budget used',
         value: '${utilizationRate.toStringAsFixed(1)}%',
@@ -364,7 +407,7 @@ class _BudgetScreenState extends State<BudgetScreen>
         color: utilizationRate > 80 ? AppTheme.warmAccent : AppTheme.trustGreen,
         trend: 5.2,
       ),
-      HealthMetric(
+      advanced_data_visualization.HealthMetric(
         title: 'Monthly Average',
         subtitle: 'Average spending per month',
         value: '\$${(totalSpent / 6).toStringAsFixed(0)}',
@@ -372,85 +415,114 @@ class _BudgetScreenState extends State<BudgetScreen>
         color: AppTheme.calmingBlue,
         trend: -2.1,
       ),
-      HealthMetric(
+      advanced_data_visualization.HealthMetric(
         title: 'Projected Balance',
         subtitle: 'Estimated remaining at plan end',
         value: '\$${((totalAllocated - totalSpent) * 0.8).toStringAsFixed(0)}',
         icon: Icons.trending_down,
         color: AppTheme.empathyPurple,
-        trend: null,
       ),
     ];
   }
+
+  Widget _buildBudgetFlowChart({
+    required final double totalBudget,
+    required final double usedBudget,
+    required final List<advanced_data_visualization.BudgetCategory> categories,
+    required final String title,
+  }) => Container(
+    height: 200,
+    decoration: BoxDecoration(
+      color: Colors.blue.withValues(alpha: 0.1),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Center(child: Text('$title\nPlaceholder')),
+  );
+
+  Widget _buildSpendingAnalytics({
+    required final double totalAllocated,
+    required final double totalSpent,
+    required final double remainingBudget,
+    required final double utilizationRate,
+    required final String title,
+  }) => Container(
+    height: 200,
+    decoration: BoxDecoration(
+      color: Colors.green.withValues(alpha: 0.1),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Center(child: Text('$title\nPlaceholder')),
+  );
+
+  Widget _buildBudgetBreakdown({
+    required final List<BudgetBucket> buckets,
+    required final String title,
+  }) => Container(
+    height: 200,
+    decoration: BoxDecoration(
+      color: Colors.orange.withValues(alpha: 0.1),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Center(child: Text('$title\nPlaceholder')),
+  );
 }
 
 // Simplified view classes
 class _OverviewView extends StatelessWidget {
+  const _OverviewView({required this.overview, required this.controller});
   final BudgetOverview overview;
   final AnimationController controller;
 
-  const _OverviewView({required this.overview, required this.controller});
-
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          Text('Overview View', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 16),
-          Text('Budget overview content would go here'),
-        ],
-      ),
-    );
-  }
+  Widget build(final BuildContext context) => Padding(
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      children: [
+        Text('Overview View', style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 16),
+        const Text('Budget overview content would go here'),
+      ],
+    ),
+  );
 }
 
 class _DetailedView extends StatelessWidget {
+  const _DetailedView({required this.overview, required this.controller});
   final BudgetOverview overview;
   final AnimationController controller;
 
-  const _DetailedView({required this.overview, required this.controller});
-
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          Text('Detailed View', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 16),
-          Text('Detailed budget breakdown would go here'),
-        ],
-      ),
-    );
-  }
+  Widget build(final BuildContext context) => Padding(
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      children: [
+        Text('Detailed View', style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 16),
+        const Text('Detailed budget breakdown would go here'),
+      ],
+    ),
+  );
 }
 
 class _TrendsView extends StatelessWidget {
+  const _TrendsView({required this.overview});
   final BudgetOverview overview;
 
-  const _TrendsView({required this.overview});
-
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          Text('Trends View', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 16),
-          Text('Budget trends and analytics would go here'),
-        ],
-      ),
-    );
-  }
+  Widget build(final BuildContext context) => Padding(
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      children: [
+        Text('Trends View', style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 16),
+        const Text('Budget trends and analytics would go here'),
+      ],
+    ),
+  );
 }
 
-BudgetOverview _mockBudget() {
-  return const BudgetOverview([
-    BudgetBucket(name: 'Core', allocated: 12000, spent: 9800),
-    BudgetBucket(name: 'Capacity', allocated: 8000, spent: 4200),
-    BudgetBucket(name: 'Capital', allocated: 5000, spent: 1000),
-  ]);
-}
+BudgetOverview _mockBudget() => const BudgetOverview([
+  BudgetBucket(name: 'Core', allocated: 12000, spent: 9800),
+  BudgetBucket(name: 'Capacity', allocated: 8000, spent: 4200),
+  BudgetBucket(name: 'Capital', allocated: 5000, spent: 1000),
+]);

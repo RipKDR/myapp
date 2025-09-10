@@ -7,17 +7,16 @@ import '../utils/haptic_utils.dart';
 class AdvancedDataVisualization {
   /// Creates an interactive health progress ring with multiple metrics
   static Widget buildHealthProgressRing({
-    required double primaryValue,
-    required double secondaryValue,
-    required String primaryLabel,
-    required String secondaryLabel,
-    required Color primaryColor,
-    required Color secondaryColor,
-    double size = 120,
-    double strokeWidth = 8,
-    bool showAnimation = true,
-  }) {
-    return _HealthProgressRing(
+    required final double primaryValue,
+    required final double secondaryValue,
+    required final String primaryLabel,
+    required final String secondaryLabel,
+    required final Color primaryColor,
+    required final Color secondaryColor,
+    final double size = 120,
+    final double strokeWidth = 8,
+    final bool showAnimation = true,
+  }) => _HealthProgressRing(
       primaryValue: primaryValue,
       secondaryValue: secondaryValue,
       primaryLabel: primaryLabel,
@@ -28,18 +27,16 @@ class AdvancedDataVisualization {
       strokeWidth: strokeWidth,
       showAnimation: showAnimation,
     );
-  }
 
   /// Creates an interactive trend chart with touch interactions
   static Widget buildTrendChart({
-    required List<ChartDataPoint> data,
-    required String title,
-    required String subtitle,
-    Color? accentColor,
-    bool showTrend = true,
-    bool interactive = true,
-  }) {
-    return _TrendChart(
+    required final List<ChartDataPoint> data,
+    required final String title,
+    required final String subtitle,
+    final Color? accentColor,
+    final bool showTrend = true,
+    final bool interactive = true,
+  }) => _TrendChart(
       data: data,
       title: title,
       subtitle: subtitle,
@@ -47,48 +44,34 @@ class AdvancedDataVisualization {
       showTrend: showTrend,
       interactive: interactive,
     );
-  }
 
   /// Creates a health score dashboard with multiple metrics
   static Widget buildHealthScoreDashboard({
-    required List<HealthMetric> metrics,
-    required String title,
-    String? subtitle,
-  }) {
-    return _HealthScoreDashboard(
+    required final List<HealthMetric> metrics,
+    required final String title,
+    final String? subtitle,
+  }) => _HealthScoreDashboard(
       metrics: metrics,
       title: title,
       subtitle: subtitle,
     );
-  }
 
   /// Creates an interactive budget flow visualization
   static Widget buildBudgetFlowChart({
-    required double totalBudget,
-    required double usedBudget,
-    required List<BudgetCategory> categories,
-    required String title,
-  }) {
-    return _BudgetFlowChart(
+    required final double totalBudget,
+    required final double usedBudget,
+    required final List<BudgetCategory> categories,
+    required final String title,
+  }) => _BudgetFlowChart(
       totalBudget: totalBudget,
       usedBudget: usedBudget,
       categories: categories,
       title: title,
     );
-  }
 }
 
 /// Interactive health progress ring with dual metrics
 class _HealthProgressRing extends StatefulWidget {
-  final double primaryValue;
-  final double secondaryValue;
-  final String primaryLabel;
-  final String secondaryLabel;
-  final Color primaryColor;
-  final Color secondaryColor;
-  final double size;
-  final double strokeWidth;
-  final bool showAnimation;
 
   const _HealthProgressRing({
     required this.primaryValue,
@@ -101,6 +84,15 @@ class _HealthProgressRing extends StatefulWidget {
     this.strokeWidth = 8,
     this.showAnimation = true,
   });
+  final double primaryValue;
+  final double secondaryValue;
+  final String primaryLabel;
+  final String secondaryLabel;
+  final Color primaryColor;
+  final Color secondaryColor;
+  final double size;
+  final double strokeWidth;
+  final bool showAnimation;
 
   @override
   State<_HealthProgressRing> createState() => _HealthProgressRingState();
@@ -122,15 +114,15 @@ class _HealthProgressRingState extends State<_HealthProgressRing>
     );
 
     _primaryAnimation = Tween<double>(
-      begin: 0.0,
+      begin: 0,
       end: widget.primaryValue,
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
+      curve: const Interval(0, 0.6, curve: Curves.easeOutCubic),
     ));
 
     _secondaryAnimation = Tween<double>(
-      begin: 0.0,
+      begin: 0,
       end: widget.secondaryValue,
     ).animate(CurvedAnimation(
       parent: _controller,
@@ -139,10 +131,10 @@ class _HealthProgressRingState extends State<_HealthProgressRing>
 
     _scaleAnimation = Tween<double>(
       begin: 0.8,
-      end: 1.0,
+      end: 1,
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.0, 1.0, curve: Curves.elasticOut),
+      curve: const Interval(0, 1, curve: Curves.elasticOut),
     ));
 
     if (widget.showAnimation) {
@@ -159,18 +151,16 @@ class _HealthProgressRingState extends State<_HealthProgressRing>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
+  Widget build(final BuildContext context) => AnimatedBuilder(
       animation: _controller,
-      builder: (context, child) {
-        return Transform.scale(
+      builder: (final context, final child) => Transform.scale(
           scale: _scaleAnimation.value,
           child: GestureDetector(
             onTap: () {
               HapticUtils.lightImpact(context);
               _showDetailedView(context);
             },
-            child: Container(
+            child: SizedBox(
               width: widget.size,
               height: widget.size,
               child: CustomPaint(
@@ -208,16 +198,14 @@ class _HealthProgressRingState extends State<_HealthProgressRing>
               ),
             ),
           ),
-        );
-      },
+        ),
     );
-  }
 
-  void _showDetailedView(BuildContext context) {
-    showDialog(
+  void _showDetailedView(final BuildContext context) {
+    showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Health Progress Details'),
+      builder: (final context) => AlertDialog(
+        title: const Text('Health Progress Details'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -231,15 +219,14 @@ class _HealthProgressRingState extends State<_HealthProgressRing>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Close'),
+            child: const Text('Close'),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildMetricRow(String label, double value, Color color) {
-    return Row(
+  Widget _buildMetricRow(final String label, final double value, final Color color) => Row(
       children: [
         Container(
           width: 12,
@@ -254,16 +241,10 @@ class _HealthProgressRingState extends State<_HealthProgressRing>
         Text('${(value * 100).toInt()}%'),
       ],
     );
-  }
 }
 
 /// Custom painter for the health progress ring
 class _HealthRingPainter extends CustomPainter {
-  final double primaryProgress;
-  final double secondaryProgress;
-  final Color primaryColor;
-  final Color secondaryColor;
-  final double strokeWidth;
 
   _HealthRingPainter({
     required this.primaryProgress,
@@ -272,15 +253,20 @@ class _HealthRingPainter extends CustomPainter {
     required this.secondaryColor,
     required this.strokeWidth,
   });
+  final double primaryProgress;
+  final double secondaryProgress;
+  final Color primaryColor;
+  final Color secondaryColor;
+  final double strokeWidth;
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(final Canvas canvas, final Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = (size.width - strokeWidth) / 2;
 
     // Background circle
     final backgroundPaint = Paint()
-      ..color = Colors.grey.withOpacity(0.1)
+      ..color = Colors.grey.withValues(alpha: 0.1)
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -322,17 +308,11 @@ class _HealthRingPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  bool shouldRepaint(covariant final CustomPainter oldDelegate) => true;
 }
 
 /// Interactive trend chart with touch interactions
 class _TrendChart extends StatefulWidget {
-  final List<ChartDataPoint> data;
-  final String title;
-  final String subtitle;
-  final Color accentColor;
-  final bool showTrend;
-  final bool interactive;
 
   const _TrendChart({
     required this.data,
@@ -342,6 +322,12 @@ class _TrendChart extends StatefulWidget {
     this.showTrend = true,
     this.interactive = true,
   });
+  final List<ChartDataPoint> data;
+  final String title;
+  final String subtitle;
+  final Color accentColor;
+  final bool showTrend;
+  final bool interactive;
 
   @override
   State<_TrendChart> createState() => _TrendChartState();
@@ -374,8 +360,7 @@ class _TrendChartState extends State<_TrendChart>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return InteractiveCard(
+  Widget build(final BuildContext context) => InteractiveCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -384,7 +369,7 @@ class _TrendChartState extends State<_TrendChart>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: widget.accentColor.withOpacity(0.1),
+                  color: widget.accentColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -421,8 +406,7 @@ class _TrendChartState extends State<_TrendChart>
             height: 120,
             child: AnimatedBuilder(
               animation: _animation,
-              builder: (context, child) {
-                return CustomPaint(
+              builder: (final context, final child) => CustomPaint(
                   painter: _TrendChartPainter(
                     data: widget.data,
                     animation: _animation.value,
@@ -432,12 +416,11 @@ class _TrendChartState extends State<_TrendChart>
                   ),
                   child: widget.interactive
                       ? GestureDetector(
-                          onTapDown: (details) => _handleTap(details),
+                          onTapDown: _handleTap,
                           child: Container(),
                         )
                       : null,
-                );
-              },
+                ),
             ),
           ),
           if (_selectedIndex != null) ...[
@@ -447,18 +430,16 @@ class _TrendChartState extends State<_TrendChart>
         ],
       ),
     );
-  }
 
-  void _handleTap(TapDownDetails details) {
+  void _handleTap(final TapDownDetails details) {
     final RenderBox box = context.findRenderObject() as RenderBox;
     final localPosition = box.globalToLocal(details.globalPosition);
 
     // Calculate which data point is closest to tap
     final chartWidth = box.size.width;
-    final chartHeight = box.size.height;
     final pointWidth = chartWidth / (widget.data.length - 1);
 
-    final tappedIndex = ((localPosition.dx / pointWidth).round())
+    final tappedIndex = (localPosition.dx / pointWidth).round()
         .clamp(0, widget.data.length - 1);
 
     setState(() {
@@ -478,7 +459,7 @@ class _TrendChartState extends State<_TrendChart>
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: widget.accentColor.withOpacity(0.1),
+        color: widget.accentColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -506,11 +487,6 @@ class _TrendChartState extends State<_TrendChart>
 
 /// Custom painter for the trend chart
 class _TrendChartPainter extends CustomPainter {
-  final List<ChartDataPoint> data;
-  final double animation;
-  final Color accentColor;
-  final int? selectedIndex;
-  final bool showTrend;
 
   _TrendChartPainter({
     required this.data,
@@ -519,9 +495,14 @@ class _TrendChartPainter extends CustomPainter {
     this.selectedIndex,
     this.showTrend = true,
   });
+  final List<ChartDataPoint> data;
+  final double animation;
+  final Color accentColor;
+  final int? selectedIndex;
+  final bool showTrend;
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(final Canvas canvas, final Size size) {
     if (data.isEmpty) return;
 
     final paint = Paint()
@@ -540,8 +521,8 @@ class _TrendChartPainter extends CustomPainter {
 
     // Calculate points
     final points = <Offset>[];
-    final maxValue = data.map((d) => d.value).reduce(math.max);
-    final minValue = data.map((d) => d.value).reduce(math.min);
+    final maxValue = data.map((final d) => d.value).reduce(math.max);
+    final minValue = data.map((final d) => d.value).reduce(math.min);
     final valueRange = maxValue - minValue;
 
     for (int i = 0; i < data.length; i++) {
@@ -581,7 +562,7 @@ class _TrendChartPainter extends CustomPainter {
       // Draw selection ring for selected point
       if (isSelected) {
         final ringPaint = Paint()
-          ..color = accentColor.withOpacity(0.3)
+          ..color = accentColor.withValues(alpha: 0.3)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2;
         canvas.drawCircle(point, radius + 3, ringPaint);
@@ -590,24 +571,23 @@ class _TrendChartPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  bool shouldRepaint(covariant final CustomPainter oldDelegate) => true;
 }
 
 /// Health score dashboard with multiple metrics
 class _HealthScoreDashboard extends StatelessWidget {
-  final List<HealthMetric> metrics;
-  final String title;
-  final String? subtitle;
 
   const _HealthScoreDashboard({
     required this.metrics,
     required this.title,
     this.subtitle,
   });
+  final List<HealthMetric> metrics;
+  final String title;
+  final String? subtitle;
 
   @override
-  Widget build(BuildContext context) {
-    return InteractiveCard(
+  Widget build(final BuildContext context) => InteractiveCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -616,10 +596,10 @@ class _HealthScoreDashboard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppTheme.trustGreen.withOpacity(0.1),
+                  color: AppTheme.trustGreen.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.health_and_safety,
                   color: AppTheme.trustGreen,
                   size: 20,
@@ -651,14 +631,12 @@ class _HealthScoreDashboard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          ...metrics.map((metric) => _buildMetricRow(context, metric)).toList(),
+          ...metrics.map((final metric) => _buildMetricRow(context, metric)),
         ],
       ),
     );
-  }
 
-  Widget _buildMetricRow(BuildContext context, HealthMetric metric) {
-    return Padding(
+  Widget _buildMetricRow(final BuildContext context, final HealthMetric metric) => Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
@@ -666,7 +644,7 @@ class _HealthScoreDashboard extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: metric.color.withOpacity(0.1),
+              color: metric.color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -734,15 +712,10 @@ class _HealthScoreDashboard extends StatelessWidget {
         ],
       ),
     );
-  }
 }
 
 /// Interactive budget flow chart
 class _BudgetFlowChart extends StatefulWidget {
-  final double totalBudget;
-  final double usedBudget;
-  final List<BudgetCategory> categories;
-  final String title;
 
   const _BudgetFlowChart({
     required this.totalBudget,
@@ -750,6 +723,10 @@ class _BudgetFlowChart extends StatefulWidget {
     required this.categories,
     required this.title,
   });
+  final double totalBudget;
+  final double usedBudget;
+  final List<BudgetCategory> categories;
+  final String title;
 
   @override
   State<_BudgetFlowChart> createState() => _BudgetFlowChartState();
@@ -782,7 +759,7 @@ class _BudgetFlowChartState extends State<_BudgetFlowChart>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final remainingBudget = widget.totalBudget - widget.usedBudget;
     final usedPercentage = widget.usedBudget / widget.totalBudget;
 
@@ -795,10 +772,10 @@ class _BudgetFlowChartState extends State<_BudgetFlowChart>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppTheme.warmAccent.withOpacity(0.1),
+                  color: AppTheme.warmAccent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.account_balance_wallet,
                   color: AppTheme.warmAccent,
                   size: 20,
@@ -854,24 +831,21 @@ class _BudgetFlowChartState extends State<_BudgetFlowChart>
           const SizedBox(height: 8),
 
           ...widget.categories
-              .map((category) => _buildCategoryRow(context, category))
-              .toList(),
+              .map((final category) => _buildCategoryRow(context, category)),
         ],
       ),
     );
   }
 
   Widget _buildBudgetSection(
-    BuildContext context,
-    String label,
-    double amount,
-    double percentage,
-    Color color,
-  ) {
-    return AnimatedBuilder(
+    final BuildContext context,
+    final String label,
+    final double amount,
+    final double percentage,
+    final Color color,
+  ) => AnimatedBuilder(
       animation: _animation,
-      builder: (context, child) {
-        return Column(
+      builder: (final context, final child) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
@@ -892,7 +866,7 @@ class _BudgetFlowChartState extends State<_BudgetFlowChart>
             Container(
               height: 8,
               decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.2),
+                color: Colors.grey.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: FractionallySizedBox(
@@ -907,12 +881,10 @@ class _BudgetFlowChartState extends State<_BudgetFlowChart>
               ),
             ),
           ],
-        );
-      },
+        ),
     );
-  }
 
-  Widget _buildCategoryRow(BuildContext context, BudgetCategory category) {
+  Widget _buildCategoryRow(final BuildContext context, final BudgetCategory category) {
     final percentage = category.amount / widget.totalBudget;
     final isSelected = _selectedCategory == widget.categories.indexOf(category);
 
@@ -929,10 +901,10 @@ class _BudgetFlowChartState extends State<_BudgetFlowChart>
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color:
-              isSelected ? category.color.withOpacity(0.1) : Colors.transparent,
+              isSelected ? category.color.withValues(alpha: 0.1) : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: isSelected
-              ? Border.all(color: category.color.withOpacity(0.3))
+              ? Border.all(color: category.color.withValues(alpha: 0.3))
               : null,
         ),
         child: Row(
@@ -981,24 +953,18 @@ class _BudgetFlowChartState extends State<_BudgetFlowChart>
 
 /// Data models for visualization components
 class ChartDataPoint {
-  final double value;
-  final String label;
-  final DateTime? date;
 
   ChartDataPoint({
     required this.value,
     required this.label,
     this.date,
   });
+  final double value;
+  final String label;
+  final DateTime? date;
 }
 
-class HealthMetric {
-  final String title;
-  final String subtitle;
-  final String value;
-  final IconData icon;
-  final Color color;
-  final double? trend; // Percentage change
+class HealthMetric { // Percentage change
 
   HealthMetric({
     required this.title,
@@ -1008,16 +974,24 @@ class HealthMetric {
     required this.color,
     this.trend,
   });
+  final String title;
+  final String subtitle;
+  final String value;
+  final IconData icon;
+  final Color color;
+  final double? trend;
 }
 
 class BudgetCategory {
-  final String name;
-  final double amount;
-  final Color color;
 
   BudgetCategory({
     required this.name,
     required this.amount,
     required this.color,
   });
+  final String name;
+  final double amount;
+  final Color color;
 }
+
+class BudgetOverview {}

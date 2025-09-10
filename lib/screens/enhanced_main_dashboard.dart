@@ -75,7 +75,7 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
       PersonalizedRecommendation? chosen;
       if (recs.isNotEmpty) {
         chosen = recs.firstWhere(
-          (r) => r.priority == RecommendationPriority.high,
+          (final r) => r.priority == RecommendationPriority.high,
           orElse: () => recs.first,
         );
       }
@@ -114,13 +114,13 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     // final isMobile = context.isMobile; // not used in this scope
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: RefreshIndicator(
         onRefresh: _handleRefresh,
         color: GoogleTheme.googleBlue,
@@ -134,8 +134,7 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
             SliverToBoxAdapter(
               child: AnimatedBuilder(
                 animation: _contentController,
-                builder: (context, child) {
-                  return FadeTransition(
+                builder: (final context, final child) => FadeTransition(
                     opacity: _contentController,
                     child: SlideTransition(
                       position: Tween<Offset>(
@@ -147,8 +146,7 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
                       )),
                       child: _buildMainContent(context),
                     ),
-                  );
-                },
+                  ),
               ),
             ),
           ],
@@ -158,8 +156,7 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
       // Floating action button
       floatingActionButton: AnimatedBuilder(
         animation: _fabController,
-        builder: (context, child) {
-          return ScaleTransition(
+        builder: (final context, final child) => ScaleTransition(
             scale: _fabController,
             child: FloatingActionButton.extended(
               onPressed: _showQuickActions,
@@ -168,20 +165,18 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
               icon: const Icon(Icons.add),
               label: const Text('Quick Action'),
             ),
-          );
-        },
+          ),
       ),
     );
   }
 
-  Widget _buildSliverAppBar(BuildContext context) {
+  Widget _buildSliverAppBar(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final gamification = context.watch<GamificationController>();
 
     return SliverAppBar(
       expandedHeight: 200,
-      floating: false,
       pinned: true,
       backgroundColor: colorScheme.surface,
       surfaceTintColor: colorScheme.surfaceTint,
@@ -191,12 +186,12 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
       // Leading
       leading: Padding(
         padding: const EdgeInsets.all(8),
-        child: Container(
+        child: DecoratedBox(
           decoration: BoxDecoration(
-            color: GoogleTheme.googleBlue.withOpacity(0.1),
+            color: GoogleTheme.googleBlue.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
+          child: const Icon(
             Icons.accessibility_new,
             color: GoogleTheme.googleBlue,
             size: 20,
@@ -208,10 +203,9 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
       actions: [
         IconButton(
           onPressed: _showNotifications,
-          icon: Badge(
-            isLabelVisible: true,
-            label: const Text('3'),
-            child: const Icon(Icons.notifications_outlined),
+          icon: const Badge(
+            label: Text('3'),
+            child: Icon(Icons.notifications_outlined),
           ),
           tooltip: 'Notifications',
         ),
@@ -227,14 +221,13 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
       flexibleSpace: FlexibleSpaceBar(
         background: AnimatedBuilder(
           animation: _headerController,
-          builder: (context, child) {
-            return FadeTransition(
+          builder: (final context, final child) => FadeTransition(
               opacity: _headerController,
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      GoogleTheme.googleBlue.withOpacity(0.1),
+                      GoogleTheme.googleBlue.withValues(alpha: 0.12),
                       Colors.transparent,
                     ],
                     begin: Alignment.topCenter,
@@ -269,10 +262,10 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
-                          color: GoogleTheme.googleBlue.withOpacity(0.05),
+                          color: GoogleTheme.googleBlue.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                              color: GoogleTheme.googleBlue.withOpacity(0.12)),
+                              color: GoogleTheme.googleBlue.withValues(alpha: 0.2)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -321,15 +314,14 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
                   ],
                 ),
               ),
-            );
-          },
+            ),
         ),
       ),
     );
   }
 
   Widget _buildQuickStat(
-      IconData icon, String value, String label, Color color) {
+      final IconData icon, final String value, final String label, final Color color) {
     final theme = Theme.of(context);
 
     return Row(
@@ -337,7 +329,7 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
         Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(6),
           ),
           child: Icon(icon, color: color, size: 16),
@@ -365,7 +357,7 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
     );
   }
 
-  Widget _buildMainContent(BuildContext context) {
+  Widget _buildMainContent(final BuildContext context) {
     final isMobile = context.isMobile;
 
     return ResponsivePadding(
@@ -397,8 +389,7 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
     );
   }
 
-  Widget _buildMetricsSection(BuildContext context) {
-    return Column(
+  Widget _buildMetricsSection(final BuildContext context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Neo-brutalism header
@@ -410,7 +401,7 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
           trailing: Trending2025Components.buildDarkModeToggle(
             context: context,
             isDark: Theme.of(context).brightness == Brightness.dark,
-            onChanged: (isDark) {
+            onChanged: (final isDark) {
               final settings = context.read<SettingsController>();
               settings.setThemeMode(isDark ? ThemeMode.dark : ThemeMode.light);
             },
@@ -426,12 +417,11 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
             CinematicDataStoryTelling.buildAnimatedDataStory(
               context: context,
               title: 'Budget Remaining',
-              value: '\$18,400',
-              previousValue: '\$19,200',
+              value: r'$18,400',
+              previousValue: r'$19,200',
               trendDescription: 'You\'re managing your budget wisely',
               icon: Icons.account_balance_wallet,
               color: GoogleTheme.googleGreen,
-              showCelebration: false,
             ),
             const SizedBox(height: 16),
             CinematicDataStoryTelling.buildAnimatedDataStory(
@@ -454,14 +444,13 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
           mobileColumns: 2,
           tabletColumns: 4,
           desktopColumns: 4,
-          spacing: 16,
           children: [
             AdvancedGlassmorphism2025.buildInteractiveGlassCard(
               context: context,
               child: NeoBrutalismComponents.buildBrutalistMetricCard(
                 context: context,
                 title: 'Budget',
-                value: '\$18.4K',
+                value: r'$18.4K',
                 unit: 'AUD',
                 icon: Icons.account_balance_wallet,
                 accentColor: GoogleTheme.googleGreen,
@@ -526,9 +515,8 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
         ),
       ],
     );
-  }
 
-  Widget _buildQuickActionsSection(BuildContext context) {
+  Widget _buildQuickActionsSection(final BuildContext context) {
     final theme = Theme.of(context);
 
     return Column(
@@ -548,7 +536,6 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
               onPressed: _showAllActions,
               isPrimary: false,
               backgroundColor: GoogleTheme.googleBlue,
-              hasRippleEffect: true,
             ),
           ],
         ),
@@ -565,7 +552,6 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
               const SnackBar(content: Text('Voice commands coming soon!')),
             );
           },
-          transcribedText: null,
           isAccessible: true,
         ),
 
@@ -616,7 +602,7 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.add_circle_outline,
                         color: GoogleTheme.googleBlue,
                         size: 32,
@@ -643,7 +629,7 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.receipt_long,
                         color: GoogleTheme.googleGreen,
                         size: 32,
@@ -672,7 +658,7 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
                     children: [
                       Stack(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.chat_bubble_outline,
                             color: GoogleTheme.ndisTeal,
                             size: 32,
@@ -720,7 +706,7 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.map_outlined,
                         color: GoogleTheme.ndisPurple,
                         size: 32,
@@ -746,18 +732,15 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
     );
   }
 
-  Widget _buildMobileLayout(BuildContext context) {
-    return Column(
+  Widget _buildMobileLayout(final BuildContext context) => Column(
       children: [
         _buildActivityFeed(context),
         const SizedBox(height: 24),
         _buildUpcomingEvents(context),
       ],
     );
-  }
 
-  Widget _buildDesktopLayout(BuildContext context) {
-    return Row(
+  Widget _buildDesktopLayout(final BuildContext context) => Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
@@ -770,18 +753,17 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
         ),
       ],
     );
-  }
 
-  Widget _buildActivityFeed(BuildContext context) {
+  Widget _buildActivityFeed(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: colorScheme.outline.withOpacity(0.1),
+          color: colorScheme.outline.withValues(alpha: 0.12),
         ),
       ),
       child: Column(
@@ -808,10 +790,9 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
           ),
           Divider(
             height: 1,
-            color: colorScheme.outline.withOpacity(0.1),
+            color: colorScheme.outline.withValues(alpha: 0.12),
           ),
-          ...List.generate(5, (index) {
-            return ActivityFeedItem(
+          ...List.generate(5, (final index) => ActivityFeedItem(
               icon: _getActivityIcon(index),
               iconColor: _getActivityColor(index),
               title: _getActivityTitle(index),
@@ -819,8 +800,7 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
               timestamp: DateTime.now().subtract(Duration(hours: index + 1)),
               isRead: index > 1,
               onTap: () => _handleActivityTap(index),
-            );
-          }),
+            )),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Center(
@@ -835,16 +815,16 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
     );
   }
 
-  Widget _buildUpcomingEvents(BuildContext context) {
+  Widget _buildUpcomingEvents(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: colorScheme.outline.withOpacity(0.1),
+          color: colorScheme.outline.withValues(alpha: 0.12),
         ),
       ),
       child: Column(
@@ -872,11 +852,9 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
           ),
           Divider(
             height: 1,
-            color: colorScheme.outline.withOpacity(0.1),
+            color: colorScheme.outline.withValues(alpha: 0.12),
           ),
-          ...List.generate(3, (index) {
-            return _buildEventItem(context, index);
-          }),
+          ...List.generate(3, (final index) => _buildEventItem(context, index)),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Center(
@@ -891,7 +869,7 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
     );
   }
 
-  Widget _buildEventItem(BuildContext context, int index) {
+  Widget _buildEventItem(final BuildContext context, final int index) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final events = [
@@ -967,7 +945,7 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
     return 'Good evening';
   }
 
-  IconData _getActivityIcon(int index) {
+  IconData _getActivityIcon(final int index) {
     const icons = [
       Icons.event_available,
       Icons.receipt,
@@ -978,7 +956,7 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
     return icons[index % icons.length];
   }
 
-  Color _getActivityColor(int index) {
+  Color _getActivityColor(final int index) {
     const colors = [
       GoogleTheme.googleBlue,
       GoogleTheme.googleGreen,
@@ -989,7 +967,7 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
     return colors[index % colors.length];
   }
 
-  String _getActivityTitle(int index) {
+  String _getActivityTitle(final int index) {
     const titles = [
       'Session Confirmed',
       'Receipt Processed',
@@ -1000,12 +978,12 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
     return titles[index % titles.length];
   }
 
-  String _getActivitySubtitle(int index) {
+  String _getActivitySubtitle(final int index) {
     const subtitles = [
       'Your physiotherapy session for tomorrow has been confirmed',
-      'Your receipt for \$85 has been processed and approved',
+      r'Your receipt for $85 has been processed and approved',
       'Sarah Johnson joined your support circle',
-      'Your next payment of \$150 is due in 3 days',
+      r'Your next payment of $150 is due in 3 days',
       'Congratulations on completing your mobility goal!',
     ];
     return subtitles[index % subtitles.length];
@@ -1014,7 +992,7 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
   // Event handlers
   Future<void> _handleRefresh() async {
     // Simulate refresh
-    await Future.delayed(const Duration(seconds: 2));
+    await Future<void>.delayed(const Duration(seconds: 2));
 
     // Trigger rebuild to refresh data
     if (mounted) {
@@ -1023,16 +1001,15 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
   }
 
   void _showQuickActions() {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => _buildQuickActionsSheet(),
+      builder: (final context) => _buildQuickActionsSheet(),
     );
   }
 
-  Widget _buildQuickActionsSheet() {
-    return Container(
+  Widget _buildQuickActionsSheet() => Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -1052,7 +1029,6 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
             mobileColumns: 3,
             tabletColumns: 4,
             desktopColumns: 4,
-            spacing: 16,
             children: [
               QuickActionCard(
                 icon: Icons.add_circle_outline,
@@ -1096,7 +1072,6 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
         ],
       ),
     );
-  }
 
   void _showNotifications() {
     // TODO: Implement notifications screen
@@ -1125,17 +1100,17 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
     // TODO: Implement activity history
   }
 
-  void _handleActivityTap(int index) {
+  void _handleActivityTap(final int index) {
     // TODO: Handle activity item tap
     HapticFeedback.lightImpact();
   }
 
-  void _showEventOptions(int index) {
+  void _showEventOptions(final int index) {
     // TODO: Show event options
   }
 
   // Personalized quick action helpers
-  IconData _iconForRec(PersonalizedRecommendation rec) {
+  IconData _iconForRec(final PersonalizedRecommendation rec) {
     switch (rec.action) {
       case 'view_calendar':
         return Icons.calendar_today;
@@ -1151,7 +1126,7 @@ class _EnhancedMainDashboardState extends State<EnhancedMainDashboard>
     }
   }
 
-  void _handlePersonalizedAction(PersonalizedRecommendation rec) {
+  void _handlePersonalizedAction(final PersonalizedRecommendation rec) {
     switch (rec.action) {
       case 'view_calendar':
         Navigator.pushNamed(context, Routes.calendar);

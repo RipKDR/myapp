@@ -7,12 +7,6 @@ import '../theme/google_theme.dart';
 
 /// Enhanced calendar view with appointment integration
 class EnhancedCalendarView extends StatefulWidget {
-  final DateTime initialDate;
-  final List<CalendarEvent> events;
-  final Function(DateTime)? onDateSelected;
-  final Function(CalendarEvent)? onEventTap;
-  final bool showWeekView;
-  final CalendarStyle style;
 
   const EnhancedCalendarView({
     super.key,
@@ -23,6 +17,12 @@ class EnhancedCalendarView extends StatefulWidget {
     this.showWeekView = false,
     this.style = const CalendarStyle(),
   });
+  final DateTime initialDate;
+  final List<CalendarEvent> events;
+  final void Function(DateTime)? onDateSelected;
+  final void Function(CalendarEvent)? onEventTap;
+  final bool showWeekView;
+  final CalendarStyle style;
 
   @override
   State<EnhancedCalendarView> createState() => _EnhancedCalendarViewState();
@@ -70,25 +70,24 @@ class _EnhancedCalendarViewState extends State<EnhancedCalendarView>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return AnimatedBuilder(
       animation: _animationController,
-      builder: (context, child) {
-        return FadeTransition(
+      builder: (final context, final child) => FadeTransition(
           opacity: _animationController,
-          child: Container(
+          child: DecoratedBox(
             decoration: BoxDecoration(
               color: colorScheme.surface,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: colorScheme.outline.withOpacity(0.1),
+                color: colorScheme.outline.withValues(alpha: 0.1),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -101,19 +100,18 @@ class _EnhancedCalendarViewState extends State<EnhancedCalendarView>
               ],
             ),
           ),
-        );
-      },
+        ),
     );
   }
 
-  Widget _buildCalendarHeader(BuildContext context) {
+  Widget _buildCalendarHeader(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: GoogleTheme.googleBlue.withOpacity(0.05),
+        color: GoogleTheme.googleBlue.withValues(alpha: 0.05),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       ),
       child: Row(
@@ -162,11 +160,9 @@ class _EnhancedCalendarViewState extends State<EnhancedCalendarView>
     );
   }
 
-  Widget _buildCalendarBody(BuildContext context) {
-    return AnimatedBuilder(
+  Widget _buildCalendarBody(final BuildContext context) => AnimatedBuilder(
       animation: _transitionController,
-      builder: (context, child) {
-        return SlideTransition(
+      builder: (final context, final child) => SlideTransition(
           position: Tween<Offset>(
             begin: _isTransitioning ? const Offset(0.1, 0) : Offset.zero,
             end: Offset.zero,
@@ -177,22 +173,19 @@ class _EnhancedCalendarViewState extends State<EnhancedCalendarView>
           child: FadeTransition(
             opacity: Tween<double>(
               begin: _isTransitioning ? 0.7 : 1.0,
-              end: 1.0,
+              end: 1,
             ).animate(_transitionController),
             child: widget.showWeekView
                 ? _buildWeekView(context)
                 : _buildMonthView(context),
           ),
-        );
-      },
+        ),
     );
-  }
 
-  Widget _buildMonthView(BuildContext context) {
-    final theme = Theme.of(context);
+  Widget _buildMonthView(final BuildContext context) {
     final daysInMonth =
         DateTime(_currentDate.year, _currentDate.month + 1, 0).day;
-    final firstDayOfMonth = DateTime(_currentDate.year, _currentDate.month, 1);
+    final firstDayOfMonth = DateTime(_currentDate.year, _currentDate.month);
     final firstWeekday = firstDayOfMonth.weekday % 7;
 
     return Column(
@@ -208,10 +201,9 @@ class _EnhancedCalendarViewState extends State<EnhancedCalendarView>
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 7,
-              childAspectRatio: 1.0,
             ),
             itemCount: 42, // 6 weeks
-            itemBuilder: (context, index) {
+            itemBuilder: (final context, final index) {
               final dayNumber = index - firstWeekday + 1;
 
               if (dayNumber <= 0 || dayNumber > daysInMonth) {
@@ -228,7 +220,7 @@ class _EnhancedCalendarViewState extends State<EnhancedCalendarView>
     );
   }
 
-  Widget _buildWeekView(BuildContext context) {
+  Widget _buildWeekView(final BuildContext context) {
     // TODO: Implement week view
     return Container(
       height: 400,
@@ -239,15 +231,14 @@ class _EnhancedCalendarViewState extends State<EnhancedCalendarView>
     );
   }
 
-  Widget _buildWeekdayHeaders(BuildContext context) {
+  Widget _buildWeekdayHeaders(final BuildContext context) {
     final theme = Theme.of(context);
     final weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
-        children: weekdays.map((day) {
-          return Expanded(
+        children: weekdays.map((final day) => Expanded(
             child: Text(
               day,
               style: theme.textTheme.labelMedium?.copyWith(
@@ -256,13 +247,12 @@ class _EnhancedCalendarViewState extends State<EnhancedCalendarView>
               ),
               textAlign: TextAlign.center,
             ),
-          );
-        }).toList(),
+          )).toList(),
       ),
     );
   }
 
-  Widget _buildDayCell(BuildContext context, DateTime date) {
+  Widget _buildDayCell(final BuildContext context, final DateTime date) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isSelected = _selectedDate != null &&
@@ -281,11 +271,11 @@ class _EnhancedCalendarViewState extends State<EnhancedCalendarView>
           color: isSelected
               ? GoogleTheme.googleBlue
               : isToday
-                  ? GoogleTheme.googleBlue.withOpacity(0.1)
+                  ? GoogleTheme.googleBlue.withValues(alpha: 0.1)
                   : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: isToday && !isSelected
-              ? Border.all(color: GoogleTheme.googleBlue, width: 1)
+              ? Border.all(color: GoogleTheme.googleBlue)
               : null,
         ),
         child: Stack(
@@ -300,7 +290,7 @@ class _EnhancedCalendarViewState extends State<EnhancedCalendarView>
                       ? Colors.white
                       : isCurrentMonth
                           ? colorScheme.onSurface
-                          : colorScheme.onSurfaceVariant.withOpacity(0.5),
+                          : colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                 ),
               ),
             ),
@@ -311,8 +301,7 @@ class _EnhancedCalendarViewState extends State<EnhancedCalendarView>
                 right: 0,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: _getEventsForDate(date).take(3).map((event) {
-                    return Container(
+                  children: _getEventsForDate(date).take(3).map((final event) => Container(
                       width: 6,
                       height: 6,
                       margin: const EdgeInsets.symmetric(horizontal: 1),
@@ -320,8 +309,7 @@ class _EnhancedCalendarViewState extends State<EnhancedCalendarView>
                         color: isSelected ? Colors.white : event.color,
                         shape: BoxShape.circle,
                       ),
-                    );
-                  }).toList(),
+                    )).toList(),
                 ),
               ),
           ],
@@ -331,22 +319,18 @@ class _EnhancedCalendarViewState extends State<EnhancedCalendarView>
   }
 
   // Helper methods
-  bool _isToday(DateTime date) {
+  bool _isToday(final DateTime date) {
     final today = DateTime.now();
     return date.day == today.day &&
         date.month == today.month &&
         date.year == today.year;
   }
 
-  List<CalendarEvent> _getEventsForDate(DateTime date) {
-    return widget.events.where((event) {
-      return event.startTime.day == date.day &&
+  List<CalendarEvent> _getEventsForDate(final DateTime date) => widget.events.where((final event) => event.startTime.day == date.day &&
           event.startTime.month == date.month &&
-          event.startTime.year == date.year;
-    }).toList();
-  }
+          event.startTime.year == date.year).toList();
 
-  String _formatMonthYear(DateTime date) {
+  String _formatMonthYear(final DateTime date) {
     const months = [
       'January',
       'February',
@@ -364,7 +348,7 @@ class _EnhancedCalendarViewState extends State<EnhancedCalendarView>
     return '${months[date.month - 1]} ${date.year}';
   }
 
-  void _selectDate(DateTime date) {
+  void _selectDate(final DateTime date) {
     setState(() => _selectedDate = date);
     widget.onDateSelected?.call(date);
     HapticFeedback.lightImpact();
@@ -401,14 +385,13 @@ class _EnhancedCalendarViewState extends State<EnhancedCalendarView>
   }
 
   void _showMonthYearPicker() {
-    showDialog(
+    showDialog<void>(
       context: context,
-      builder: (context) => _buildMonthYearPickerDialog(),
+      builder: (final context) => _buildMonthYearPickerDialog(),
     );
   }
 
-  Widget _buildMonthYearPickerDialog() {
-    return AlertDialog(
+  Widget _buildMonthYearPickerDialog() => AlertDialog(
       title: const Text('Select Month & Year'),
       content: SizedBox(
         width: 300,
@@ -417,23 +400,17 @@ class _EnhancedCalendarViewState extends State<EnhancedCalendarView>
           firstDate: DateTime(2020),
           lastDate: DateTime(2030),
           selectedDate: _currentDate,
-          onChanged: (date) {
+          onChanged: (final date) {
             setState(() => _currentDate = date);
             Navigator.pop(context);
           },
         ),
       ),
     );
-  }
 }
 
 /// Appointment card with enhanced styling and interactions
 class AppointmentCard extends StatefulWidget {
-  final CalendarEvent event;
-  final VoidCallback? onTap;
-  final VoidCallback? onEdit;
-  final VoidCallback? onCancel;
-  final bool isCompact;
 
   const AppointmentCard({
     super.key,
@@ -443,6 +420,11 @@ class AppointmentCard extends StatefulWidget {
     this.onCancel,
     this.isCompact = false,
   });
+  final CalendarEvent event;
+  final VoidCallback? onTap;
+  final VoidCallback? onEdit;
+  final VoidCallback? onCancel;
+  final bool isCompact;
 
   @override
   State<AppointmentCard> createState() => _AppointmentCardState();
@@ -452,7 +434,6 @@ class _AppointmentCardState extends State<AppointmentCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-  bool _isPressed = false;
 
   @override
   void initState() {
@@ -462,7 +443,7 @@ class _AppointmentCardState extends State<AppointmentCard>
       vsync: this,
     );
     _scaleAnimation = Tween<double>(
-      begin: 1.0,
+      begin: 1,
       end: 0.97,
     ).animate(_animationController);
   }
@@ -474,7 +455,7 @@ class _AppointmentCardState extends State<AppointmentCard>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final timeText =
@@ -482,13 +463,12 @@ class _AppointmentCardState extends State<AppointmentCard>
 
     return AnimatedBuilder(
       animation: _scaleAnimation,
-      builder: (context, child) {
-        return Transform.scale(
+      builder: (final context, final child) => Transform.scale(
           scale: _scaleAnimation.value,
           child: GestureDetector(
             onTapDown: (_) => _handleTapDown(),
             onTapUp: (_) => _handleTapUp(),
-            onTapCancel: () => _handleTapUp(),
+            onTapCancel: _handleTapUp,
             onTap: widget.onTap,
             child: Container(
               margin: EdgeInsets.only(bottom: widget.isCompact ? 8 : 12),
@@ -497,12 +477,12 @@ class _AppointmentCardState extends State<AppointmentCard>
                 color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: widget.event.color.withOpacity(0.3),
+                  color: widget.event.color.withValues(alpha: 0.3),
                   width: 2,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: widget.event.color.withOpacity(0.1),
+                    color: widget.event.color.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -516,7 +496,7 @@ class _AppointmentCardState extends State<AppointmentCard>
                       Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: widget.event.color.withOpacity(0.1),
+                          color: widget.event.color.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Icon(
@@ -633,12 +613,11 @@ class _AppointmentCardState extends State<AppointmentCard>
               ),
             ),
           ),
-        );
-      },
+        ),
     );
   }
 
-  Widget _buildStatusIndicator(BuildContext context) {
+  Widget _buildStatusIndicator(final BuildContext context) {
     final theme = Theme.of(context);
 
     switch (widget.event.status) {
@@ -646,7 +625,7 @@ class _AppointmentCardState extends State<AppointmentCard>
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
-            color: GoogleTheme.googleGreen.withOpacity(0.1),
+            color: GoogleTheme.googleGreen.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
@@ -661,13 +640,13 @@ class _AppointmentCardState extends State<AppointmentCard>
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
-            color: GoogleTheme.googleYellow.withOpacity(0.1),
+            color: GoogleTheme.googleYellow.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
             'Pending',
             style: theme.textTheme.labelSmall?.copyWith(
-              color: GoogleTheme.googleYellow.withOpacity(0.8),
+              color: GoogleTheme.googleYellow.withValues(alpha: 0.8),
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -676,7 +655,7 @@ class _AppointmentCardState extends State<AppointmentCard>
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
-            color: GoogleTheme.googleRed.withOpacity(0.1),
+            color: GoogleTheme.googleRed.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
@@ -690,7 +669,7 @@ class _AppointmentCardState extends State<AppointmentCard>
     }
   }
 
-  IconData _getEventIcon(AppointmentType type) {
+  IconData _getEventIcon(final AppointmentType type) {
     switch (type) {
       case AppointmentType.therapy:
         return Icons.healing;
@@ -705,7 +684,7 @@ class _AppointmentCardState extends State<AppointmentCard>
     }
   }
 
-  String _formatTime(DateTime time) {
+  String _formatTime(final DateTime time) {
     final hour = time.hour;
     final minute = time.minute;
     final period = hour >= 12 ? 'PM' : 'AM';
@@ -714,22 +693,16 @@ class _AppointmentCardState extends State<AppointmentCard>
   }
 
   void _handleTapDown() {
-    setState(() => _isPressed = true);
     _animationController.forward();
   }
 
   void _handleTapUp() {
-    setState(() => _isPressed = false);
     _animationController.reverse();
   }
 }
 
 /// Time slot selector for appointment booking
 class TimeSlotSelector extends StatefulWidget {
-  final DateTime selectedDate;
-  final List<TimeSlot> availableSlots;
-  final Function(TimeSlot)? onSlotSelected;
-  final TimeSlot? selectedSlot;
 
   const TimeSlotSelector({
     super.key,
@@ -738,6 +711,10 @@ class TimeSlotSelector extends StatefulWidget {
     this.onSlotSelected,
     this.selectedSlot,
   });
+  final DateTime selectedDate;
+  final List<TimeSlot> availableSlots;
+  final void Function(TimeSlot)? onSlotSelected;
+  final TimeSlot? selectedSlot;
 
   @override
   State<TimeSlotSelector> createState() => _TimeSlotSelectorState();
@@ -745,7 +722,7 @@ class TimeSlotSelector extends StatefulWidget {
 
 class _TimeSlotSelectorState extends State<TimeSlotSelector> {
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
 
     return Column(
@@ -761,7 +738,7 @@ class _TimeSlotSelectorState extends State<TimeSlotSelector> {
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: widget.availableSlots.map((slot) {
+          children: widget.availableSlots.map((final slot) {
             final isSelected = widget.selectedSlot == slot;
 
             return GestureDetector(
@@ -781,7 +758,7 @@ class _TimeSlotSelectorState extends State<TimeSlotSelector> {
                   border: Border.all(
                     color: isSelected
                         ? GoogleTheme.googleBlue
-                        : theme.colorScheme.outline.withOpacity(0.3),
+                        : theme.colorScheme.outline.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(
@@ -803,27 +780,6 @@ class _TimeSlotSelectorState extends State<TimeSlotSelector> {
 
 // Data models
 class CalendarEvent {
-  final String id;
-  final String title;
-  final DateTime startTime;
-  final DateTime endTime;
-  final Color color;
-  final AppointmentType type;
-  final AppointmentStatus status;
-  final String? provider;
-  final String? location;
-  final String? notes;
-
-  // NDIS-specific properties
-  final double? providerRating;
-  final double? cost;
-  final String? ndisCategory;
-  final bool? claimable;
-  final bool? transportRequired;
-  final String? emergencyContact;
-  final String? cancellationPolicy;
-  final List<String>? requiredDocuments;
-  final String? fundingSource;
 
   const CalendarEvent({
     required this.id,
@@ -846,13 +802,30 @@ class CalendarEvent {
     this.requiredDocuments,
     this.fundingSource,
   });
+  final String id;
+  final String title;
+  final DateTime startTime;
+  final DateTime endTime;
+  final Color color;
+  final AppointmentType type;
+  final AppointmentStatus status;
+  final String? provider;
+  final String? location;
+  final String? notes;
+
+  // NDIS-specific properties
+  final double? providerRating;
+  final double? cost;
+  final String? ndisCategory;
+  final bool? claimable;
+  final bool? transportRequired;
+  final String? emergencyContact;
+  final String? cancellationPolicy;
+  final List<String>? requiredDocuments;
+  final String? fundingSource;
 }
 
 class TimeSlot {
-  final DateTime startTime;
-  final DateTime endTime;
-  final bool isAvailable;
-  final String displayTime;
 
   const TimeSlot({
     required this.startTime,
@@ -860,6 +833,10 @@ class TimeSlot {
     required this.isAvailable,
     required this.displayTime,
   });
+  final DateTime startTime;
+  final DateTime endTime;
+  final bool isAvailable;
+  final String displayTime;
 }
 
 enum AppointmentType { therapy, assessment, support, review, other }
@@ -867,11 +844,6 @@ enum AppointmentType { therapy, assessment, support, review, other }
 enum AppointmentStatus { confirmed, pending, cancelled }
 
 class CalendarStyle {
-  final Color primaryColor;
-  final Color selectedColor;
-  final Color todayColor;
-  final TextStyle? dayTextStyle;
-  final TextStyle? selectedDayTextStyle;
 
   const CalendarStyle({
     this.primaryColor = const Color(0xFF1A73E8),
@@ -880,4 +852,9 @@ class CalendarStyle {
     this.dayTextStyle,
     this.selectedDayTextStyle,
   });
+  final Color primaryColor;
+  final Color selectedColor;
+  final Color todayColor;
+  final TextStyle? dayTextStyle;
+  final TextStyle? selectedDayTextStyle;
 }

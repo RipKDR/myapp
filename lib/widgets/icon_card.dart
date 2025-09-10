@@ -1,16 +1,6 @@
 import 'package:flutter/material.dart';
 
 class IconCard extends StatefulWidget {
-  final IconData icon;
-  final String label;
-  final String? subtitle;
-  final Color? color;
-  final Color? iconColor;
-  final VoidCallback? onTap;
-  final bool showBadge;
-  final String? badgeText;
-  final bool isPremium;
-  final bool isLoading;
 
   const IconCard({
     super.key,
@@ -25,6 +15,16 @@ class IconCard extends StatefulWidget {
     this.isPremium = false,
     this.isLoading = false,
   });
+  final IconData icon;
+  final String label;
+  final String? subtitle;
+  final Color? color;
+  final Color? iconColor;
+  final VoidCallback? onTap;
+  final bool showBadge;
+  final String? badgeText;
+  final bool isPremium;
+  final bool isLoading;
 
   @override
   State<IconCard> createState() => _IconCardState();
@@ -44,7 +44,7 @@ class _IconCardState extends State<IconCard>
       vsync: this,
     );
     _scaleAnimation = Tween<double>(
-      begin: 1.0,
+      begin: 1,
       end: 0.95,
     ).animate(CurvedAnimation(
       parent: _animationController,
@@ -58,14 +58,14 @@ class _IconCardState extends State<IconCard>
     super.dispose();
   }
 
-  void _handleTapDown(TapDownDetails details) {
+  void _handleTapDown(final TapDownDetails details) {
     if (widget.onTap != null) {
       setState(() => _isPressed = true);
       _animationController.forward();
     }
   }
 
-  void _handleTapUp(TapUpDetails details) {
+  void _handleTapUp(final TapUpDetails details) {
     _handleTapEnd();
   }
 
@@ -81,7 +81,7 @@ class _IconCardState extends State<IconCard>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final isHighContrast = Theme.of(context).brightness == Brightness.light
         ? scheme.primary == const Color(0xFF000080)
@@ -93,8 +93,7 @@ class _IconCardState extends State<IconCard>
       hint: widget.subtitle,
       child: AnimatedBuilder(
         animation: _scaleAnimation,
-        builder: (context, child) {
-          return Transform.scale(
+        builder: (final context, final child) => Transform.scale(
             scale: _scaleAnimation.value,
             child: Card(
               color: widget.color ?? scheme.surface,
@@ -106,7 +105,7 @@ class _IconCardState extends State<IconCard>
                 onTapUp: _handleTapUp,
                 onTapCancel: _handleTapCancel,
                 child: Container(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.all(20),
                   child: Row(
                     children: [
                       // Icon with optional badge
@@ -116,7 +115,7 @@ class _IconCardState extends State<IconCard>
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: (widget.iconColor ?? scheme.primary)
-                                  .withOpacity(0.1),
+                                  .withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
                               border: isHighContrast
                                   ? Border.all(
@@ -221,8 +220,7 @@ class _IconCardState extends State<IconCard>
                 ),
               ),
             ),
-          );
-        },
+          ),
       ),
     );
   }

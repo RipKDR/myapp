@@ -15,7 +15,7 @@ class _ChecklistScreenState extends State<ChecklistScreen>
     with TickerProviderStateMixin {
   final _tasks = <PlanTask>[
     const PlanTask(id: 't1', title: 'Book session with physio', priority: 1),
-    const PlanTask(id: 't2', title: 'Upload last invoice', priority: 2),
+    const PlanTask(id: 't2', title: 'Upload last invoice'),
     const PlanTask(id: 't3', title: 'Check Core budget', priority: 1),
   ];
 
@@ -42,7 +42,7 @@ class _ChecklistScreenState extends State<ChecklistScreen>
       vsync: this,
     );
 
-    TaskRepository.stream().listen((cloud) {
+    TaskRepository.stream().listen((final cloud) {
       if (!mounted || cloud.isEmpty) return;
       setState(() {
         _tasks
@@ -63,17 +63,17 @@ class _ChecklistScreenState extends State<ChecklistScreen>
   }
 
   void _updateProgress() {
-    final completed = _tasks.where((t) => t.done).length;
+    final completed = _tasks.where((final t) => t.done).length;
     final total = _tasks.length;
     final progress = total > 0 ? completed / total : 0.0;
     _progressController.animateTo(progress);
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final filteredTasks = _getFilteredTasks();
-    final completedCount = _tasks.where((t) => t.done).length;
+    final completedCount = _tasks.where((final t) => t.done).length;
     final totalCount = _tasks.length;
 
     return Scaffold(
@@ -129,7 +129,7 @@ class _ChecklistScreenState extends State<ChecklistScreen>
                                 .textTheme
                                 .bodyMedium
                                 ?.copyWith(
-                                  color: Colors.white.withOpacity(0.9),
+                                  color: Colors.white.withValues(alpha: 0.9),
                                 ),
                           ),
                         ],
@@ -138,7 +138,7 @@ class _ChecklistScreenState extends State<ChecklistScreen>
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -154,15 +154,13 @@ class _ChecklistScreenState extends State<ChecklistScreen>
                 const SizedBox(height: 16),
                 AnimatedBuilder(
                   animation: _progressController,
-                  builder: (context, child) {
-                    return LinearProgressIndicator(
+                  builder: (final context, final child) => LinearProgressIndicator(
                       value: _progressController.value,
-                      backgroundColor: Colors.white.withOpacity(0.3),
+                      backgroundColor: Colors.white.withValues(alpha: 0.3),
                       valueColor:
                           const AlwaysStoppedAnimation<Color>(Colors.white),
                       minHeight: 8,
-                    );
-                  },
+                    ),
                 ),
               ],
             ),
@@ -197,7 +195,7 @@ class _ChecklistScreenState extends State<ChecklistScreen>
                 : ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: filteredTasks.length,
-                    itemBuilder: (context, index) {
+                    itemBuilder: (final context, final index) {
                       final task = filteredTasks[index];
                       return _TaskCard(
                         task: task,
@@ -223,43 +221,41 @@ class _ChecklistScreenState extends State<ChecklistScreen>
   List<PlanTask> _getFilteredTasks() {
     switch (_selectedFilter) {
       case 'High Priority':
-        return _tasks.where((t) => t.priority == 1).toList();
+        return _tasks.where((final t) => t.priority == 1).toList();
       case 'Medium Priority':
-        return _tasks.where((t) => t.priority == 2).toList();
+        return _tasks.where((final t) => t.priority == 2).toList();
       case 'Low Priority':
-        return _tasks.where((t) => t.priority == 3).toList();
+        return _tasks.where((final t) => t.priority == 3).toList();
       case 'Completed':
-        return _tasks.where((t) => t.done).toList();
+        return _tasks.where((final t) => t.done).toList();
       default:
         return _tasks;
     }
   }
 
   void _showFilterDialog() {
-    showDialog(
+    showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (final context) => AlertDialog(
         title: const Text('Filter Tasks'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: _filters.map((filter) {
-            return RadioListTile<String>(
+          children: _filters.map((final filter) => RadioListTile<String>(
               title: Text(filter),
               value: filter,
               groupValue: _selectedFilter,
-              onChanged: (value) {
+              onChanged: (final value) {
                 setState(() => _selectedFilter = value!);
                 Navigator.pop(context);
               },
-            );
-          }).toList(),
+            )).toList(),
         ),
       ),
     );
   }
 
-  void _toggle(PlanTask t) {
-    final i = _tasks.indexWhere((x) => x.id == t.id);
+  void _toggle(final PlanTask t) {
+    final i = _tasks.indexWhere((final x) => x.id == t.id);
     _tasks[i] = t.toggle();
     _updateProgress();
 
@@ -285,11 +281,11 @@ class _ChecklistScreenState extends State<ChecklistScreen>
     }
   }
 
-  void _editTask(PlanTask task) {
+  void _editTask(final PlanTask task) {
     final controller = TextEditingController(text: task.title);
-    showDialog(
+    showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (final context) => AlertDialog(
         title: const Text('Edit Task'),
         content: TextField(
           controller: controller,
@@ -304,7 +300,7 @@ class _ChecklistScreenState extends State<ChecklistScreen>
             onPressed: () {
               final newTitle = controller.text.trim();
               if (newTitle.isNotEmpty) {
-                final index = _tasks.indexWhere((t) => t.id == task.id);
+                final index = _tasks.indexWhere((final t) => t.id == task.id);
                 _tasks[index] = PlanTask(
                   id: task.id,
                   title: newTitle,
@@ -322,10 +318,10 @@ class _ChecklistScreenState extends State<ChecklistScreen>
     );
   }
 
-  void _deleteTask(PlanTask task) {
-    showDialog(
+  void _deleteTask(final PlanTask task) {
+    showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (final context) => AlertDialog(
         title: const Text('Delete Task'),
         content: Text('Are you sure you want to delete "${task.title}"?'),
         actions: [
@@ -335,7 +331,7 @@ class _ChecklistScreenState extends State<ChecklistScreen>
           ),
           FilledButton(
             onPressed: () {
-              _tasks.removeWhere((t) => t.id == task.id);
+              _tasks.removeWhere((final t) => t.id == task.id);
               _updateProgress();
               setState(() {});
               Navigator.pop(context);
@@ -352,7 +348,7 @@ class _ChecklistScreenState extends State<ChecklistScreen>
     final ctrl = TextEditingController();
     final text = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (final context) => AlertDialog(
         title: const Text('Add task'),
         content: TextField(
             controller: ctrl,
@@ -370,18 +366,13 @@ class _ChecklistScreenState extends State<ChecklistScreen>
     if (text == null || text.isEmpty) return;
     final t = PlanTask(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
-        title: text,
-        priority: 2);
+        title: text);
     setState(() => _tasks.add(t));
     TaskRepository.save(t);
   }
 }
 
 class _TaskCard extends StatelessWidget {
-  final PlanTask task;
-  final VoidCallback onToggle;
-  final VoidCallback onEdit;
-  final VoidCallback onDelete;
 
   const _TaskCard({
     required this.task,
@@ -389,9 +380,13 @@ class _TaskCard extends StatelessWidget {
     required this.onEdit,
     required this.onDelete,
   });
+  final PlanTask task;
+  final VoidCallback onToggle;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
     return Container(
@@ -399,7 +394,7 @@ class _TaskCard extends StatelessWidget {
       child: Card(
         elevation: task.done ? 0 : 2,
         color: task.done
-            ? scheme.surfaceContainerHighest.withOpacity(0.5)
+            ? scheme.surfaceContainerHighest.withValues(alpha: 0.5)
             : scheme.surface,
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
@@ -459,7 +454,7 @@ class _TaskCard extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
-                                color: AppTheme.ndisGreen.withOpacity(0.1),
+                                color: AppTheme.ndisGreen.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
@@ -481,7 +476,7 @@ class _TaskCard extends StatelessWidget {
 
                 // Actions
                 PopupMenuButton<String>(
-                  onSelected: (value) {
+                  onSelected: (final value) {
                     switch (value) {
                       case 'edit':
                         onEdit();
@@ -491,7 +486,7 @@ class _TaskCard extends StatelessWidget {
                         break;
                     }
                   },
-                  itemBuilder: (context) => [
+                  itemBuilder: (final context) => [
                     const PopupMenuItem(
                       value: 'edit',
                       child: Row(
@@ -524,12 +519,12 @@ class _TaskCard extends StatelessWidget {
 }
 
 class _PriorityChip extends StatelessWidget {
-  final int priority;
 
   const _PriorityChip({required this.priority});
+  final int priority;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     Color color;
     String label;
     IconData icon;
@@ -554,7 +549,7 @@ class _PriorityChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -576,12 +571,12 @@ class _PriorityChip extends StatelessWidget {
 }
 
 class _EmptyState extends StatelessWidget {
-  final String filter;
 
   const _EmptyState({required this.filter});
+  final String filter;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
     return Center(
@@ -593,7 +588,7 @@ class _EmptyState extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AppTheme.ndisBlue.withOpacity(0.1),
+                color: AppTheme.ndisBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: const Icon(

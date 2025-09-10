@@ -8,10 +8,10 @@ import '../theme/google_theme.dart';
 class Trending2025Components {
   /// Creates an energy-efficient dark mode toggle with smooth animations
   static Widget buildDarkModeToggle({
-    required BuildContext context,
-    required bool isDark,
-    required ValueChanged<bool> onChanged,
-    bool isAccessible = false,
+    required final BuildContext context,
+    required final bool isDark,
+    required final ValueChanged<bool> onChanged,
+    final bool isAccessible = false,
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -31,7 +31,7 @@ class Trending2025Components {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             color: isDark
-                ? GoogleTheme.googleBlue.withOpacity(0.2)
+                ? GoogleTheme.googleBlue.withValues(alpha: 0.2)
                 : Colors.grey.shade300,
             border: isAccessible
                 ? Border.all(color: colorScheme.primary, width: 2)
@@ -67,7 +67,7 @@ class Trending2025Components {
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Colors.black.withValues(alpha: 0.2),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
@@ -107,13 +107,13 @@ class Trending2025Components {
 
   /// Creates minimalist functional cards with clean layouts and ample spacing
   static Widget buildMinimalistCard({
-    required BuildContext context,
-    required Widget child,
-    Color? backgroundColor,
-    double? elevation,
-    EdgeInsets? padding,
-    bool hasHoverEffect = true,
-    VoidCallback? onTap,
+    required final BuildContext context,
+    required final Widget child,
+    final Color? backgroundColor,
+    final double? elevation,
+    final EdgeInsets? padding,
+    final bool hasHoverEffect = true,
+    final VoidCallback? onTap,
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -124,7 +124,7 @@ class Trending2025Components {
         color: backgroundColor ?? colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         elevation: elevation ?? 1,
-        shadowColor: colorScheme.shadow.withOpacity(0.1),
+        shadowColor: colorScheme.shadow.withValues(alpha: 0.1),
         child: InkWell(
           onTap: onTap != null
               ? () {
@@ -134,13 +134,13 @@ class Trending2025Components {
               : null,
           borderRadius: BorderRadius.circular(16),
           hoverColor:
-              hasHoverEffect ? colorScheme.primary.withOpacity(0.05) : null,
+              hasHoverEffect ? colorScheme.primary.withValues(alpha: 0.05) : null,
           child: Container(
             padding: padding ?? const EdgeInsets.all(24),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: colorScheme.outline.withOpacity(0.08),
+                color: colorScheme.outline.withValues(alpha: 0.08),
               ),
             ),
             child: child,
@@ -152,18 +152,17 @@ class Trending2025Components {
 
   /// Creates delightful microinteractions for buttons and actions
   static Widget buildInteractiveButton({
-    required String label,
-    required VoidCallback onPressed,
-    IconData? icon,
-    Color? backgroundColor,
-    Color? foregroundColor,
-    bool isPrimary = true,
-    bool hasRippleEffect = true,
-    bool hasPulseAnimation = false,
-  }) {
-    return AnimatedScale(
+    required final String label,
+    required final VoidCallback onPressed,
+    final IconData? icon,
+    final Color? backgroundColor,
+    final Color? foregroundColor,
+    final bool isPrimary = true,
+    final bool hasRippleEffect = true,
+    final bool hasPulseAnimation = false,
+  }) => AnimatedScale(
       duration: const Duration(milliseconds: 150),
-      scale: 1.0,
+      scale: 1,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         child: Material(
@@ -175,7 +174,7 @@ class Trending2025Components {
             },
             borderRadius: BorderRadius.circular(12),
             splashColor: hasRippleEffect
-                ? (backgroundColor ?? GoogleTheme.googleBlue).withOpacity(0.2)
+                ? (backgroundColor ?? GoogleTheme.googleBlue).withValues(alpha: 0.2)
                 : Colors.transparent,
             child: Container(
               padding: const EdgeInsets.symmetric(
@@ -196,7 +195,7 @@ class Trending2025Components {
                     ? [
                         BoxShadow(
                           color: (backgroundColor ?? GoogleTheme.googleBlue)
-                              .withOpacity(0.3),
+                              .withValues(alpha: 0.3),
                           blurRadius: hasPulseAnimation ? 20 : 8,
                           offset: const Offset(0, 4),
                         ),
@@ -236,15 +235,14 @@ class Trending2025Components {
         ),
       ),
     );
-  }
 
   /// Creates voice-enabled conversational interface component
   static Widget buildVoiceInterface({
-    required BuildContext context,
-    required bool isListening,
-    required VoidCallback onVoiceToggle,
-    String? transcribedText,
-    bool isAccessible = false,
+    required final BuildContext context,
+    required final bool isListening,
+    required final VoidCallback onVoiceToggle,
+    final String? transcribedText,
+    final bool isAccessible = false,
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -256,21 +254,21 @@ class Trending2025Components {
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isListening
-              ? GoogleTheme.googleRed.withOpacity(0.3)
-              : colorScheme.outline.withOpacity(0.1),
+              ? GoogleTheme.googleRed.withValues(alpha: 0.3)
+              : colorScheme.outline.withValues(alpha: 0.1),
           width: isListening ? 2 : 1,
         ),
         boxShadow: isListening
             ? [
                 BoxShadow(
-                  color: GoogleTheme.googleRed.withOpacity(0.2),
+                  color: GoogleTheme.googleRed.withValues(alpha: 0.2),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
               ]
             : [
                 BoxShadow(
-                  color: colorScheme.shadow.withOpacity(0.1),
+                  color: colorScheme.shadow.withValues(alpha: 0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -300,7 +298,7 @@ class Trending2025Components {
                         color: (isListening
                                 ? GoogleTheme.googleRed
                                 : GoogleTheme.googleBlue)
-                            .withOpacity(0.3),
+                            .withValues(alpha: 0.3),
                         blurRadius: isListening ? 20 : 12,
                         offset: const Offset(0, 4),
                       ),
@@ -387,10 +385,10 @@ class Trending2025Components {
 
   /// Creates sustainable and energy-efficient loading indicators
   static Widget buildEcoFriendlyLoader({
-    required BuildContext context,
-    double size = 40.0,
-    Color? color,
-    bool isMinimal = true,
+    required final BuildContext context,
+    final double size = 40.0,
+    final Color? color,
+    final bool isMinimal = true,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
     final loaderColor = color ?? colorScheme.primary;
@@ -402,7 +400,7 @@ class Trending2025Components {
         child: CircularProgressIndicator(
           strokeWidth: 2,
           color: loaderColor,
-          backgroundColor: loaderColor.withOpacity(0.1),
+          backgroundColor: loaderColor.withValues(alpha: 0.1),
         ),
       );
     }
@@ -414,15 +412,15 @@ class Trending2025Components {
         shape: BoxShape.circle,
         gradient: SweepGradient(
           colors: [
-            loaderColor.withOpacity(0.1),
+            loaderColor.withValues(alpha: 0.1),
             loaderColor,
-            loaderColor.withOpacity(0.1),
+            loaderColor.withValues(alpha: 0.1),
           ],
         ),
       ),
       child: Padding(
         padding: EdgeInsets.all(size * 0.15),
-        child: CircularProgressIndicator(
+        child: const CircularProgressIndicator(
           strokeWidth: 2,
           color: Colors.white,
           backgroundColor: Colors.transparent,
@@ -433,13 +431,13 @@ class Trending2025Components {
 
   /// Creates inclusive and accessible information cards
   static Widget buildAccessibleInfoCard({
-    required BuildContext context,
-    required String title,
-    required String content,
-    IconData? icon,
-    Color? accentColor,
-    bool hasHighContrast = false,
-    VoidCallback? onTap,
+    required final BuildContext context,
+    required final String title,
+    required final String content,
+    final IconData? icon,
+    final Color? accentColor,
+    final bool hasHighContrast = false,
+    final VoidCallback? onTap,
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -464,7 +462,7 @@ class Trending2025Components {
             border: Border.all(
               color: hasHighContrast
                   ? Colors.black
-                  : colorScheme.outline.withOpacity(0.1),
+                  : colorScheme.outline.withValues(alpha: 0.1),
               width: hasHighContrast ? 2 : 1,
             ),
             boxShadow: hasHighContrast
@@ -477,7 +475,7 @@ class Trending2025Components {
                   ]
                 : [
                     BoxShadow(
-                      color: colorScheme.shadow.withOpacity(0.08),
+                      color: colorScheme.shadow.withValues(alpha: 0.08),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -491,10 +489,10 @@ class Trending2025Components {
                   height: 48,
                   decoration: BoxDecoration(
                     color:
-                        (accentColor ?? colorScheme.primary).withOpacity(0.1),
+                        (accentColor ?? colorScheme.primary).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: hasHighContrast
-                        ? Border.all(color: Colors.black, width: 1)
+                        ? Border.all()
                         : null,
                   ),
                   child: Icon(
@@ -548,20 +546,20 @@ class Trending2025Components {
 
   /// Creates modern glassmorphism effects with sustainability in mind
   static Widget buildSustainableGlass({
-    required Widget child,
-    double opacity = 0.1,
-    double blur = 10.0,
-    Color? backgroundColor,
-    bool isEnergyEfficient = true,
+    required final Widget child,
+    final double opacity = 0.1,
+    final double blur = 10.0,
+    final Color? backgroundColor,
+    final bool isEnergyEfficient = true,
   }) {
     if (isEnergyEfficient) {
       // Use lighter blur for energy efficiency
-      return Container(
+      return DecoratedBox(
         decoration: BoxDecoration(
-          color: (backgroundColor ?? Colors.white).withOpacity(opacity),
+          color: (backgroundColor ?? Colors.white).withValues(alpha: opacity),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha: 0.2),
           ),
         ),
         child: child,
@@ -572,12 +570,12 @@ class Trending2025Components {
       borderRadius: BorderRadius.circular(16),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-        child: Container(
+        child: DecoratedBox(
           decoration: BoxDecoration(
-            color: (backgroundColor ?? Colors.white).withOpacity(opacity),
+            color: (backgroundColor ?? Colors.white).withValues(alpha: opacity),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
             ),
           ),
           child: child,

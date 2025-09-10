@@ -24,7 +24,7 @@ class ParticipantDashboardScreen extends StatelessWidget {
   const ParticipantDashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final auth = context.watch<AuthController>();
     final dateFmt = DateFormat('EEE d MMM, h:mm a');
 
@@ -39,7 +39,7 @@ class ParticipantDashboardScreen extends StatelessWidget {
         ),
       ],
       floatingActionButton: VoiceCommandButton(
-        onCommand: (command) {
+        onCommand: (final command) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Voice command: $command')),
           );
@@ -53,7 +53,6 @@ class ParticipantDashboardScreen extends StatelessWidget {
           GoogleDashboardHeader(
             greeting: 'there',
             subtitle: 'Your NDIS journey continues',
-            showStats: true,
             onProfileTap: () => _openSettings(context),
             actions: [
               IconButton(
@@ -91,7 +90,7 @@ class ParticipantDashboardScreen extends StatelessWidget {
           icon: Icons.account_balance_wallet,
           title: 'Budget Tracker',
           subtitle: 'Monitor spending and plan your NDIS funds',
-          value: auth.userId != null ? null : '\$18,400 remaining',
+          value: auth.userId != null ? null : r'$18,400 remaining',
           iconColor: GoogleTheme.ndisGreen,
           showTrend: true,
           trend: '12% left',
@@ -196,10 +195,10 @@ class ParticipantDashboardScreen extends StatelessWidget {
         _buildAppointmentsCard(context, auth, dateFmt),
 
         // Compact professional infographics (minimal, tasteful)
-        Padding(
-          padding: const EdgeInsets.only(top: 8.0),
+        const Padding(
+          padding: EdgeInsets.only(top: 8),
           child: CompactTimeline(
-            entries: const [
+            entries: [
               TimelineEntry(
                 title: 'Receipt Uploaded',
                 subtitle: 'Budget • Core Supports',
@@ -225,16 +224,16 @@ class ParticipantDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBudgetOverviewCard(BuildContext context, AuthController auth) {
+  Widget _buildBudgetOverviewCard(final BuildContext context, final AuthController auth) {
     if (auth.userId != null) {
       return StreamBuilder<BudgetOverview?>(
         stream: BudgetRepository.streamForUser(auth.userId!),
-        builder: (context, snapshot) {
+        builder: (final context, final snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
             final budget = snapshot.data!;
             final remaining = budget.totalAllocated - budget.totalSpent;
             final percentUsed =
-                (budget.totalSpent / budget.totalAllocated * 100);
+                budget.totalSpent / budget.totalAllocated * 100;
 
             return ModernDashboardCard(
               icon: Icons.pie_chart,
@@ -296,11 +295,11 @@ class ParticipantDashboardScreen extends StatelessWidget {
   }
 
   Widget _buildAppointmentsCard(
-      BuildContext context, AuthController auth, DateFormat dateFmt) {
+      final BuildContext context, final AuthController auth, final DateFormat dateFmt) {
     if (auth.userId != null) {
       return StreamBuilder<List<Appointment>>(
         stream: AppointmentRepository.getUpcoming(auth.userId!, limit: 3),
-        builder: (context, snapshot) {
+        builder: (final context, final snapshot) {
           if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             final appointments = snapshot.data!;
             final nextAppointment = appointments.first;
@@ -363,12 +362,12 @@ class ParticipantDashboardScreen extends StatelessWidget {
     }
   }
 
-  void _openSettings(BuildContext context) {
+  void _openSettings(final BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => const EnhancedSettingsSheet(),
+      builder: (final context) => const EnhancedSettingsSheet(),
     );
   }
 }
@@ -402,10 +401,8 @@ List<Appointment> _mockAppointments() {
   ];
 }
 
-BudgetOverview _mockBudget() {
-  return const BudgetOverview([
+BudgetOverview _mockBudget() => const BudgetOverview([
     BudgetBucket(name: 'Core', allocated: 12000, spent: 9600),
     BudgetBucket(name: 'Capacity', allocated: 8000, spent: 4200),
     BudgetBucket(name: 'Capital', allocated: 5000, spent: 1000),
   ]);
-}

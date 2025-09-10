@@ -60,8 +60,7 @@ class _AdvancedGamificationDashboardState
   }
 
   @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
+  Widget build(final BuildContext context) => SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,7 +90,6 @@ class _AdvancedGamificationDashboardState
         ],
       ),
     );
-  }
 
   Widget _buildLevelProgressSection() {
     final levelInfo = _gamificationService.getNextLevelInfo();
@@ -106,14 +104,14 @@ class _AdvancedGamificationDashboardState
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [AppTheme.trustGreen, AppTheme.calmingBlue],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.emoji_events,
                   color: Colors.white,
                   size: 24,
@@ -145,7 +143,7 @@ class _AdvancedGamificationDashboardState
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: AppTheme.warmAccent.withOpacity(0.1),
+                  color: AppTheme.warmAccent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
@@ -164,8 +162,7 @@ class _AdvancedGamificationDashboardState
           // Progress Bar
           AnimatedBuilder(
             animation: _progressController,
-            builder: (context, child) {
-              return Column(
+            builder: (final context, final child) => Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -194,12 +191,11 @@ class _AdvancedGamificationDashboardState
                     backgroundColor:
                         Theme.of(context).colorScheme.surfaceContainerHighest,
                     valueColor:
-                        AlwaysStoppedAnimation<Color>(AppTheme.trustGreen),
+                        const AlwaysStoppedAnimation<Color>(AppTheme.trustGreen),
                     minHeight: 8,
                   ),
                 ],
-              );
-            },
+              ),
           ),
 
           const SizedBox(height: 16),
@@ -241,15 +237,13 @@ class _AdvancedGamificationDashboardState
   }
 
   Widget _buildStatCard(
-      String label, String value, IconData icon, Color color) {
-    return Container(
+      final String label, final String value, final IconData icon, final Color color) => Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.2),
-          width: 1,
+          color: color.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -273,7 +267,6 @@ class _AdvancedGamificationDashboardState
         ],
       ),
     );
-  }
 
   Widget _buildAchievementsSection() {
     final achievements = _gamificationService.unlockedAchievements;
@@ -288,10 +281,10 @@ class _AdvancedGamificationDashboardState
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppTheme.empathyPurple.withOpacity(0.1),
+                  color: AppTheme.empathyPurple.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.emoji_events,
                   color: AppTheme.empathyPurple,
                   size: 20,
@@ -320,9 +313,9 @@ class _AdvancedGamificationDashboardState
             const SizedBox(height: 12),
             ...achievements
                 .take(3)
-                .map((achievement) =>
+                .map((final achievement) =>
                     _buildAchievementCard(achievement, isUnlocked: true))
-                .toList(),
+                ,
           ],
 
           const SizedBox(height: 16),
@@ -336,29 +329,27 @@ class _AdvancedGamificationDashboardState
           ),
           const SizedBox(height: 12),
           ...achievementProgress.entries
-              .map((entry) =>
+              .map((final entry) =>
                   _buildAchievementProgressCard(entry.key, entry.value))
-              .toList(),
+              ,
         ],
       ),
     );
   }
 
-  Widget _buildAchievementCard(gamification.Achievement achievement,
-      {bool isUnlocked = false}) {
-    return Container(
+  Widget _buildAchievementCard(final gamification.Achievement achievement,
+      {final bool isUnlocked = false}) => Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isUnlocked
-            ? _getRarityColor(achievement.rarity).withOpacity(0.1)
-            : Colors.grey.withOpacity(0.05),
+            ? _getRarityColor(achievement.rarity).withValues(alpha: 0.1)
+            : Colors.grey.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isUnlocked
-              ? _getRarityColor(achievement.rarity).withOpacity(0.3)
-              : Colors.grey.withOpacity(0.2),
-          width: 1,
+              ? _getRarityColor(achievement.rarity).withValues(alpha: 0.3)
+              : Colors.grey.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
@@ -402,7 +393,7 @@ class _AdvancedGamificationDashboardState
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: _getRarityColor(achievement.rarity).withOpacity(0.2),
+                color: _getRarityColor(achievement.rarity).withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -416,9 +407,8 @@ class _AdvancedGamificationDashboardState
         ],
       ),
     );
-  }
 
-  Widget _buildAchievementProgressCard(String achievementId, double progress) {
+  Widget _buildAchievementProgressCard(final String achievementId, final double progress) {
     // Get achievement from the service (would need to expose this method)
     // For now, create a mock achievement
     final achievement = gamification.Achievement(
@@ -435,11 +425,10 @@ class _AdvancedGamificationDashboardState
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.05),
+        color: Colors.grey.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.grey.withOpacity(0.2),
-          width: 1,
+          color: Colors.grey.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -485,8 +474,8 @@ class _AdvancedGamificationDashboardState
           const SizedBox(height: 8),
           LinearProgressIndicator(
             value: progress,
-            backgroundColor: Colors.grey.withOpacity(0.2),
-            valueColor: AlwaysStoppedAnimation<Color>(AppTheme.calmingBlue),
+            backgroundColor: Colors.grey.withValues(alpha: 0.2),
+            valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.calmingBlue),
             minHeight: 4,
           ),
         ],
@@ -506,10 +495,10 @@ class _AdvancedGamificationDashboardState
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppTheme.calmingBlue.withOpacity(0.1),
+                  color: AppTheme.calmingBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.people,
                   color: AppTheme.calmingBlue,
                   size: 20,
@@ -529,7 +518,7 @@ class _AdvancedGamificationDashboardState
             Center(
               child: Column(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.people_outline,
                     size: 48,
                     color: Colors.grey,
@@ -546,14 +535,14 @@ class _AdvancedGamificationDashboardState
             )
           else
             ...challenges
-                .map((challenge) => _buildChallengeCard(challenge))
-                .toList(),
+                .map(_buildChallengeCard)
+                ,
         ],
       ),
     );
   }
 
-  Widget _buildChallengeCard(gamification.SocialChallenge challenge) {
+  Widget _buildChallengeCard(final gamification.SocialChallenge challenge) {
     final userProgress =
         challenge.userProgress[_gamificationService.userProgress.userId] ?? 0;
     final progress = (userProgress / challenge.target).clamp(0.0, 1.0);
@@ -563,11 +552,10 @@ class _AdvancedGamificationDashboardState
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.calmingBlue.withOpacity(0.05),
+        color: AppTheme.calmingBlue.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppTheme.calmingBlue.withOpacity(0.2),
-          width: 1,
+          color: AppTheme.calmingBlue.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -586,7 +574,7 @@ class _AdvancedGamificationDashboardState
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppTheme.warmAccent.withOpacity(0.1),
+                  color: AppTheme.warmAccent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -623,9 +611,9 @@ class _AdvancedGamificationDashboardState
                     const SizedBox(height: 4),
                     LinearProgressIndicator(
                       value: progress,
-                      backgroundColor: Colors.grey.withOpacity(0.2),
+                      backgroundColor: Colors.grey.withValues(alpha: 0.2),
                       valueColor:
-                          AlwaysStoppedAnimation<Color>(AppTheme.calmingBlue),
+                          const AlwaysStoppedAnimation<Color>(AppTheme.calmingBlue),
                       minHeight: 4,
                     ),
                   ],
@@ -660,14 +648,14 @@ class _AdvancedGamificationDashboardState
                     foregroundColor: Colors.white,
                     minimumSize: const Size(80, 32),
                   ),
-                  child: Text('Join'),
+                  child: const Text('Join'),
                 )
               else
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: AppTheme.trustGreen.withOpacity(0.1),
+                    color: AppTheme.trustGreen.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
@@ -698,10 +686,10 @@ class _AdvancedGamificationDashboardState
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppTheme.trustGreen.withOpacity(0.1),
+                  color: AppTheme.trustGreen.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.lightbulb,
                   color: AppTheme.trustGreen,
                   size: 20,
@@ -721,7 +709,7 @@ class _AdvancedGamificationDashboardState
             Center(
               child: Column(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.check_circle_outline,
                     size: 48,
                     color: AppTheme.trustGreen,
@@ -739,25 +727,22 @@ class _AdvancedGamificationDashboardState
           else
             ...recommendations
                 .take(3)
-                .map((recommendation) =>
-                    _buildRecommendationCard(recommendation))
-                .toList(),
+                .map(_buildRecommendationCard)
+                ,
         ],
       ),
     );
   }
 
   Widget _buildRecommendationCard(
-      personalization.PersonalizedRecommendation recommendation) {
-    return Container(
+      final personalization.PersonalizedRecommendation recommendation) => Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: _getPriorityColor(recommendation.priority).withOpacity(0.1),
+        color: _getPriorityColor(recommendation.priority).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: _getPriorityColor(recommendation.priority).withOpacity(0.2),
-          width: 1,
+          color: _getPriorityColor(recommendation.priority).withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -777,7 +762,7 @@ class _AdvancedGamificationDashboardState
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: _getPriorityColor(recommendation.priority)
-                      .withOpacity(0.2),
+                      .withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -817,14 +802,13 @@ class _AdvancedGamificationDashboardState
                   foregroundColor: Colors.white,
                   minimumSize: const Size(60, 28),
                 ),
-                child: Text('Do'),
+                child: const Text('Do'),
               ),
             ],
           ),
         ],
       ),
     );
-  }
 
   Widget _buildLeaderboardSection() {
     final leaderboard = _gamificationService.leaderboard;
@@ -838,10 +822,10 @@ class _AdvancedGamificationDashboardState
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppTheme.warmAccent.withOpacity(0.1),
+                  color: AppTheme.warmAccent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.leaderboard,
                   color: AppTheme.warmAccent,
                   size: 20,
@@ -859,27 +843,25 @@ class _AdvancedGamificationDashboardState
           const SizedBox(height: 16),
           ...leaderboard
               .take(5)
-              .map((entry) => _buildLeaderboardEntry(entry))
-              .toList(),
+              .map(_buildLeaderboardEntry)
+              ,
         ],
       ),
     );
   }
 
-  Widget _buildLeaderboardEntry(gamification.LeaderboardEntry entry) {
-    return Container(
+  Widget _buildLeaderboardEntry(final gamification.LeaderboardEntry entry) => Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: entry.rank <= 3
-            ? _getRankColor(entry.rank).withOpacity(0.1)
-            : Colors.grey.withOpacity(0.05),
+            ? _getRankColor(entry.rank).withValues(alpha: 0.1)
+            : Colors.grey.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: entry.rank <= 3
-              ? _getRankColor(entry.rank).withOpacity(0.2)
-              : Colors.grey.withOpacity(0.2),
-          width: 1,
+              ? _getRankColor(entry.rank).withValues(alpha: 0.2)
+              : Colors.grey.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
@@ -930,11 +912,10 @@ class _AdvancedGamificationDashboardState
         ],
       ),
     );
-  }
 
   // Helper methods
 
-  Color _getRarityColor(gamification.AchievementRarity rarity) {
+  Color _getRarityColor(final gamification.AchievementRarity rarity) {
     switch (rarity) {
       case gamification.AchievementRarity.common:
         return Colors.grey;
@@ -949,7 +930,7 @@ class _AdvancedGamificationDashboardState
     }
   }
 
-  Color _getPriorityColor(dynamic priority) {
+  Color _getPriorityColor(final dynamic priority) {
     // Handle both gamification and personalization priority types
     if (priority.toString().contains('low')) {
       return AppTheme.trustGreen;
@@ -961,7 +942,7 @@ class _AdvancedGamificationDashboardState
     return AppTheme.trustGreen; // Default
   }
 
-  Color _getRankColor(int rank) {
+  Color _getRankColor(final int rank) {
     switch (rank) {
       case 1:
         return AppTheme.warmAccent; // Gold
@@ -974,7 +955,7 @@ class _AdvancedGamificationDashboardState
     }
   }
 
-  String _getRankEmoji(int rank) {
+  String _getRankEmoji(final int rank) {
     switch (rank) {
       case 1:
         return '🥇';
@@ -987,14 +968,14 @@ class _AdvancedGamificationDashboardState
     }
   }
 
-  Future<void> _joinChallenge(String challengeId) async {
+  Future<void> _joinChallenge(final String challengeId) async {
     try {
       await _gamificationService.joinChallenge(challengeId);
       HapticUtils.successFeedback(context);
       setState(() {});
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Joined challenge successfully!'),
           backgroundColor: AppTheme.trustGreen,
         ),
@@ -1002,7 +983,7 @@ class _AdvancedGamificationDashboardState
     } catch (e) {
       HapticUtils.errorFeedback(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Failed to join challenge'),
           backgroundColor: AppTheme.safetyGrey,
         ),
@@ -1011,7 +992,7 @@ class _AdvancedGamificationDashboardState
   }
 
   void _handleRecommendation(
-      personalization.PersonalizedRecommendation recommendation) {
+      final personalization.PersonalizedRecommendation recommendation) {
     HapticUtils.lightImpact(context);
 
     // Record behavior
@@ -1026,7 +1007,7 @@ class _AdvancedGamificationDashboardState
         customPoints: 50);
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Great choice! +50 points'),
         backgroundColor: AppTheme.trustGreen,
       ),

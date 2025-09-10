@@ -4,19 +4,6 @@ import 'responsive_layout.dart';
 
 /// Modern dashboard card with clean design and smooth animations
 class ModernDashboardCard extends StatefulWidget {
-  final IconData icon;
-  final String title;
-  final String? subtitle;
-  final String? value;
-  final String? trend;
-  final Color? iconColor;
-  final Color? backgroundColor;
-  final VoidCallback? onTap;
-  final Widget? trailing;
-  final bool isLoading;
-  final bool showTrend;
-  final TrendDirection? trendDirection;
-  final List<Widget>? actions;
 
   const ModernDashboardCard({
     super.key,
@@ -34,6 +21,19 @@ class ModernDashboardCard extends StatefulWidget {
     this.trendDirection,
     this.actions,
   });
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final String? value;
+  final String? trend;
+  final Color? iconColor;
+  final Color? backgroundColor;
+  final VoidCallback? onTap;
+  final Widget? trailing;
+  final bool isLoading;
+  final bool showTrend;
+  final TrendDirection? trendDirection;
+  final List<Widget>? actions;
 
   @override
   State<ModernDashboardCard> createState() => _ModernDashboardCardState();
@@ -49,7 +49,6 @@ class _ModernDashboardCardState extends State<ModernDashboardCard>
 
   late Animation<double> _scaleAnimation;
   late Animation<double> _elevationAnimation;
-  late Animation<Color?> _colorAnimation;
 
   bool _isHovered = false;
   bool _isPressed = false;
@@ -77,7 +76,7 @@ class _ModernDashboardCardState extends State<ModernDashboardCard>
     );
 
     _scaleAnimation = Tween<double>(
-      begin: 1.0,
+      begin: 1,
       end: 0.98,
     ).animate(CurvedAnimation(
       parent: _pressController,
@@ -85,8 +84,8 @@ class _ModernDashboardCardState extends State<ModernDashboardCard>
     ));
 
     _elevationAnimation = Tween<double>(
-      begin: 0.0,
-      end: 8.0,
+      begin: 0,
+      end: 8,
     ).animate(CurvedAnimation(
       parent: _hoverController,
       curve: Curves.easeOutCubic,
@@ -98,7 +97,7 @@ class _ModernDashboardCardState extends State<ModernDashboardCard>
   }
 
   @override
-  void didUpdateWidget(ModernDashboardCard oldWidget) {
+  void didUpdateWidget(final ModernDashboardCard oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isLoading != oldWidget.isLoading) {
       if (widget.isLoading) {
@@ -117,14 +116,14 @@ class _ModernDashboardCardState extends State<ModernDashboardCard>
     super.dispose();
   }
 
-  void _handleTapDown(TapDownDetails details) {
+  void _handleTapDown(final TapDownDetails details) {
     if (widget.onTap == null) return;
     setState(() => _isPressed = true);
     _pressController.forward();
     HapticFeedback.lightImpact();
   }
 
-  void _handleTapUp(TapUpDetails details) {
+  void _handleTapUp(final TapUpDetails details) {
     _handleTapEnd();
   }
 
@@ -139,13 +138,13 @@ class _ModernDashboardCardState extends State<ModernDashboardCard>
     }
   }
 
-  void _handleHoverEnter(PointerEnterEvent event) {
+  void _handleHoverEnter(final PointerEnterEvent event) {
     if (widget.onTap == null) return;
     setState(() => _isHovered = true);
     _hoverController.forward();
   }
 
-  void _handleHoverExit(PointerExitEvent event) {
+  void _handleHoverExit(final PointerExitEvent event) {
     if (_isHovered) {
       setState(() => _isHovered = false);
       _hoverController.reverse();
@@ -153,7 +152,7 @@ class _ModernDashboardCardState extends State<ModernDashboardCard>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final isMobile = context.isMobile;
 
@@ -163,8 +162,7 @@ class _ModernDashboardCardState extends State<ModernDashboardCard>
         _pressController,
         _loadingController,
       ]),
-      builder: (context, child) {
-        return Transform.scale(
+      builder: (final context, final child) => Transform.scale(
           scale: _scaleAnimation.value,
           child: MouseRegion(
             onEnter: _handleHoverEnter,
@@ -174,20 +172,19 @@ class _ModernDashboardCardState extends State<ModernDashboardCard>
               onTapUp: _handleTapUp,
               onTapCancel: _handleTapCancel,
               onTap: widget.onTap,
-              child: Container(
+              child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: widget.backgroundColor ?? scheme.surface,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: scheme.shadow.withOpacity(0.1),
+                      color: scheme.shadow.withValues(alpha: 0.1),
                       blurRadius: 10 + _elevationAnimation.value,
                       offset: Offset(0, 4 + _elevationAnimation.value / 2),
                     ),
                   ],
                   border: Border.all(
-                    color: scheme.outline.withOpacity(0.1),
-                    width: 1,
+                    color: scheme.outline.withValues(alpha: 0.1),
                   ),
                 ),
                 child: ClipRRect(
@@ -201,9 +198,9 @@ class _ModernDashboardCardState extends State<ModernDashboardCard>
                             gradient: LinearGradient(
                               colors: [
                                 (widget.iconColor ?? scheme.primary)
-                                    .withOpacity(0.05),
+                                    .withValues(alpha: 0.05),
                                 (widget.iconColor ?? scheme.primary)
-                                    .withOpacity(0.02),
+                                    .withValues(alpha: 0.02),
                               ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
@@ -225,13 +222,12 @@ class _ModernDashboardCardState extends State<ModernDashboardCard>
                                   padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
                                     color: (widget.iconColor ?? scheme.primary)
-                                        .withOpacity(0.1),
+                                        .withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(16),
                                     border: Border.all(
                                       color:
                                           (widget.iconColor ?? scheme.primary)
-                                              .withOpacity(0.2),
-                                      width: 1,
+                                              .withValues(alpha: 0.2),
                                     ),
                                   ),
                                   child: Icon(
@@ -316,9 +312,9 @@ class _ModernDashboardCardState extends State<ModernDashboardCard>
 
                       // Loading overlay
                       if (widget.isLoading)
-                        Container(
+                        DecoratedBox(
                           decoration: BoxDecoration(
-                            color: scheme.surface.withOpacity(0.8),
+                            color: scheme.surface.withValues(alpha: 0.8),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Center(
@@ -334,24 +330,23 @@ class _ModernDashboardCardState extends State<ModernDashboardCard>
               ),
             ),
           ),
-        );
-      },
+        ),
     );
   }
 }
 
 /// Trend indicator widget
 class _TrendIndicator extends StatelessWidget {
-  final String trend;
-  final TrendDirection direction;
 
   const _TrendIndicator({
     required this.trend,
     required this.direction,
   });
+  final String trend;
+  final TrendDirection direction;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
     Color color;
@@ -375,7 +370,7 @@ class _TrendIndicator extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -402,10 +397,6 @@ class _TrendIndicator extends StatelessWidget {
 
 /// Quick action button for dashboard cards
 class QuickActionButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onPressed;
-  final Color? color;
 
   const QuickActionButton({
     super.key,
@@ -414,9 +405,13 @@ class QuickActionButton extends StatelessWidget {
     required this.onPressed,
     this.color,
   });
+  final IconData icon;
+  final String label;
+  final VoidCallback onPressed;
+  final Color? color;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
     return Expanded(

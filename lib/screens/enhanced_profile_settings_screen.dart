@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../controllers/settings_controller.dart';
-import '../controllers/settings_controller.dart';
 import '../controllers/gamification_controller.dart';
 import '../theme/google_theme.dart';
 import '../widgets/responsive_layout.dart';
@@ -75,25 +74,22 @@ class _EnhancedProfileSettingsScreenState
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final settings = context.watch<SettingsController>();
     final gamification = context.watch<GamificationController>();
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: NestedScrollView(
         controller: _scrollController,
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
+        headerSliverBuilder: (final context, final innerBoxIsScrolled) => [
             _buildSliverAppBar(context),
-          ];
-        },
+          ],
         body: AnimatedBuilder(
           animation: _contentController,
-          builder: (context, child) {
-            return FadeTransition(
+          builder: (final context, final child) => FadeTransition(
               opacity: _contentController,
               child: SlideTransition(
                 position: Tween<Offset>(
@@ -141,7 +137,7 @@ class _EnhancedProfileSettingsScreenState
                                 leadingIcon: Icons.contrast,
                                 trailing: Switch(
                                   value: settings.highContrast,
-                                  onChanged: (value) {
+                                  onChanged: (final value) {
                                     HapticFeedback.lightImpact();
                                     settings.setHighContrast(value);
                                   },
@@ -154,7 +150,7 @@ class _EnhancedProfileSettingsScreenState
                                 leadingIcon: Icons.motion_photos_off,
                                 trailing: Switch(
                                   value: settings.reduceMotion,
-                                  onChanged: (value) {
+                                  onChanged: (final value) {
                                     HapticFeedback.lightImpact();
                                     settings.setReduceMotion(value);
                                   },
@@ -166,7 +162,7 @@ class _EnhancedProfileSettingsScreenState
                                 leadingIcon: Icons.record_voice_over,
                                 trailing: Switch(
                                   value: settings.voiceNavigation,
-                                  onChanged: (value) {
+                                  onChanged: (final value) {
                                     HapticFeedback.lightImpact();
                                     settings.setVoiceNavigation(value);
                                     _toggleVoiceNavigation(value);
@@ -180,7 +176,7 @@ class _EnhancedProfileSettingsScreenState
                                 leadingIcon: Icons.psychology,
                                 trailing: Switch(
                                   value: settings.cognitiveAssistance,
-                                  onChanged: (value) {
+                                  onChanged: (final value) {
                                     HapticFeedback.lightImpact();
                                     settings.setCognitiveAssistance(value);
                                     _toggleCognitiveAssistance(value);
@@ -198,9 +194,8 @@ class _EnhancedProfileSettingsScreenState
                           value: settings.textScale,
                           min: 0.8,
                           max: 1.8,
-                          divisions: 10,
                           onChanged: settings.setTextScale,
-                          formatter: (value) => '${(value * 100).round()}%',
+                          formatter: (final value) => '${(value * 100).round()}%',
                           icon: Icons.text_fields,
                           activeColor: GoogleTheme.googleBlue,
                         ),
@@ -235,7 +230,7 @@ class _EnhancedProfileSettingsScreenState
                                     child: Text('Dark'),
                                   ),
                                 ],
-                                onChanged: (mode) {
+                                onChanged: (final mode) {
                                   if (mode != null) {
                                     HapticFeedback.lightImpact();
                                     settings.setThemeMode(mode);
@@ -260,7 +255,7 @@ class _EnhancedProfileSettingsScreenState
                               leadingIcon: Icons.event_note,
                               trailing: Switch(
                                 value: settings.notifAppointmentReminders,
-                                onChanged: (value) {
+                                onChanged: (final value) {
                                   HapticFeedback.lightImpact();
                                   settings.setNotifAppointmentReminders(value);
                                 },
@@ -272,7 +267,7 @@ class _EnhancedProfileSettingsScreenState
                               leadingIcon: Icons.account_balance_wallet,
                               trailing: Switch(
                                 value: settings.notifBudgetAlerts,
-                                onChanged: (value) {
+                                onChanged: (final value) {
                                   HapticFeedback.lightImpact();
                                   settings.setNotifBudgetAlerts(value);
                                 },
@@ -284,7 +279,7 @@ class _EnhancedProfileSettingsScreenState
                               leadingIcon: Icons.smart_toy,
                               trailing: Switch(
                                 value: settings.notifAIUpdates,
-                                onChanged: (value) {
+                                onChanged: (final value) {
                                   HapticFeedback.lightImpact();
                                   settings.setNotifAIUpdates(value);
                                 },
@@ -361,19 +356,17 @@ class _EnhancedProfileSettingsScreenState
                   ),
                 ),
               ),
-            );
-          },
+            ),
         ),
       ),
     );
   }
 
-  Widget _buildSliverAppBar(BuildContext context) {
+  Widget _buildSliverAppBar(final BuildContext context) {
     final gamification = context.watch<GamificationController>();
 
     return SliverAppBar(
       expandedHeight: 220,
-      floating: false,
       pinned: true,
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -387,7 +380,7 @@ class _EnhancedProfileSettingsScreenState
         Trending2025Components.buildDarkModeToggle(
           context: context,
           isDark: Theme.of(context).brightness == Brightness.dark,
-          onChanged: (isDark) {
+          onChanged: (final isDark) {
             final settings = context.read<SettingsController>();
             settings.setThemeMode(isDark ? ThemeMode.dark : ThemeMode.light);
           },
@@ -422,7 +415,7 @@ class _EnhancedProfileSettingsScreenState
     );
   }
 
-  String _getThemeDescription(ThemeMode mode) {
+  String _getThemeDescription(final ThemeMode mode) {
     switch (mode) {
       case ThemeMode.system:
         return 'Follows system setting';
@@ -435,9 +428,9 @@ class _EnhancedProfileSettingsScreenState
 
   // Event handlers
   void _editProfile() {
-    showDialog(
+    showDialog<void>(
       context: context,
-      builder: (context) => _buildEditProfileDialog(),
+      builder: (final context) => _buildEditProfileDialog(),
     );
   }
 
@@ -504,10 +497,10 @@ class _EnhancedProfileSettingsScreenState
   }
 
   void _changeAvatar() {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
+      builder: (final context) => Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -556,134 +549,6 @@ class _EnhancedProfileSettingsScreenState
     );
   }
 
-  void _showPrivacySettings() {
-    showDialog(
-      context: context,
-      builder: (context) => _buildPrivacySettingsDialog(),
-    );
-  }
-
-  Widget _buildPrivacySettingsDialog() {
-    return Dialog(
-      child: Container(
-        width: 500,
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Privacy Settings',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-            const SizedBox(height: 24),
-            PreferenceToggle(
-              value: context.watch<SettingsController>().shareData,
-              onChanged: (value) {
-                context.read<SettingsController>().setShareData(value);
-              },
-              title: 'Data Sharing',
-              subtitle: 'Share anonymized data to improve NDIS services',
-              icon: Icons.share,
-              activeColor: GoogleTheme.googleGreen,
-            ),
-            const SizedBox(height: 16),
-            PreferenceToggle(
-              value: context.watch<SettingsController>().analyticsEnabled,
-              onChanged: (value) {
-                context.read<SettingsController>().setAnalyticsEnabled(value);
-              },
-              title: 'Analytics',
-              subtitle: 'Help improve the app with usage analytics',
-              icon: Icons.analytics,
-              activeColor: GoogleTheme.googleBlue,
-            ),
-            const SizedBox(height: 16),
-            PreferenceToggle(
-              value: context.watch<SettingsController>().crashReportingEnabled,
-              onChanged: (value) {
-                context
-                    .read<SettingsController>()
-                    .setCrashReportingEnabled(value);
-              },
-              title: 'Crash Reporting',
-              subtitle: 'Automatically report crashes to improve stability',
-              icon: Icons.bug_report,
-              activeColor: GoogleTheme.ndisTeal,
-            ),
-            const SizedBox(height: 24),
-            EnhancedButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Save Settings'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showBackupSettings() {
-    showDialog(
-      context: context,
-      builder: (context) => _buildBackupSettingsDialog(),
-    );
-  }
-
-  Widget _buildBackupSettingsDialog() {
-    return Dialog(
-      child: Container(
-        width: 400,
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Backup & Sync',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-            const SizedBox(height: 24),
-            ListTile(
-              leading: Icon(Icons.cloud_upload, color: GoogleTheme.googleBlue),
-              title: const Text('Backup to Cloud'),
-              subtitle: const Text('Last backup: Today, 2:30 PM'),
-              trailing: const Icon(Icons.check_circle, color: Colors.green),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: EnhancedButton(
-                    onPressed: _performBackup,
-                    isSecondary: true,
-                    child: const Text('Backup Now'),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: EnhancedButton(
-                    onPressed: _restoreFromBackup,
-                    isSecondary: true,
-                    child: const Text('Restore'),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            EnhancedButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Done'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   void _showAdvancedSettings() {
     // TODO: Implement advanced settings
     ScaffoldMessenger.of(context).showSnackBar(
@@ -709,9 +574,9 @@ class _EnhancedProfileSettingsScreenState
   }
 
   void _showDeleteAccountDialog() {
-    showDialog(
+    showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (final context) => AlertDialog(
         title: const Text('Delete Account'),
         content: const Text(
           'This action cannot be undone. All your data will be permanently deleted. Are you sure you want to continue?',
@@ -733,7 +598,7 @@ class _EnhancedProfileSettingsScreenState
     );
   }
 
-  void _saveProfile(String name, String email) {
+  void _saveProfile(final String name, final String email) {
     // TODO: Implement profile save
     HapticFeedback.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -754,22 +619,6 @@ class _EnhancedProfileSettingsScreenState
     HapticFeedback.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Camera capture feature coming soon')),
-    );
-  }
-
-  void _performBackup() {
-    // TODO: Implement backup functionality
-    HapticFeedback.lightImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Backup completed successfully')),
-    );
-  }
-
-  void _restoreFromBackup() {
-    // TODO: Implement restore functionality
-    HapticFeedback.lightImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Restore feature coming soon')),
     );
   }
 
@@ -802,10 +651,10 @@ class _EnhancedProfileSettingsScreenState
       applicationIcon: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: GoogleTheme.googleBlue.withOpacity(0.1),
+          color: GoogleTheme.googleBlue.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(
+        child: const Icon(
           Icons.accessibility_new,
           color: GoogleTheme.googleBlue,
           size: 24,
@@ -822,7 +671,7 @@ class _EnhancedProfileSettingsScreenState
   // BMAD Enhanced Methods - New 2025+ Features
 
   Widget _buildEnhancedProfileHeader(
-      BuildContext context, GamificationController gamification) {
+      final BuildContext context, final GamificationController gamification) {
     final theme = Theme.of(context);
 
     return AdvancedGlassmorphism2025.buildInteractiveGlassCard(
@@ -842,8 +691,8 @@ class _EnhancedProfileSettingsScreenState
                   child: CircularProgressIndicator(
                     value: gamification.streakDays / 30.0, // 30-day streak goal
                     strokeWidth: 6,
-                    backgroundColor: GoogleTheme.googleBlue.withOpacity(0.2),
-                    valueColor: AlwaysStoppedAnimation(GoogleTheme.googleBlue),
+                    backgroundColor: GoogleTheme.googleBlue.withValues(alpha: 0.1),
+                    valueColor: const AlwaysStoppedAnimation(GoogleTheme.googleBlue),
                   ),
                 ),
 
@@ -855,7 +704,7 @@ class _EnhancedProfileSettingsScreenState
                     height: 100,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: LinearGradient(
+                      gradient: const LinearGradient(
                         colors: [
                           GoogleTheme.googleBlue,
                           GoogleTheme.ndisPurple,
@@ -939,7 +788,6 @@ class _EnhancedProfileSettingsScreenState
                   trendDescription: 'Completed',
                   icon: Icons.event_available,
                   color: GoogleTheme.googleGreen,
-                  showCelebration: false,
                 ),
               ],
             ),
@@ -950,8 +798,7 @@ class _EnhancedProfileSettingsScreenState
     );
   }
 
-  Widget _buildVoiceControlledActions(BuildContext context) {
-    return Column(
+  Widget _buildVoiceControlledActions(final BuildContext context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -975,7 +822,6 @@ class _EnhancedProfileSettingsScreenState
               ),
             );
           },
-          transcribedText: null,
           isAccessible: true,
         ),
 
@@ -993,7 +839,6 @@ class _EnhancedProfileSettingsScreenState
               onPressed: _editProfile,
               icon: Icons.edit,
               backgroundColor: GoogleTheme.googleBlue,
-              hasPulseAnimation: false,
             ),
             Trending2025Components.buildInteractiveButton(
               label: 'Emergency',
@@ -1007,23 +852,19 @@ class _EnhancedProfileSettingsScreenState
               onPressed: _manageCareTeam,
               icon: Icons.people,
               backgroundColor: GoogleTheme.ndisTeal,
-              hasPulseAnimation: false,
             ),
             Trending2025Components.buildInteractiveButton(
               label: 'Health Data',
               onPressed: _manageHealthData,
               icon: Icons.health_and_safety,
               backgroundColor: GoogleTheme.googleGreen,
-              hasPulseAnimation: false,
             ),
           ],
         ),
       ],
     );
-  }
 
-  Widget _buildNDISProfileSection(BuildContext context) {
-    return AdvancedGlassmorphism2025.buildInteractiveGlassCard(
+  Widget _buildNDISProfileSection(final BuildContext context) => AdvancedGlassmorphism2025.buildInteractiveGlassCard(
       context: context,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1063,7 +904,7 @@ class _EnhancedProfileSettingsScreenState
           Trending2025Components.buildAccessibleInfoCard(
             context: context,
             title: 'Plan Utilization',
-            content: '68% used • \$18,400 remaining of \$28,000 total',
+            content: r'68% used • $18,400 remaining of $28,000 total',
             icon: Icons.pie_chart,
             accentColor: GoogleTheme.ndisPurple,
             onTap: _showBudgetBreakdown,
@@ -1082,10 +923,9 @@ class _EnhancedProfileSettingsScreenState
         ],
       ),
     );
-  }
 
   // Enhanced event handlers with NDIS-specific features
-  void _toggleVoiceNavigation(bool enabled) {
+  void _toggleVoiceNavigation(final bool enabled) {
     HapticFeedback.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -1097,7 +937,7 @@ class _EnhancedProfileSettingsScreenState
     );
   }
 
-  void _toggleCognitiveAssistance(bool enabled) {
+  void _toggleCognitiveAssistance(final bool enabled) {
     HapticFeedback.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -1110,9 +950,9 @@ class _EnhancedProfileSettingsScreenState
   }
 
   void _showEmergencyContacts() {
-    showDialog(
+    showDialog<void>(
       context: context,
-      builder: (context) => AdvancedGlassmorphism2025.buildGlassModalOverlay(
+      builder: (final context) => AdvancedGlassmorphism2025.buildGlassModalOverlay(
         context: context,
         child: _buildEmergencyContactsDialog(),
         onDismiss: () => Navigator.pop(context),
@@ -1120,8 +960,7 @@ class _EnhancedProfileSettingsScreenState
     );
   }
 
-  Widget _buildEmergencyContactsDialog() {
-    return Container(
+  Widget _buildEmergencyContactsDialog() => Container(
       width: 500,
       padding: const EdgeInsets.all(32),
       child: Column(
@@ -1184,7 +1023,6 @@ class _EnhancedProfileSettingsScreenState
         ],
       ),
     );
-  }
 
   void _manageCareTeam() {
     ScaffoldMessenger.of(context).showSnackBar(

@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart' as fb;
 import '../services/auth_service.dart';
 import '../services/firestore_service.dart';
 
-enum UserRole { participant, provider, unknown }
+enum UserRole { participant, provider, none, unknown }
 
 class AuthController extends ChangeNotifier {
   UserRole _role = UserRole.unknown;
@@ -27,7 +27,7 @@ class AuthController extends ChangeNotifier {
   fb.User? get currentUser => _firebaseUser;
   UserRole? get userRole => _role == UserRole.unknown ? null : _role;
 
-  static AuthController of(BuildContext context) =>
+  static AuthController of(final BuildContext context) =>
       context.read<AuthController>();
 
   Future<void> load() async {
@@ -68,7 +68,7 @@ class AuthController extends ChangeNotifier {
           .doc(_userId)
           .get();
 
-      if (userDoc?.exists == true) {
+      if (userDoc?.exists ?? false) {
         final data = userDoc!.data();
         final roleString = data?['role'] as String?;
         _role = switch (roleString) {
@@ -117,7 +117,7 @@ class AuthController extends ChangeNotifier {
     return false;
   }
 
-  Future<bool> signInWithEmail(String email, String password) async {
+  Future<bool> signInWithEmail(final String email, final String password) async {
     _setLoading(true);
     _clearError();
 
@@ -150,9 +150,9 @@ class AuthController extends ChangeNotifier {
   }
 
   Future<bool> createAccount(
-    String email,
-    String password,
-    UserRole role,
+    final String email,
+    final String password,
+    final UserRole role,
   ) async {
     _setLoading(true);
     _clearError();
@@ -215,7 +215,7 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  Future<void> setRole(UserRole role) async {
+  Future<void> setRole(final UserRole role) async {
     _role = role;
     notifyListeners();
 
@@ -238,17 +238,17 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  void setSignedIn(bool signedIn) {
+  void setSignedIn(final bool signedIn) {
     _signedIn = signedIn;
     notifyListeners();
   }
 
-  void _setLoading(bool loading) {
+  void _setLoading(final bool loading) {
     _isLoading = loading;
     notifyListeners();
   }
 
-  void _setError(String error) {
+  void _setError(final String error) {
     _errorMessage = error;
     notifyListeners();
   }

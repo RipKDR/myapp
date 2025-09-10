@@ -4,15 +4,6 @@ import '../theme/app_theme.dart';
 
 /// Modern dashboard layout with responsive grid and smooth animations
 class ModernDashboardLayout extends StatefulWidget {
-  final String title;
-  final String? subtitle;
-  final Widget? header;
-  final List<Widget> children;
-  final EdgeInsets? padding;
-  final Widget? floatingActionButton;
-  final List<Widget>? actions;
-  final bool showAppBar;
-  final Color? backgroundColor;
 
   const ModernDashboardLayout({
     super.key,
@@ -26,6 +17,15 @@ class ModernDashboardLayout extends StatefulWidget {
     this.showAppBar = true,
     this.backgroundColor,
   });
+  final String title;
+  final String? subtitle;
+  final Widget? header;
+  final List<Widget> children;
+  final EdgeInsets? padding;
+  final Widget? floatingActionButton;
+  final List<Widget>? actions;
+  final bool showAppBar;
+  final Color? backgroundColor;
 
   @override
   State<ModernDashboardLayout> createState() => _ModernDashboardLayoutState();
@@ -67,8 +67,8 @@ class _ModernDashboardLayoutState extends State<ModernDashboardLayout>
 
       _fadeAnimations.add(
         Tween<double>(
-          begin: 0.0,
-          end: 1.0,
+          begin: 0,
+          end: 1,
         ).animate(CurvedAnimation(
           parent: _animationController,
           curve: Interval(delay, 0.6 + delay, curve: Curves.easeOut),
@@ -86,7 +86,7 @@ class _ModernDashboardLayoutState extends State<ModernDashboardLayout>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -94,7 +94,6 @@ class _ModernDashboardLayoutState extends State<ModernDashboardLayout>
       appBar: widget.showAppBar ? _buildAppBar(context) : null,
       floatingActionButton: widget.floatingActionButton,
       body: ResponsiveContainer(
-        maxWidth: 1200,
         padding: widget.padding ?? EdgeInsets.zero,
         child: CustomScrollView(
           slivers: [
@@ -103,19 +102,17 @@ class _ModernDashboardLayoutState extends State<ModernDashboardLayout>
               SliverToBoxAdapter(
                 child: AnimatedBuilder(
                   animation: _animationController,
-                  builder: (context, child) {
-                    return FadeTransition(
+                  builder: (final context, final child) => FadeTransition(
                       opacity: _fadeAnimations.isNotEmpty
                           ? _fadeAnimations[0]
-                          : const AlwaysStoppedAnimation(1.0),
+                          : const AlwaysStoppedAnimation(1),
                       child: SlideTransition(
                         position: _slideAnimations.isNotEmpty
                             ? _slideAnimations[0]
                             : const AlwaysStoppedAnimation(Offset.zero),
-                        child: widget.header!,
+                        child: widget.header,
                       ),
-                    );
-                  },
+                    ),
                 ),
               ),
 
@@ -125,15 +122,14 @@ class _ModernDashboardLayoutState extends State<ModernDashboardLayout>
               tabletColumns: 2,
               desktopColumns: 3,
               largeDesktopColumns: 4,
-              spacing: 16,
               padding: const EdgeInsets.all(16),
-              children: widget.children.asMap().entries.map((entry) {
+              children: widget.children.asMap().entries.map((final entry) {
                 final index = entry.key;
                 final child = entry.value;
 
                 return AnimatedBuilder(
                   animation: _animationController,
-                  builder: (context, _) {
+                  builder: (final context, _) {
                     final slideIndex =
                         index < _slideAnimations.length ? index : 0;
                     final fadeIndex =
@@ -142,7 +138,7 @@ class _ModernDashboardLayoutState extends State<ModernDashboardLayout>
                     return FadeTransition(
                       opacity: _fadeAnimations.isNotEmpty
                           ? _fadeAnimations[fadeIndex]
-                          : const AlwaysStoppedAnimation(1.0),
+                          : const AlwaysStoppedAnimation(1),
                       child: SlideTransition(
                         position: _slideAnimations.isNotEmpty
                             ? _slideAnimations[slideIndex]
@@ -160,7 +156,7 @@ class _ModernDashboardLayoutState extends State<ModernDashboardLayout>
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
+  PreferredSizeWidget _buildAppBar(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
     return AppBar(
@@ -170,7 +166,7 @@ class _ModernDashboardLayoutState extends State<ModernDashboardLayout>
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              AppTheme.ndisBlue.withOpacity(0.1),
+              AppTheme.ndisBlue.withValues(alpha: 0.1),
               Colors.transparent,
             ],
             begin: Alignment.topCenter,
@@ -207,15 +203,6 @@ class _ModernDashboardLayoutState extends State<ModernDashboardLayout>
 
 /// Responsive sliver grid for dashboard layouts
 class ResponsiveSliverGrid extends StatelessWidget {
-  final List<Widget> children;
-  final int? mobileColumns;
-  final int? tabletColumns;
-  final int? desktopColumns;
-  final int? largeDesktopColumns;
-  final double spacing;
-  final double runSpacing;
-  final EdgeInsets? padding;
-  final double? childAspectRatio;
 
   const ResponsiveSliverGrid({
     super.key,
@@ -229,11 +216,19 @@ class ResponsiveSliverGrid extends StatelessWidget {
     this.padding,
     this.childAspectRatio,
   });
+  final List<Widget> children;
+  final int? mobileColumns;
+  final int? tabletColumns;
+  final int? desktopColumns;
+  final int? largeDesktopColumns;
+  final double spacing;
+  final double runSpacing;
+  final EdgeInsets? padding;
+  final double? childAspectRatio;
 
   @override
-  Widget build(BuildContext context) {
-    return SliverLayoutBuilder(
-      builder: (context, constraints) {
+  Widget build(final BuildContext context) => SliverLayoutBuilder(
+      builder: (final context, final constraints) {
         final breakpoint =
             ScreenBreakpoint.fromWidth(constraints.crossAxisExtent);
 
@@ -267,16 +262,15 @@ class ResponsiveSliverGrid extends StatelessWidget {
               childAspectRatio: childAspectRatio ?? _getAspectRatio(breakpoint),
             ),
             delegate: SliverChildBuilderDelegate(
-              (context, index) => children[index],
+              (final context, final index) => children[index],
               childCount: children.length,
             ),
           ),
         );
       },
     );
-  }
 
-  double _getAspectRatio(ScreenBreakpoint breakpoint) {
+  double _getAspectRatio(final ScreenBreakpoint breakpoint) {
     switch (breakpoint) {
       case ScreenBreakpoint.mobile:
         return 1.4;
@@ -291,18 +285,17 @@ class ResponsiveSliverGrid extends StatelessWidget {
 
 /// Dashboard stats overview widget
 class DashboardStatsOverview extends StatelessWidget {
-  final List<DashboardStat> stats;
-  final EdgeInsets? padding;
 
   const DashboardStatsOverview({
     super.key,
     required this.stats,
     this.padding,
   });
+  final List<DashboardStat> stats;
+  final EdgeInsets? padding;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(final BuildContext context) => Container(
       padding: padding ?? const EdgeInsets.all(16),
       child: ResponsiveLayout(
         mobile: _buildMobileLayout(context),
@@ -310,41 +303,35 @@ class DashboardStatsOverview extends StatelessWidget {
         desktop: _buildDesktopLayout(context),
       ),
     );
-  }
 
-  Widget _buildMobileLayout(BuildContext context) {
-    return Column(
+  Widget _buildMobileLayout(final BuildContext context) => Column(
       children: stats
           .map(
-            (stat) => Padding(
+            (final stat) => Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: _StatCard(stat: stat),
             ),
           )
           .toList(),
     );
-  }
 
-  Widget _buildTabletLayout(BuildContext context) {
-    return Wrap(
+  Widget _buildTabletLayout(final BuildContext context) => Wrap(
       spacing: 16,
       runSpacing: 16,
       children: stats
           .map(
-            (stat) => SizedBox(
+            (final stat) => SizedBox(
               width: (MediaQuery.of(context).size.width - 48) / 2,
               child: _StatCard(stat: stat),
             ),
           )
           .toList(),
     );
-  }
 
-  Widget _buildDesktopLayout(BuildContext context) {
-    return Row(
+  Widget _buildDesktopLayout(final BuildContext context) => Row(
       children: stats
           .map(
-            (stat) => Expanded(
+            (final stat) => Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: _StatCard(stat: stat),
@@ -353,17 +340,16 @@ class DashboardStatsOverview extends StatelessWidget {
           )
           .toList(),
     );
-  }
 }
 
 /// Individual stat card
 class _StatCard extends StatelessWidget {
-  final DashboardStat stat;
 
   const _StatCard({required this.stat});
+  final DashboardStat stat;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
     return Container(
@@ -372,11 +358,11 @@ class _StatCard extends StatelessWidget {
         color: scheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: scheme.outline.withOpacity(0.1),
+          color: scheme.outline.withValues(alpha: 0.1),
         ),
         boxShadow: [
           BoxShadow(
-            color: scheme.shadow.withOpacity(0.05),
+            color: scheme.shadow.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -429,11 +415,6 @@ class _StatCard extends StatelessWidget {
 
 /// Dashboard stat data model
 class DashboardStat {
-  final String title;
-  final String value;
-  final String? subtitle;
-  final IconData icon;
-  final Color? color;
 
   const DashboardStat({
     required this.title,
@@ -442,4 +423,9 @@ class DashboardStat {
     required this.icon,
     this.color,
   });
+  final String title;
+  final String value;
+  final String? subtitle;
+  final IconData icon;
+  final Color? color;
 }

@@ -8,9 +8,9 @@ class E2ECrypto {
   static final _algo = AesGcm.with256bits();
 
   static Future<SecretKey> deriveKey({
-    required String passphrase,
-    required List<int> salt,
-    int iterations = 150000,
+    required final String passphrase,
+    required final List<int> salt,
+    final int iterations = 150000,
   }) async {
     final pbkdf2 = Pbkdf2(
       macAlgorithm: Hmac.sha256(),
@@ -24,8 +24,8 @@ class E2ECrypto {
   }
 
   static Future<Map<String, String>> encrypt({
-    required SecretKey key,
-    required String plaintext,
+    required final SecretKey key,
+    required final String plaintext,
   }) async {
     final nonce = randomBytes(12);
     final secretBox = await _algo.encrypt(utf8.encode(plaintext),
@@ -38,8 +38,8 @@ class E2ECrypto {
   }
 
   static Future<String> decrypt({
-    required SecretKey key,
-    required Map<String, String> payload,
+    required final SecretKey key,
+    required final Map<String, String> payload,
   }) async {
     final nonce = base64Decode(payload['n']!);
     final cipher = base64Decode(payload['c']!);
@@ -49,7 +49,7 @@ class E2ECrypto {
     return utf8.decode(data);
   }
 
-  static List<int> randomBytes(int length) {
+  static List<int> randomBytes(final int length) {
     final rnd = Random.secure();
     return List<int>.generate(length, (_) => rnd.nextInt(256));
   }

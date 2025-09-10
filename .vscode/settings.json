@@ -3,5 +3,6 @@
     "cmake.ignoreCMakeListsMissing": true,
     "cSpell.words": [
         "ndisconnect"
-    ]
+    ],
+    "dart.flutterTrackWidgetCreation": true
 }

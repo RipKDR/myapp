@@ -9,17 +9,6 @@ import '../theme/google_theme.dart';
 
 /// Glassmorphic container with frosted glass effect
 class GlassmorphicContainer extends StatelessWidget {
-  final Widget child;
-  final double blur;
-  final double opacity;
-  final Color color;
-  final BorderRadius? borderRadius;
-  final Border? border;
-  final EdgeInsetsGeometry? padding;
-  final EdgeInsetsGeometry? margin;
-  final double? width;
-  final double? height;
-  final List<BoxShadow>? boxShadow;
 
   const GlassmorphicContainer({
     super.key,
@@ -35,10 +24,20 @@ class GlassmorphicContainer extends StatelessWidget {
     this.height,
     this.boxShadow,
   });
+  final Widget child;
+  final double blur;
+  final double opacity;
+  final Color color;
+  final BorderRadius? borderRadius;
+  final Border? border;
+  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? margin;
+  final double? width;
+  final double? height;
+  final List<BoxShadow>? boxShadow;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(final BuildContext context) => Container(
       margin: margin,
       child: ClipRRect(
         borderRadius: borderRadius ?? BorderRadius.circular(16),
@@ -49,17 +48,17 @@ class GlassmorphicContainer extends StatelessWidget {
             height: height,
             padding: padding,
             decoration: BoxDecoration(
-              color: color.withOpacity(opacity),
+              color: color.withValues(alpha: opacity),
               borderRadius: borderRadius ?? BorderRadius.circular(16),
               border: border ??
                   Border.all(
-                    color: color.withOpacity(0.2),
+                    color: color.withValues(alpha: 0.2),
                     width: 1.5,
                   ),
               boxShadow: boxShadow ??
                   [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -70,16 +69,10 @@ class GlassmorphicContainer extends StatelessWidget {
         ),
       ),
     );
-  }
 }
 
 /// 3D Flip card with perspective transformation
 class Flip3DCard extends StatefulWidget {
-  final Widget front;
-  final Widget back;
-  final double width;
-  final double height;
-  final Duration duration;
 
   const Flip3DCard({
     super.key,
@@ -89,6 +82,11 @@ class Flip3DCard extends StatefulWidget {
     this.height = 200,
     this.duration = const Duration(milliseconds: 800),
   });
+  final Widget front;
+  final Widget back;
+  final double width;
+  final double height;
+  final Duration duration;
 
   @override
   State<Flip3DCard> createState() => _Flip3DCardState();
@@ -135,12 +133,11 @@ class _Flip3DCardState extends State<Flip3DCard>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
+  Widget build(final BuildContext context) => GestureDetector(
       onTap: _flip,
       child: AnimatedBuilder(
         animation: _animation,
-        builder: (context, child) {
+        builder: (final context, final child) {
           final isShowingFront = _animation.value < 0.5;
           final angle = _animation.value * math.pi;
 
@@ -149,7 +146,7 @@ class _Flip3DCardState extends State<Flip3DCard>
             transform: Matrix4.identity()
               ..setEntry(3, 2, 0.001)
               ..rotateY(angle),
-            child: Container(
+            child: SizedBox(
               width: widget.width,
               height: widget.height,
               child: isShowingFront
@@ -164,18 +161,10 @@ class _Flip3DCardState extends State<Flip3DCard>
         },
       ),
     );
-  }
 }
 
 /// Liquid button with morphing animation
 class LiquidButton extends StatefulWidget {
-  final String text;
-  final VoidCallback onPressed;
-  final Color color;
-  final Color textColor;
-  final double width;
-  final double height;
-  final IconData? icon;
 
   const LiquidButton({
     super.key,
@@ -187,6 +176,13 @@ class LiquidButton extends StatefulWidget {
     this.height = 56,
     this.icon,
   });
+  final String text;
+  final VoidCallback onPressed;
+  final Color color;
+  final Color textColor;
+  final double width;
+  final double height;
+  final IconData? icon;
 
   @override
   State<LiquidButton> createState() => _LiquidButtonState();
@@ -213,7 +209,7 @@ class _LiquidButtonState extends State<LiquidButton>
     )..repeat();
 
     _morphAnimation = Tween<double>(
-      begin: 1.0,
+      begin: 1,
       end: 0.95,
     ).animate(CurvedAnimation(
       parent: _morphController,
@@ -234,8 +230,7 @@ class _LiquidButtonState extends State<LiquidButton>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
+  Widget build(final BuildContext context) => GestureDetector(
       onTapDown: (_) {
         setState(() => _isPressed = true);
         _morphController.forward();
@@ -252,10 +247,9 @@ class _LiquidButtonState extends State<LiquidButton>
       },
       child: AnimatedBuilder(
         animation: Listenable.merge([_morphAnimation, _waveAnimation]),
-        builder: (context, child) {
-          return Transform.scale(
+        builder: (final context, final child) => Transform.scale(
             scale: _morphAnimation.value,
-            child: Container(
+            child: SizedBox(
               width: widget.width,
               height: widget.height,
               child: CustomPaint(
@@ -285,26 +279,24 @@ class _LiquidButtonState extends State<LiquidButton>
                 ),
               ),
             ),
-          );
-        },
+          ),
       ),
     );
-  }
 }
 
 class _LiquidPainter extends CustomPainter {
-  final Color color;
-  final double wavePhase;
-  final bool isPressed;
 
   _LiquidPainter({
     required this.color,
     required this.wavePhase,
     required this.isPressed,
   });
+  final Color color;
+  final double wavePhase;
+  final bool isPressed;
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(final Canvas canvas, final Size size) {
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
@@ -337,7 +329,7 @@ class _LiquidPainter extends CustomPainter {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        Colors.white.withOpacity(0.2),
+        Colors.white.withValues(alpha: 0.2),
         Colors.transparent,
       ],
     );
@@ -351,16 +343,11 @@ class _LiquidPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  bool shouldRepaint(covariant final CustomPainter oldDelegate) => true;
 }
 
 /// Parallax scrolling card with depth effect
 class ParallaxCard extends StatefulWidget {
-  final String imageUrl;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-  final double height;
 
   const ParallaxCard({
     super.key,
@@ -370,6 +357,11 @@ class ParallaxCard extends StatefulWidget {
     required this.onTap,
     this.height = 200,
   });
+  final String imageUrl;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+  final double height;
 
   @override
   State<ParallaxCard> createState() => _ParallaxCardState();
@@ -380,10 +372,9 @@ class _ParallaxCardState extends State<ParallaxCard> {
   double _offsetY = 0;
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
+  Widget build(final BuildContext context) => GestureDetector(
       onTap: widget.onTap,
-      onPanUpdate: (details) {
+      onPanUpdate: (final details) {
         setState(() {
           _offsetX = (details.localPosition.dx - 150) / 10;
           _offsetY = (details.localPosition.dy - 100) / 10;
@@ -407,7 +398,7 @@ class _ParallaxCardState extends State<ParallaxCard> {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withValues(alpha: 0.2),
                 blurRadius: 20,
                 offset: Offset(_offsetX / 2, _offsetY / 2 + 10),
               ),
@@ -425,7 +416,7 @@ class _ParallaxCardState extends State<ParallaxCard> {
                   right: -20 + _offsetX,
                   bottom: -20 + _offsetY,
                   child: Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
                           GoogleTheme.googleBlue,
@@ -464,7 +455,7 @@ class _ParallaxCardState extends State<ParallaxCard> {
                         Text(
                           widget.subtitle,
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.8),
+                            color: Colors.white.withValues(alpha: 0.8),
                             fontSize: 14,
                           ),
                         ),
@@ -478,14 +469,10 @@ class _ParallaxCardState extends State<ParallaxCard> {
         ),
       ),
     );
-  }
 }
 
 /// Animated gradient background with mesh effect
 class AnimatedMeshGradient extends StatefulWidget {
-  final Widget child;
-  final List<Color> colors;
-  final Duration duration;
 
   const AnimatedMeshGradient({
     super.key,
@@ -498,6 +485,9 @@ class AnimatedMeshGradient extends StatefulWidget {
     ],
     this.duration = const Duration(seconds: 5),
   });
+  final Widget child;
+  final List<Color> colors;
+  final Duration duration;
 
   @override
   State<AnimatedMeshGradient> createState() => _AnimatedMeshGradientState();
@@ -529,33 +519,29 @@ class _AnimatedMeshGradientState extends State<AnimatedMeshGradient>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
+  Widget build(final BuildContext context) => AnimatedBuilder(
       animation: _animation,
-      builder: (context, child) {
-        return CustomPaint(
+      builder: (final context, final child) => CustomPaint(
           painter: _MeshGradientPainter(
             colors: widget.colors,
             phase: _animation.value,
           ),
           child: widget.child,
-        );
-      },
+        ),
     );
-  }
 }
 
 class _MeshGradientPainter extends CustomPainter {
-  final List<Color> colors;
-  final double phase;
 
   _MeshGradientPainter({
     required this.colors,
     required this.phase,
   });
+  final List<Color> colors;
+  final double phase;
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(final Canvas canvas, final Size size) {
     final paint = Paint()..style = PaintingStyle.fill;
 
     // Create mesh grid
@@ -577,11 +563,10 @@ class _MeshGradientPainter extends CustomPainter {
         final distortionY = 10 * math.cos(phase + j * 0.1);
 
         final gradient = RadialGradient(
-          center: Alignment.center,
           radius: 1.5,
           colors: [
-            color.withOpacity(0.6),
-            color.withOpacity(0.0),
+            color.withValues(alpha: 0.6),
+            color.withValues(alpha: 0),
           ],
         );
 
@@ -602,15 +587,11 @@ class _MeshGradientPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  bool shouldRepaint(covariant final CustomPainter oldDelegate) => true;
 }
 
 /// Neumorphic toggle switch with smooth animation
 class NeumorphicSwitch extends StatefulWidget {
-  final bool value;
-  final ValueChanged<bool> onChanged;
-  final Color activeColor;
-  final Color inactiveColor;
 
   const NeumorphicSwitch({
     super.key,
@@ -619,6 +600,10 @@ class NeumorphicSwitch extends StatefulWidget {
     this.activeColor = const Color(0xFF1A73E8),
     this.inactiveColor = const Color(0xFFE0E0E0),
   });
+  final bool value;
+  final ValueChanged<bool> onChanged;
+  final Color activeColor;
+  final Color inactiveColor;
 
   @override
   State<NeumorphicSwitch> createState() => _NeumorphicSwitchState();
@@ -647,7 +632,7 @@ class _NeumorphicSwitchState extends State<NeumorphicSwitch>
   }
 
   @override
-  void didUpdateWidget(NeumorphicSwitch oldWidget) {
+  void didUpdateWidget(final NeumorphicSwitch oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.value != oldWidget.value) {
       if (widget.value) {
@@ -665,16 +650,14 @@ class _NeumorphicSwitchState extends State<NeumorphicSwitch>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
+  Widget build(final BuildContext context) => GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
         widget.onChanged(!widget.value);
       },
       child: AnimatedBuilder(
         animation: _animation,
-        builder: (context, child) {
-          return Container(
+        builder: (final context, final child) => Container(
             width: 60,
             height: 30,
             decoration: BoxDecoration(
@@ -686,12 +669,12 @@ class _NeumorphicSwitchState extends State<NeumorphicSwitch>
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 6,
                   offset: const Offset(0, 3),
                 ),
                 BoxShadow(
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                   blurRadius: 6,
                   offset: const Offset(0, -3),
                 ),
@@ -712,7 +695,7 @@ class _NeumorphicSwitchState extends State<NeumorphicSwitch>
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
+                          color: Colors.black.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -722,23 +705,21 @@ class _NeumorphicSwitchState extends State<NeumorphicSwitch>
                 ),
               ],
             ),
-          );
-        },
+          ),
       ),
     );
-  }
 }
 
 /// Floating action menu with orbital animation
 class OrbitalActionMenu extends StatefulWidget {
-  final List<OrbitalAction> actions;
-  final Widget child;
 
   const OrbitalActionMenu({
     super.key,
     required this.actions,
     required this.child,
   });
+  final List<OrbitalAction> actions;
+  final Widget child;
 
   @override
   State<OrbitalActionMenu> createState() => _OrbitalActionMenuState();
@@ -775,22 +756,21 @@ class _OrbitalActionMenuState extends State<OrbitalActionMenu>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(
+  Widget build(final BuildContext context) => SizedBox(
       width: 200,
       height: 200,
       child: Stack(
         alignment: Alignment.center,
         children: [
           // Orbital items
-          ...widget.actions.asMap().entries.map((entry) {
+          ...widget.actions.asMap().entries.map((final entry) {
             final index = entry.key;
             final action = entry.value;
             final angle = (index * 2 * math.pi) / widget.actions.length;
 
             return AnimatedBuilder(
               animation: _controller,
-              builder: (context, child) {
+              builder: (final context, final child) {
                 final radius = 80.0 * _controller.value;
                 final x =
                     radius * math.cos(angle - _controller.value * math.pi);
@@ -811,7 +791,7 @@ class _OrbitalActionMenuState extends State<OrbitalActionMenu>
                 );
               },
             );
-          }).toList(),
+          }),
 
           // Main button
           GestureDetector(
@@ -825,17 +805,16 @@ class _OrbitalActionMenuState extends State<OrbitalActionMenu>
         ],
       ),
     );
-  }
 }
 
 class OrbitalAction {
-  final IconData icon;
-  final Color color;
-  final VoidCallback onPressed;
 
   OrbitalAction({
     required this.icon,
     required this.color,
     required this.onPressed,
   });
+  final IconData icon;
+  final Color color;
+  final VoidCallback onPressed;
 }

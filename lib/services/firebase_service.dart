@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 
 // This file will be replaced by FlutterFire's generated options in production.
 // Keep a permissive stub to avoid compile errors before configuration.
@@ -66,7 +66,8 @@ class FirebaseService {
   // Get current user ID for debugging
   static String? get currentUserId {
     try {
-      return FirebaseFirestore.instance.app.name;
+      final user = fb_auth.FirebaseAuth.instance.currentUser;
+      return user?.uid;
     } catch (e) {
       return null;
     }

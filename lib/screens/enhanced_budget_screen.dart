@@ -9,7 +9,7 @@ import '../widgets/trending_2025_components.dart';
 import '../widgets/neo_brutalism_components.dart';
 import '../widgets/advanced_glassmorphism_2025.dart';
 import '../widgets/cinematic_data_storytelling.dart';
-import '../widgets/advanced_financial_2025.dart';
+import '../widgets/advanced_financial_2025.dart' as financial;
 
 /// Enhanced budget management screen with advanced financial visualizations
 /// Following 2025 design trends with sophisticated NDIS funding management
@@ -30,91 +30,38 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
   bool _showAppBarTitle = false;
 
   // Enhanced NDIS budget data with 2025+ features
-  final List<NDISBudgetCategory> _budgetCategories = [
-    NDISBudgetCategory(
+  final List<financial.NDISBudgetCategory> _budgetCategories = [
+    const financial.NDISBudgetCategory(
       name: 'Core Supports',
       allocated: 12000,
       spent: 8400,
       color: GoogleTheme.googleBlue,
       description: 'Assistance with daily personal activities and self-care',
-      type: NDISCategoryType.coreSupports,
+      type: financial.NDISCategoryType.coreSupports,
     ),
-    NDISBudgetCategory(
+    const financial.NDISBudgetCategory(
       name: 'Capacity Building',
       allocated: 8000,
       spent: 5200,
       color: GoogleTheme.googleGreen,
       description: 'Support to build independence and life skills',
-      type: NDISCategoryType.capacityBuilding,
+      type: financial.NDISCategoryType.capacityBuilding,
     ),
-    NDISBudgetCategory(
+    const financial.NDISBudgetCategory(
       name: 'Capital Supports',
       allocated: 5000,
       spent: 1800,
       color: GoogleTheme.ndisTeal,
       description: 'Assistive technology and home modifications',
-      type: NDISCategoryType.capitalSupports,
+      type: financial.NDISCategoryType.capitalSupports,
     ),
-    NDISBudgetCategory(
+    const financial.NDISBudgetCategory(
       name: 'Transport',
       allocated: 3000,
       spent: 2100,
       color: GoogleTheme.ndisPurple,
       description: 'Transport to access community and services',
-      type: NDISCategoryType.transport,
-    ),
-  ];
-
-  // Enhanced spending events for cinematic storytelling
-  final List<SpendingEvent> _spendingEvents = [
-    SpendingEvent(
-      title: 'Physiotherapy Session',
-      description: 'FlexCare Physiotherapy - Session #12',
-      amount: 89.50,
-      date: DateTime.now().subtract(const Duration(days: 2)),
-      type: SpendingEventType.expense,
-    ),
-    SpendingEvent(
-      title: 'OT Assessment',
-      description: 'Ability OT Services - Home modification assessment',
-      amount: 125.00,
-      date: DateTime.now().subtract(const Duration(days: 5)),
-      type: SpendingEventType.expense,
-    ),
-    SpendingEvent(
-      title: 'Plan Review Approved',
-      description: 'Additional capacity building funding approved',
-      amount: 2000.00,
-      date: DateTime.now().subtract(const Duration(days: 14)),
-      type: SpendingEventType.budgetIncrease,
-    ),
-  ];
-
-  // AI-generated spending insights
-  final List<SpendingInsight> _spendingInsights = [
-    SpendingInsight(
-      title: 'Excellent Budget Management',
-      description:
-          'Your spending pace ensures full budget utilization by plan end',
-      icon: Icons.thumb_up,
-      priority: InsightPriority.low,
-      actionable: false,
-    ),
-    SpendingInsight(
-      title: 'Transport Budget Alert',
-      description:
-          'Transport category is 70% used. Consider booking transport-included sessions',
-      icon: Icons.warning,
-      priority: InsightPriority.medium,
-      actionable: true,
-    ),
-    SpendingInsight(
-      title: 'Capital Supports Opportunity',
-      description:
-          'You have \$3,200 unused in Capital Supports. Review assistive technology options',
-      icon: Icons.lightbulb,
-      priority: InsightPriority.high,
-      actionable: true,
+      type: financial.NDISCategoryType.transport,
     ),
   ];
 
@@ -179,23 +126,20 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: NestedScrollView(
         controller: _scrollController,
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
+        headerSliverBuilder: (final context, final innerBoxIsScrolled) => [
             _buildSliverAppBar(context),
-          ];
-        },
+          ],
         body: AnimatedBuilder(
           animation: _contentController,
-          builder: (context, child) {
-            return FadeTransition(
+          builder: (final context, final child) => FadeTransition(
               opacity: _contentController,
               child: SlideTransition(
                 position: Tween<Offset>(
@@ -221,30 +165,26 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
                   ],
                 ),
               ),
-            );
-          },
+            ),
         ),
       ),
       floatingActionButton: AdvancedGlassmorphism2025.buildFloatingGlassButton(
         icon: Icons.add,
         onPressed: _showEnhancedAddExpenseDialog,
         backgroundColor: GoogleTheme.googleGreen,
-        size: 56.0,
-        isPulsing: false,
       ),
     );
   }
 
-  Widget _buildSliverAppBar(BuildContext context) {
+  Widget _buildSliverAppBar(final BuildContext context) {
     final totalAllocated =
-        _budgetCategories.fold<double>(0, (sum, cat) => sum + cat.allocated);
+        _budgetCategories.fold<double>(0, (final sum, final cat) => sum + cat.allocated);
     final totalSpent =
-        _budgetCategories.fold<double>(0, (sum, cat) => sum + cat.spent);
+        _budgetCategories.fold<double>(0, (final sum, final cat) => sum + cat.spent);
     final utilizationRate = totalSpent / totalAllocated;
 
     return SliverAppBar(
       expandedHeight: 220,
-      floating: false,
       pinned: true,
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -262,7 +202,6 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
           icon: Icons.mic,
           isPrimary: false,
           backgroundColor: GoogleTheme.googleGreen,
-          hasRippleEffect: true,
         ),
         const SizedBox(width: 8),
         IconButton(
@@ -297,33 +236,10 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
     );
   }
 
-  Widget _buildBudgetStat(String label, String value, Color color) {
+  Widget _buildTabBar(final BuildContext context) {
     final theme = Theme.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          value,
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w700,
-            color: color,
-          ),
-        ),
-        Text(
-          label,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTabBar(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Container(
+    return ColoredBox(
       color: theme.colorScheme.surface,
       child: TabBar(
         controller: _tabController,
@@ -340,7 +256,7 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
     );
   }
 
-  Widget _buildOverviewTab(BuildContext context) {
+  Widget _buildOverviewTab(final BuildContext context) {
     final isMobile = context.isMobile;
 
     return SingleChildScrollView(
@@ -368,7 +284,7 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
     );
   }
 
-  Widget _buildBudgetVisualization(BuildContext context) {
+  Widget _buildBudgetVisualization(final BuildContext context) {
     final theme = Theme.of(context);
     final isMobile = context.isMobile;
 
@@ -378,7 +294,7 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.1),
+          color: theme.colorScheme.outline.withValues(alpha: 0.1),
         ),
       ),
       child: Column(
@@ -395,8 +311,14 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
             Column(
               children: [
                 BudgetDonutChart(
-                  categories: _budgetCategories,
-                  size: 200,
+                  categories: _budgetCategories
+                      .map((final cat) => BudgetCategory(
+                            name: cat.name,
+                            allocated: cat.allocated,
+                            spent: cat.spent,
+                            color: cat.color,
+                          ))
+                      .toList(),
                   onSegmentTap: _showCategoryDetails,
                 ),
                 const SizedBox(height: 20),
@@ -407,7 +329,14 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
             Row(
               children: [
                 BudgetDonutChart(
-                  categories: _budgetCategories,
+                  categories: _budgetCategories
+                      .map((final cat) => BudgetCategory(
+                            name: cat.name,
+                            allocated: cat.allocated,
+                            spent: cat.spent,
+                            color: cat.color,
+                          ))
+                      .toList(),
                   size: 250,
                   onSegmentTap: _showCategoryDetails,
                 ),
@@ -423,10 +352,10 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
   Widget _buildBudgetSummary() {
     final theme = Theme.of(context);
     final totalAllocated =
-        _budgetCategories.fold<double>(0, (sum, cat) => sum + cat.allocated);
+        _budgetCategories.fold<double>(0, (final sum, final cat) => sum + cat.allocated);
     final totalSpent =
-        _budgetCategories.fold<double>(0, (sum, cat) => sum + cat.spent);
-    final utilizationRate = (totalSpent / totalAllocated * 100);
+        _budgetCategories.fold<double>(0, (final sum, final cat) => sum + cat.spent);
+    final utilizationRate = totalSpent / totalAllocated * 100;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -463,11 +392,10 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
   }
 
   Widget _buildQuickStats() {
-    final theme = Theme.of(context);
     final overBudgetCategories =
-        _budgetCategories.where((cat) => cat.isOverBudget).length;
+        _budgetCategories.where((final cat) => cat.isOverBudget).length;
     final nearLimitCategories = _budgetCategories
-        .where((cat) => cat.progress > 0.8 && !cat.isOverBudget)
+        .where((final cat) => cat.progress > 0.8 && !cat.isOverBudget)
         .length;
 
     return Column(
@@ -483,7 +411,7 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
     );
   }
 
-  Widget _buildStatRow(String label, String value, Color color) {
+  Widget _buildStatRow(final String label, final String value, final Color color) {
     final theme = Theme.of(context);
 
     return Row(
@@ -506,7 +434,7 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
     );
   }
 
-  Widget _buildSpendingTrend(BuildContext context) {
+  Widget _buildSpendingTrend(final BuildContext context) {
     final theme = Theme.of(context);
 
     return Container(
@@ -515,7 +443,7 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.1),
+          color: theme.colorScheme.outline.withValues(alpha: 0.1),
         ),
       ),
       child: Column(
@@ -540,15 +468,14 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
           const SizedBox(height: 20),
           SpendingTrendChart(
             data: _spendingTrend,
-            height: 200,
           ),
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildTrendStat('This Week', '\$2,800', '+16.7%', true),
-              _buildTrendStat('This Month', '\$8,400', '+12.3%', true),
-              _buildTrendStat('Average', '\$1,950', 'per week', false),
+              _buildTrendStat('This Week', r'$2,800', '+16.7%', true),
+              _buildTrendStat('This Month', r'$8,400', '+12.3%', true),
+              _buildTrendStat('Average', r'$1,950', 'per week', false),
             ],
           ),
         ],
@@ -557,7 +484,7 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
   }
 
   Widget _buildTrendStat(
-      String label, String value, String change, bool isPercentage) {
+      final String label, final String value, final String change, final bool isPercentage) {
     final theme = Theme.of(context);
     final isPositive = isPercentage && change.startsWith('+');
 
@@ -600,8 +527,7 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
     );
   }
 
-  Widget _buildMobileInsights(BuildContext context) {
-    return Column(
+  Widget _buildMobileInsights(final BuildContext context) => Column(
       children: [
         _buildInsightCard(
             'Budget Alert',
@@ -619,10 +545,8 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
             GoogleTheme.googleGreen, Icons.celebration),
       ],
     );
-  }
 
-  Widget _buildDesktopInsights(BuildContext context) {
-    return Row(
+  Widget _buildDesktopInsights(final BuildContext context) => Row(
       children: [
         Expanded(
             child: _buildInsightCard(
@@ -646,10 +570,9 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
                 Icons.celebration)),
       ],
     );
-  }
 
   Widget _buildInsightCard(
-      String title, String description, Color color, IconData icon) {
+      final String title, final String description, final Color color, final IconData icon) {
     final theme = Theme.of(context);
 
     return Container(
@@ -658,7 +581,7 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.2),
+          color: color.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
@@ -666,7 +589,7 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -697,27 +620,29 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
     );
   }
 
-  Widget _buildCategoriesTab(BuildContext context) {
-    return SingleChildScrollView(
+  Widget _buildCategoriesTab(final BuildContext context) => SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        children: _budgetCategories.map((category) {
+        children: _budgetCategories.map((final category) {
+          final budgetCategory = BudgetCategory(
+            name: category.name,
+            allocated: category.allocated,
+            spent: category.spent,
+            color: category.color,
+            description: category.description,
+          );
           return Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: BudgetCategoryBar(
-              category: category,
-              onTap: () => _showCategoryDetails(category),
+              category: budgetCategory,
+              onTap: () => _showCategoryDetails(budgetCategory),
             ),
           );
         }).toList(),
       ),
     );
-  }
 
-  Widget _buildTransactionsTab(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Column(
+  Widget _buildTransactionsTab(final BuildContext context) => Column(
       children: [
         // Search and filter bar
         Padding(
@@ -750,16 +675,13 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: 10, // Mock data
-            itemBuilder: (context, index) {
-              return _buildTransactionItem(context, index);
-            },
+            itemBuilder: _buildTransactionItem,
           ),
         ),
       ],
     );
-  }
 
-  Widget _buildTransactionItem(BuildContext context, int index) {
+  Widget _buildTransactionItem(final BuildContext context, final int index) {
     final theme = Theme.of(context);
     final mockTransactions = [
       {
@@ -805,7 +727,7 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.1),
+          color: theme.colorScheme.outline.withValues(alpha: 0.1),
         ),
       ),
       child: Row(
@@ -813,7 +735,7 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -856,16 +778,22 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
   }
 
   // Event handlers
-  void _showCategoryDetails(BudgetCategory category) {
-    showModalBottomSheet(
+  void _showCategoryDetails(final BudgetCategory category) {
+    // Find the corresponding NDISBudgetCategory
+    final ndisCategory = _budgetCategories.firstWhere(
+      (final cat) => cat.name == category.name,
+      orElse: () => _budgetCategories.first,
+    );
+
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => _buildCategoryDetailsSheet(category),
+      builder: (final context) => _buildCategoryDetailsSheet(ndisCategory),
     );
   }
 
-  Widget _buildCategoryDetailsSheet(BudgetCategory category) {
+  Widget _buildCategoryDetailsSheet(final financial.NDISBudgetCategory category) {
     final theme = Theme.of(context);
 
     return Container(
@@ -883,7 +811,7 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: category.color.withOpacity(0.1),
+                  color: category.color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -904,9 +832,9 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
             ],
           ),
           const SizedBox(height: 16),
-          if (category.description != null) ...[
+          ...[
             Text(
-              category.description!,
+              category.description,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -914,7 +842,13 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
             const SizedBox(height: 20),
           ],
           BudgetCategoryBar(
-            category: category,
+            category: BudgetCategory(
+              name: category.name,
+              allocated: category.allocated,
+              spent: category.spent,
+              color: category.color,
+              description: category.description,
+            ),
             isInteractive: false,
           ),
           const SizedBox(height: 20),
@@ -924,7 +858,14 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
                 child: EnhancedButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    _showAddExpenseDialog(category: category);
+                    _showAddExpenseDialog(
+                        category: BudgetCategory(
+                      name: category.name,
+                      allocated: category.allocated,
+                      spent: category.spent,
+                      color: category.color,
+                      description: category.description,
+                    ));
                   },
                   child: const Text('Add Expense'),
                 ),
@@ -947,17 +888,14 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
     );
   }
 
-  void _showAddExpenseDialog({BudgetCategory? category}) {
-    showDialog(
+  void _showAddExpenseDialog({final BudgetCategory? category}) {
+    showDialog<void>(
       context: context,
-      builder: (context) => _buildAddExpenseDialog(category),
+      builder: (final context) => _buildAddExpenseDialog(category),
     );
   }
 
-  Widget _buildAddExpenseDialog(BudgetCategory? category) {
-    final theme = Theme.of(context);
-
-    return AlertDialog(
+  Widget _buildAddExpenseDialog(final BudgetCategory? category) => AlertDialog(
       title: const Text('Add Expense'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -985,14 +923,12 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            value: category?.name,
-            items: _budgetCategories.map((cat) {
-              return DropdownMenuItem(
+            initialValue: category?.name,
+            items: _budgetCategories.map((final cat) => DropdownMenuItem(
                 value: cat.name,
                 child: Text(cat.name),
-              );
-            }).toList(),
-            onChanged: (value) {},
+              )).toList(),
+            onChanged: (final value) {},
           ),
         ],
       ),
@@ -1010,7 +946,6 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
         ),
       ],
     );
-  }
 
   void _addExpense() {
     // TODO: Implement add expense functionality
@@ -1027,14 +962,6 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
     );
   }
 
-  void _exportBudgetReport() {
-    // TODO: Implement export functionality
-    HapticFeedback.lightImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Budget report exported')),
-    );
-  }
-
   void _showDetailedTrend() {
     // TODO: Implement detailed trend view
     ScaffoldMessenger.of(context).showSnackBar(
@@ -1046,6 +973,22 @@ class _EnhancedBudgetScreenState extends State<EnhancedBudgetScreen>
     // TODO: Implement transaction filters
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Transaction filters coming soon')),
+    );
+  }
+
+  void _showEnhancedAddExpenseDialog() {
+    // TODO: Implement add expense functionality
+    HapticFeedback.lightImpact();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Add expense feature coming soon')),
+    );
+  }
+
+  void _activateVoiceBudgetQuery() {
+    // TODO: Implement voice budget query
+    HapticFeedback.lightImpact();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Voice budget query feature coming soon')),
     );
   }
 }

@@ -7,11 +7,11 @@ import '../theme/google_theme.dart';
 class NeoBrutalismComponents {
   /// Creates a bold, striking header with neo-brutalism styling
   static Widget buildStrikingHeader({
-    required BuildContext context,
-    required String title,
-    required String subtitle,
-    Color? backgroundColor,
-    Widget? trailing,
+    required final BuildContext context,
+    required final String title,
+    required final String subtitle,
+    final Color? backgroundColor,
+    final Widget? trailing,
   }) {
     final theme = Theme.of(context);
 
@@ -33,14 +33,12 @@ class NeoBrutalismComponents {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.8),
+                  color: Colors.black.withValues(alpha: 0.8),
                   offset: const Offset(8, 8),
-                  blurRadius: 0, // Sharp shadow for brutalist effect
                 ),
                 BoxShadow(
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withValues(alpha: 0.1),
                   offset: const Offset(-2, -2),
-                  blurRadius: 0,
                 ),
               ],
             ),
@@ -67,7 +65,6 @@ class NeoBrutalismComponents {
               height: 16,
               decoration: const BoxDecoration(
                 color: Colors.yellow,
-                shape: BoxShape.rectangle,
               ),
             ),
           ),
@@ -85,12 +82,10 @@ class NeoBrutalismComponents {
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
-                      letterSpacing: 2.0,
+                      letterSpacing: 2,
                       shadows: [
                         const Shadow(
                           offset: Offset(2, 2),
-                          blurRadius: 0,
-                          color: Colors.black,
                         ),
                       ],
                     ),
@@ -100,7 +95,7 @@ class NeoBrutalismComponents {
                     subtitle,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -123,13 +118,12 @@ class NeoBrutalismComponents {
 
   /// Creates a brutalist-style action button with sharp edges and bold colors
   static Widget buildBrutalistButton({
-    required VoidCallback onPressed,
-    required String label,
-    required Color color,
-    IconData? icon,
-    bool isSecondary = false,
-  }) {
-    return GestureDetector(
+    required final VoidCallback onPressed,
+    required final String label,
+    required final Color color,
+    final IconData? icon,
+    final bool isSecondary = false,
+  }) => GestureDetector(
       onTap: () {
         HapticFeedback.heavyImpact();
         onPressed();
@@ -139,14 +133,12 @@ class NeoBrutalismComponents {
         decoration: BoxDecoration(
           color: isSecondary ? Colors.white : color,
           border: Border.all(
-            color: Colors.black,
             width: 3,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.8),
+              color: Colors.black.withValues(alpha: 0.8),
               offset: const Offset(6, 6),
-              blurRadius: 0,
             ),
           ],
         ),
@@ -174,17 +166,16 @@ class NeoBrutalismComponents {
         ),
       ),
     );
-  }
 
   /// Creates a brutalist-style metric card with bold geometric design
   static Widget buildBrutalistMetricCard({
-    required BuildContext context,
-    required String title,
-    required String value,
-    required String unit,
-    required IconData icon,
-    required Color accentColor,
-    VoidCallback? onTap,
+    required final BuildContext context,
+    required final String title,
+    required final String value,
+    required final String unit,
+    required final IconData icon,
+    required final Color accentColor,
+    final VoidCallback? onTap,
   }) {
     final theme = Theme.of(context);
 
@@ -199,17 +190,14 @@ class NeoBrutalismComponents {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: Colors.black, width: 3),
+          border: Border.all(width: 3),
           boxShadow: [
             BoxShadow(
-              color: accentColor.withOpacity(0.3),
+              color: accentColor.withValues(alpha: 0.3),
               offset: const Offset(8, 8),
-              blurRadius: 0,
             ),
             const BoxShadow(
-              color: Colors.black,
               offset: Offset(4, 4),
-              blurRadius: 0,
             ),
           ],
         ),
@@ -222,7 +210,7 @@ class NeoBrutalismComponents {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: accentColor,
-                    border: Border.all(color: Colors.black, width: 2),
+                    border: Border.all(width: 2),
                   ),
                   child: Icon(
                     icon,
@@ -246,7 +234,7 @@ class NeoBrutalismComponents {
               title.toUpperCase(),
               style: theme.textTheme.labelMedium?.copyWith(
                 fontWeight: FontWeight.w700,
-                letterSpacing: 1.0,
+                letterSpacing: 1,
                 color: Colors.black,
               ),
             ),
@@ -268,7 +256,7 @@ class NeoBrutalismComponents {
                   unit.toUpperCase(),
                   style: theme.textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: Colors.black.withOpacity(0.6),
+                    color: Colors.black.withValues(alpha: 0.6),
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -282,12 +270,11 @@ class NeoBrutalismComponents {
 
   /// Creates a brutalist-style navigation pill
   static Widget buildBrutalistNavPill({
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-    required Color accentColor,
-  }) {
-    return GestureDetector(
+    required final String label,
+    required final bool isSelected,
+    required final VoidCallback onTap,
+    required final Color accentColor,
+  }) => GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
         onTap();
@@ -297,16 +284,13 @@ class NeoBrutalismComponents {
         decoration: BoxDecoration(
           color: isSelected ? accentColor : Colors.white,
           border: Border.all(
-            color: Colors.black,
             width: 2,
           ),
           borderRadius: BorderRadius.circular(0), // Sharp corners
           boxShadow: isSelected
               ? [
                   const BoxShadow(
-                    color: Colors.black,
                     offset: Offset(4, 4),
-                    blurRadius: 0,
                   ),
                 ]
               : [],
@@ -316,32 +300,28 @@ class NeoBrutalismComponents {
           style: TextStyle(
             fontWeight: FontWeight.w700,
             color: isSelected ? Colors.white : Colors.black,
-            letterSpacing: 1.0,
+            letterSpacing: 1,
             fontSize: 12,
           ),
         ),
       ),
     );
-  }
 
   /// Creates a brutalist-style alert/notification banner
   static Widget buildBrutalistAlert({
-    required String message,
-    required IconData icon,
-    required Color backgroundColor,
-    VoidCallback? onDismiss,
-  }) {
-    return Container(
+    required final String message,
+    required final IconData icon,
+    required final Color backgroundColor,
+    final VoidCallback? onDismiss,
+  }) => Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: backgroundColor,
-        border: Border.all(color: Colors.black, width: 3),
-        boxShadow: [
-          const BoxShadow(
-            color: Colors.black,
+        border: Border.all(width: 3),
+        boxShadow: const [
+          BoxShadow(
             offset: Offset(6, 6),
-            blurRadius: 0,
           ),
         ],
       ),
@@ -390,5 +370,4 @@ class NeoBrutalismComponents {
         ],
       ),
     );
-  }
 }

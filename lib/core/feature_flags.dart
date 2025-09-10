@@ -1,12 +1,13 @@
 enum FeatureTier { free, premium }
 
 class FeatureFlags {
-  static bool isPremiumEnabled = false; // Toggle for dev/demo
+  static bool isPremiumEnabled =
+      const bool.fromEnvironment('PREMIUM_ENABLED');
   static bool isMapsEnabled =
-      String.fromEnvironment('GOOGLE_MAPS_ENABLED', defaultValue: 'false') ==
+      const String.fromEnvironment('GOOGLE_MAPS_ENABLED', defaultValue: 'true') ==
           'true';
 
-  static bool allow(FeatureTier tier) {
+  static bool allow(final FeatureTier tier) {
     if (tier == FeatureTier.free) return true;
     return isPremiumEnabled;
   }

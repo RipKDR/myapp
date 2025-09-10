@@ -9,10 +9,10 @@ import 'analytics_service.dart';
 /// Advanced Analytics Service with comprehensive data visualization,
 /// predictive analytics, and business intelligence capabilities
 class AdvancedAnalyticsService {
-  static final AdvancedAnalyticsService _instance =
-      AdvancedAnalyticsService._internal();
   factory AdvancedAnalyticsService() => _instance;
   AdvancedAnalyticsService._internal();
+  static final AdvancedAnalyticsService _instance =
+      AdvancedAnalyticsService._internal();
 
   final AnalyticsService _analytics = AnalyticsService();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -51,10 +51,10 @@ class AdvancedAnalyticsService {
 
   /// Track user engagement with detailed metrics
   Future<void> trackUserEngagement({
-    required String feature,
-    required String action,
-    required int duration,
-    Map<String, dynamic>? additionalData,
+    required final String feature,
+    required final String action,
+    required final int duration,
+    final Map<String, dynamic>? additionalData,
   }) async {
     if (!_isInitialized) await initialize();
 
@@ -78,10 +78,10 @@ class AdvancedAnalyticsService {
 
   /// Track feature usage with conversion funnel analysis
   Future<void> trackFeatureUsage({
-    required String feature,
-    required String action,
-    required String stage, // discovery, engagement, conversion, retention
-    Map<String, dynamic>? context,
+    required final String feature,
+    required final String action,
+    required final String stage, // discovery, engagement, conversion, retention
+    final Map<String, dynamic>? context,
   }) async {
     if (!_isInitialized) await initialize();
 
@@ -104,10 +104,10 @@ class AdvancedAnalyticsService {
 
   /// Track accessibility feature usage
   Future<void> trackAccessibilityUsage({
-    required String feature,
-    required bool enabled,
-    required String userType, // participant, provider, caregiver
-    Map<String, dynamic>? accessibilityNeeds,
+    required final String feature,
+    required final bool enabled,
+    required final String userType, // participant, provider, caregiver
+    final Map<String, dynamic>? accessibilityNeeds,
   }) async {
     if (!_isInitialized) await initialize();
 
@@ -130,11 +130,11 @@ class AdvancedAnalyticsService {
 
   /// Track budget analytics and spending patterns
   Future<void> trackBudgetAnalytics({
-    required String category,
-    required double amount,
-    required double remaining,
-    required String action, // view, spend, alert, plan
-    Map<String, dynamic>? budgetContext,
+    required final String category,
+    required final double amount,
+    required final double remaining,
+    required final String action, // view, spend, alert, plan
+    final Map<String, dynamic>? budgetContext,
   }) async {
     if (!_isInitialized) await initialize();
 
@@ -165,11 +165,11 @@ class AdvancedAnalyticsService {
 
   /// Track appointment analytics and scheduling patterns
   Future<void> trackAppointmentAnalytics({
-    required String providerId,
-    required String appointmentType,
-    required DateTime appointmentDate,
-    required String action, // book, cancel, reschedule, complete
-    Map<String, dynamic>? appointmentContext,
+    required final String providerId,
+    required final String appointmentType,
+    required final DateTime appointmentDate,
+    required final String action, // book, cancel, reschedule, complete
+    final Map<String, dynamic>? appointmentContext,
   }) async {
     if (!_isInitialized) await initialize();
 
@@ -201,11 +201,11 @@ class AdvancedAnalyticsService {
 
   /// Track provider directory usage and search patterns
   Future<void> trackProviderAnalytics({
-    required String searchTerm,
-    required String location,
-    required int resultCount,
-    required String action, // search, view, contact, book
-    Map<String, dynamic>? searchFilters,
+    required final String searchTerm,
+    required final String location,
+    required final int resultCount,
+    required final String action, // search, view, contact, book
+    final Map<String, dynamic>? searchFilters,
   }) async {
     if (!_isInitialized) await initialize();
 
@@ -229,11 +229,11 @@ class AdvancedAnalyticsService {
 
   /// Track support circle interactions and collaboration metrics
   Future<void> trackSupportCircleAnalytics({
-    required String circleId,
-    required String action,
-    required int memberCount,
-    required String userRole,
-    Map<String, dynamic>? collaborationData,
+    required final String circleId,
+    required final String action,
+    required final int memberCount,
+    required final String userRole,
+    final Map<String, dynamic>? collaborationData,
   }) async {
     if (!_isInitialized) await initialize();
 
@@ -256,12 +256,12 @@ class AdvancedAnalyticsService {
   }
 
   /// Start performance timing for a specific operation
-  void startPerformanceTimer(String operation) {
+  void startPerformanceTimer(final String operation) {
     _performanceTimers[operation] = DateTime.now();
   }
 
   /// End performance timing and record metrics
-  Future<void> endPerformanceTimer(String operation) async {
+  Future<void> endPerformanceTimer(final String operation) async {
     if (!_isInitialized) await initialize();
 
     final startTime = _performanceTimers[operation];
@@ -289,7 +289,7 @@ class AdvancedAnalyticsService {
   }
 
   /// Record performance metric
-  Future<void> _recordPerformanceMetric(String operation, int duration) async {
+  Future<void> _recordPerformanceMetric(final String operation, final int duration) async {
     final params = <String, Object>{
       'operation': operation,
       'duration': duration,
@@ -417,7 +417,7 @@ class AdvancedAnalyticsService {
   }
 
   /// Record analytics event
-  Future<void> _recordEvent(AnalyticsEvent event) async {
+  Future<void> _recordEvent(final AnalyticsEvent event) async {
     // Add to buffer
     _eventBuffer.add(event);
 
@@ -458,7 +458,7 @@ class AdvancedAnalyticsService {
 
   /// Update user metrics
   Future<void> _updateUserMetrics(
-      String feature, String action, int duration) async {
+      final String feature, final String action, final int duration) async {
     final key = '${feature}_$action';
     _userMetrics[key] = (_userMetrics[key] ?? 0) + 1;
     _userMetrics['${key}_total_duration'] =
@@ -468,7 +468,7 @@ class AdvancedAnalyticsService {
   }
 
   /// Update conversion funnel metrics
-  Future<void> _updateConversionFunnel(String feature, String stage) async {
+  Future<void> _updateConversionFunnel(final String feature, final String stage) async {
     final key = 'funnel_${feature}_$stage';
     _userMetrics[key] = (_userMetrics[key] ?? 0) + 1;
 
@@ -477,7 +477,7 @@ class AdvancedAnalyticsService {
 
   /// Update accessibility metrics
   Future<void> _updateAccessibilityMetrics(
-      String feature, bool enabled, String userType) async {
+      final String feature, final bool enabled, final String userType) async {
     final key =
         'accessibility_${feature}_${userType}_${enabled ? 'enabled' : 'disabled'}';
     _userMetrics[key] = (_userMetrics[key] ?? 0) + 1;
@@ -487,7 +487,7 @@ class AdvancedAnalyticsService {
 
   /// Update budget metrics
   Future<void> _updateBudgetMetrics(
-      String category, double amount, double remaining, String action) async {
+      final String category, final double amount, final double remaining, final String action) async {
     final key = 'budget_${category}_$action';
     _userMetrics[key] = (_userMetrics[key] ?? 0) + 1;
     _userMetrics['${key}_amount'] =
@@ -498,7 +498,7 @@ class AdvancedAnalyticsService {
 
   /// Update appointment metrics
   Future<void> _updateAppointmentMetrics(
-      String providerId, String appointmentType, String action) async {
+      final String providerId, final String appointmentType, final String action) async {
     final key = 'appointment_${appointmentType}_$action';
     _userMetrics[key] = (_userMetrics[key] ?? 0) + 1;
 
@@ -506,8 +506,8 @@ class AdvancedAnalyticsService {
   }
 
   /// Update provider metrics
-  Future<void> _updateProviderMetrics(String searchTerm, String location,
-      int resultCount, String action) async {
+  Future<void> _updateProviderMetrics(final String searchTerm, final String location,
+      final int resultCount, final String action) async {
     final key = 'provider_$action';
     _userMetrics[key] = (_userMetrics[key] ?? 0) + 1;
     _userMetrics['${key}_result_count'] =
@@ -518,7 +518,7 @@ class AdvancedAnalyticsService {
 
   /// Update support circle metrics
   Future<void> _updateSupportCircleMetrics(
-      String circleId, String action, int memberCount) async {
+      final String circleId, final String action, final int memberCount) async {
     final key = 'support_circle_$action';
     _userMetrics[key] = (_userMetrics[key] ?? 0) + 1;
     _userMetrics['${key}_member_count'] =
@@ -532,7 +532,8 @@ class AdvancedAnalyticsService {
     final prefs = await SharedPreferences.getInstance();
     final metricsJson = prefs.getString('user_metrics');
     if (metricsJson != null) {
-      _userMetrics.addAll(Map<String, dynamic>.from(jsonDecode(metricsJson)));
+      _userMetrics.addAll(Map<String, dynamic>.from(
+          jsonDecode(metricsJson) as Map<dynamic, dynamic>));
     }
   }
 
@@ -547,7 +548,8 @@ class AdvancedAnalyticsService {
     final prefs = await SharedPreferences.getInstance();
     final metricsJson = prefs.getString('app_metrics');
     if (metricsJson != null) {
-      _appMetrics.addAll(Map<String, dynamic>.from(jsonDecode(metricsJson)));
+      _appMetrics.addAll(Map<String, dynamic>.from(
+          jsonDecode(metricsJson) as Map<dynamic, dynamic>));
     }
   }
 
@@ -565,17 +567,17 @@ class AdvancedAnalyticsService {
   }
 
   /// Get user metrics from Firestore
-  Future<Map<String, dynamic>> _getUserMetrics(String userId) async {
+  Future<Map<String, dynamic>> _getUserMetrics(final String userId) async {
     // Implementation would query Firestore for user-specific metrics
     return _userMetrics;
   }
 
   /// Get budget analytics from Firestore
-  Future<BudgetAnalytics> _getBudgetAnalytics(String userId) async {
+  Future<BudgetAnalytics> _getBudgetAnalytics(final String userId) async {
     // Implementation would query Firestore for budget analytics
     return BudgetAnalytics(
-      totalSpent: 0.0,
-      totalRemaining: 0.0,
+      totalSpent: 0,
+      totalRemaining: 0,
       categoryBreakdown: {},
       spendingTrends: [],
       alerts: [],
@@ -583,7 +585,7 @@ class AdvancedAnalyticsService {
   }
 
   /// Get appointment analytics from Firestore
-  Future<AppointmentAnalytics> _getAppointmentAnalytics(String userId) async {
+  Future<AppointmentAnalytics> _getAppointmentAnalytics(final String userId) async {
     // Implementation would query Firestore for appointment analytics
     return AppointmentAnalytics(
       totalAppointments: 0,
@@ -596,7 +598,7 @@ class AdvancedAnalyticsService {
   }
 
   /// Get provider analytics from Firestore
-  Future<ProviderAnalytics> _getProviderAnalytics(String userId) async {
+  Future<ProviderAnalytics> _getProviderAnalytics(final String userId) async {
     // Implementation would query Firestore for provider analytics
     return ProviderAnalytics(
       totalSearches: 0,
@@ -609,7 +611,7 @@ class AdvancedAnalyticsService {
 
   /// Get support circle analytics from Firestore
   Future<SupportCircleAnalytics> _getSupportCircleAnalytics(
-      String userId) async {
+      final String userId) async {
     // Implementation would query Firestore for support circle analytics
     return SupportCircleAnalytics(
       totalCircles: 0,
@@ -628,7 +630,7 @@ class AdvancedAnalyticsService {
       final durations = entry.value;
       if (durations.isNotEmpty) {
         metrics[entry.key] =
-            durations.reduce((a, b) => a + b) / durations.length;
+            durations.reduce((final a, final b) => a + b) / durations.length;
       }
     }
 
@@ -640,27 +642,27 @@ class AdvancedAnalyticsService {
   }
 
   /// Get spending history for forecasting
-  Future<List<SpendingRecord>> _getSpendingHistory(String userId) async {
+  Future<List<SpendingRecord>> _getSpendingHistory(final String userId) async {
     // Implementation would query Firestore for spending history
     return [];
   }
 
   /// Calculate spending trends
-  SpendingTrends _calculateSpendingTrends(List<SpendingRecord> history) {
+  SpendingTrends _calculateSpendingTrends(final List<SpendingRecord> history) {
     // Implementation would calculate spending trends from history
     return SpendingTrends(
-      currentSpending: 0.0,
-      monthlyAverage: 0.0,
+      currentSpending: 0,
+      monthlyAverage: 0,
       trendDirection: 'stable',
-      volatility: 0.0,
+      volatility: 0,
     );
   }
 
   /// Predict future spending
-  SpendingForecast _predictFutureSpending(SpendingTrends trends) {
+  SpendingForecast _predictFutureSpending(final SpendingTrends trends) {
     // Implementation would use ML algorithms to predict future spending
     return SpendingForecast(
-      projectedSpending: 0.0,
+      projectedSpending: 0,
       budgetExhaustionDate: DateTime.now().add(const Duration(days: 30)),
       confidence: 0.8,
     );
@@ -668,13 +670,13 @@ class AdvancedAnalyticsService {
 
   /// Generate budget recommendations
   List<PersonalizedRecommendation> _generateBudgetRecommendationsFromForecast(
-      SpendingForecast forecast) {
+      final SpendingForecast forecast) {
     // Implementation would generate personalized budget recommendations
     return [];
   }
 
   /// Analyze usage patterns
-  Future<UsagePatterns> _analyzeUsagePatterns(String userId) async {
+  Future<UsagePatterns> _analyzeUsagePatterns(final String userId) async {
     // Implementation would analyze user usage patterns
     return UsagePatterns(
       peakUsageHours: [],
@@ -685,62 +687,62 @@ class AdvancedAnalyticsService {
   }
 
   /// Analyze engagement metrics
-  Future<EngagementMetrics> _analyzeEngagementMetrics(String userId) async {
+  Future<EngagementMetrics> _analyzeEngagementMetrics(final String userId) async {
     // Implementation would analyze user engagement metrics
     return EngagementMetrics(
       dailyActiveMinutes: 0,
-      weeklyRetention: 0.0,
-      featureAdoptionRate: 0.0,
-      userSatisfactionScore: 0.0,
+      weeklyRetention: 0,
+      featureAdoptionRate: 0,
+      userSatisfactionScore: 0,
     );
   }
 
   /// Analyze accessibility usage
-  Future<AccessibilityUsage> _analyzeAccessibilityUsage(String userId) async {
+  Future<AccessibilityUsage> _analyzeAccessibilityUsage(final String userId) async {
     // Implementation would analyze accessibility feature usage
     return AccessibilityUsage(
       enabledFeatures: [],
       usageFrequency: {},
-      effectiveness: 0.0,
+      effectiveness: 0,
       recommendations: [],
     );
   }
 
   /// Analyze feature adoption
-  Future<FeatureAdoption> _analyzeFeatureAdoption(String userId) async {
+  Future<FeatureAdoption> _analyzeFeatureAdoption(final String userId) async {
     // Implementation would analyze feature adoption patterns
     return FeatureAdoption(
       adoptedFeatures: [],
       pendingFeatures: [],
-      adoptionRate: 0.0,
+      adoptionRate: 0,
       timeToAdoption: {},
     );
   }
 
   /// Generate budget recommendations for user
   Future<List<PersonalizedRecommendation>>
-      _generateBudgetRecommendationsForUser(String userId) async {
+      _generateBudgetRecommendationsForUser(final String userId) async {
     // Implementation would generate budget-specific recommendations
     return [];
   }
 
   /// Generate service recommendations for user
   Future<List<PersonalizedRecommendation>> _generateServiceRecommendations(
-      String userId) async {
+      final String userId) async {
     // Implementation would generate service recommendations
     return [];
   }
 
   /// Generate feature recommendations for user
   Future<List<PersonalizedRecommendation>> _generateFeatureRecommendations(
-      String userId) async {
+      final String userId) async {
     // Implementation would generate feature recommendations
     return [];
   }
 
   /// Generate accessibility recommendations for user
   Future<List<PersonalizedRecommendation>>
-      _generateAccessibilityRecommendations(String userId) async {
+      _generateAccessibilityRecommendations(final String userId) async {
     // Implementation would generate accessibility recommendations
     return [];
   }
@@ -748,11 +750,11 @@ class AdvancedAnalyticsService {
   /// Get slowest operations
   List<String> _getSlowestOperations() {
     final sortedMetrics = _performanceMetrics.entries.toList()
-      ..sort((a, b) => b.value
-          .reduce((x, y) => x + y)
-          .compareTo(a.value.reduce((x, y) => x + y)));
+      ..sort((final a, final b) => b.value
+          .reduce((final x, final y) => x + y)
+          .compareTo(a.value.reduce((final x, final y) => x + y)));
 
-    return sortedMetrics.take(5).map((e) => e.key).toList();
+    return sortedMetrics.take(5).map((final e) => e.key).toList();
   }
 
   /// Get performance trends
@@ -769,15 +771,15 @@ class AdvancedAnalyticsService {
 
 /// Analytics event model
 class AnalyticsEvent {
-  final String name;
-  final DateTime timestamp;
-  final Map<String, Object> parameters;
 
   AnalyticsEvent({
     required this.name,
     required this.timestamp,
     required this.parameters,
   });
+  final String name;
+  final DateTime timestamp;
+  final Map<String, Object> parameters;
 
   Map<String, dynamic> toJson() => {
         'name': name,
@@ -788,13 +790,6 @@ class AnalyticsEvent {
 
 /// Analytics dashboard model
 class AnalyticsDashboard {
-  final Map<String, dynamic> userMetrics;
-  final BudgetAnalytics budgetAnalytics;
-  final AppointmentAnalytics appointmentAnalytics;
-  final ProviderAnalytics providerAnalytics;
-  final SupportCircleAnalytics supportCircleAnalytics;
-  final PerformanceMetrics performanceMetrics;
-  final DateTime generatedAt;
 
   AnalyticsDashboard({
     required this.userMetrics,
@@ -805,15 +800,17 @@ class AnalyticsDashboard {
     required this.performanceMetrics,
     required this.generatedAt,
   });
+  final Map<String, dynamic> userMetrics;
+  final BudgetAnalytics budgetAnalytics;
+  final AppointmentAnalytics appointmentAnalytics;
+  final ProviderAnalytics providerAnalytics;
+  final SupportCircleAnalytics supportCircleAnalytics;
+  final PerformanceMetrics performanceMetrics;
+  final DateTime generatedAt;
 }
 
 /// Budget analytics model
 class BudgetAnalytics {
-  final double totalSpent;
-  final double totalRemaining;
-  final Map<String, double> categoryBreakdown;
-  final List<SpendingTrend> spendingTrends;
-  final List<BudgetAlert> alerts;
 
   BudgetAnalytics({
     required this.totalSpent,
@@ -822,16 +819,15 @@ class BudgetAnalytics {
     required this.spendingTrends,
     required this.alerts,
   });
+  final double totalSpent;
+  final double totalRemaining;
+  final Map<String, double> categoryBreakdown;
+  final List<SpendingTrend> spendingTrends;
+  final List<BudgetAlert> alerts;
 }
 
 /// Appointment analytics model
 class AppointmentAnalytics {
-  final int totalAppointments;
-  final int upcomingAppointments;
-  final int completedAppointments;
-  final int cancelledAppointments;
-  final int averageBookingTime;
-  final Map<String, int> providerBreakdown;
 
   AppointmentAnalytics({
     required this.totalAppointments,
@@ -841,15 +837,16 @@ class AppointmentAnalytics {
     required this.averageBookingTime,
     required this.providerBreakdown,
   });
+  final int totalAppointments;
+  final int upcomingAppointments;
+  final int completedAppointments;
+  final int cancelledAppointments;
+  final int averageBookingTime;
+  final Map<String, int> providerBreakdown;
 }
 
 /// Provider analytics model
 class ProviderAnalytics {
-  final int totalSearches;
-  final int averageResults;
-  final List<String> topSearchTerms;
-  final Map<String, int> locationBreakdown;
-  final Map<String, int> serviceTypeBreakdown;
 
   ProviderAnalytics({
     required this.totalSearches,
@@ -858,15 +855,15 @@ class ProviderAnalytics {
     required this.locationBreakdown,
     required this.serviceTypeBreakdown,
   });
+  final int totalSearches;
+  final int averageResults;
+  final List<String> topSearchTerms;
+  final Map<String, int> locationBreakdown;
+  final Map<String, int> serviceTypeBreakdown;
 }
 
 /// Support circle analytics model
 class SupportCircleAnalytics {
-  final int totalCircles;
-  final int activeMembers;
-  final int collaborationEvents;
-  final int averageResponseTime;
-  final Map<String, int> memberBreakdown;
 
   SupportCircleAnalytics({
     required this.totalCircles,
@@ -875,29 +872,28 @@ class SupportCircleAnalytics {
     required this.averageResponseTime,
     required this.memberBreakdown,
   });
+  final int totalCircles;
+  final int activeMembers;
+  final int collaborationEvents;
+  final int averageResponseTime;
+  final Map<String, int> memberBreakdown;
 }
 
 /// Performance metrics model
 class PerformanceMetrics {
-  final Map<String, double> averageResponseTimes;
-  final List<String> slowestOperations;
-  final Map<String, List<double>> performanceTrends;
 
   PerformanceMetrics({
     required this.averageResponseTimes,
     required this.slowestOperations,
     required this.performanceTrends,
   });
+  final Map<String, double> averageResponseTimes;
+  final List<String> slowestOperations;
+  final Map<String, List<double>> performanceTrends;
 }
 
 /// Budget forecast model
 class BudgetForecast {
-  final double currentSpending;
-  final double projectedSpending;
-  final DateTime budgetExhaustionDate;
-  final List<PersonalizedRecommendation> recommendations;
-  final double confidence;
-  final DateTime generatedAt;
 
   BudgetForecast({
     required this.currentSpending,
@@ -907,15 +903,16 @@ class BudgetForecast {
     required this.confidence,
     required this.generatedAt,
   });
+  final double currentSpending;
+  final double projectedSpending;
+  final DateTime budgetExhaustionDate;
+  final List<PersonalizedRecommendation> recommendations;
+  final double confidence;
+  final DateTime generatedAt;
 }
 
 /// User behavior insights model
 class UserBehaviorInsights {
-  final UsagePatterns usagePatterns;
-  final EngagementMetrics engagementMetrics;
-  final AccessibilityUsage accessibilityUsage;
-  final FeatureAdoption featureAdoption;
-  final DateTime generatedAt;
 
   UserBehaviorInsights({
     required this.usagePatterns,
@@ -924,16 +921,15 @@ class UserBehaviorInsights {
     required this.featureAdoption,
     required this.generatedAt,
   });
+  final UsagePatterns usagePatterns;
+  final EngagementMetrics engagementMetrics;
+  final AccessibilityUsage accessibilityUsage;
+  final FeatureAdoption featureAdoption;
+  final DateTime generatedAt;
 }
 
 /// Personalized recommendation model
 class PersonalizedRecommendation {
-  final String type;
-  final String title;
-  final String description;
-  final String action;
-  final double priority;
-  final Map<String, dynamic> metadata;
 
   PersonalizedRecommendation({
     required this.type,
@@ -943,118 +939,124 @@ class PersonalizedRecommendation {
     required this.priority,
     this.metadata = const {},
   });
+  final String type;
+  final String title;
+  final String description;
+  final String action;
+  final double priority;
+  final Map<String, dynamic> metadata;
 }
 
 /// Supporting models
 class SpendingRecord {
-  final DateTime date;
-  final double amount;
-  final String category;
-  final String description;
   SpendingRecord({
     required this.date,
     required this.amount,
     required this.category,
     required this.description,
   });
+  final DateTime date;
+  final double amount;
+  final String category;
+  final String description;
 }
 
 class SpendingTrends {
-  final double currentSpending;
-  final double monthlyAverage;
-  final String trendDirection;
-  final double volatility;
   SpendingTrends({
     required this.currentSpending,
     required this.monthlyAverage,
     required this.trendDirection,
     required this.volatility,
   });
+  final double currentSpending;
+  final double monthlyAverage;
+  final String trendDirection;
+  final double volatility;
 }
 
 class SpendingForecast {
-  final double projectedSpending;
-  final DateTime budgetExhaustionDate;
-  final double confidence;
   SpendingForecast({
     required this.projectedSpending,
     required this.budgetExhaustionDate,
     required this.confidence,
   });
+  final double projectedSpending;
+  final DateTime budgetExhaustionDate;
+  final double confidence;
 }
 
 class SpendingTrend {
-  final DateTime date;
-  final double amount;
-  final String category;
   SpendingTrend({
     required this.date,
     required this.amount,
     required this.category,
   });
+  final DateTime date;
+  final double amount;
+  final String category;
 }
 
 class BudgetAlert {
-  final String type;
-  final String message;
-  final DateTime timestamp;
-  final double threshold;
   BudgetAlert({
     required this.type,
     required this.message,
     required this.timestamp,
     required this.threshold,
   });
+  final String type;
+  final String message;
+  final DateTime timestamp;
+  final double threshold;
 }
 
 class UsagePatterns {
-  final List<int> peakUsageHours;
-  final List<String> mostUsedFeatures;
-  final int sessionDuration;
-  final int frequency;
   UsagePatterns({
     required this.peakUsageHours,
     required this.mostUsedFeatures,
     required this.sessionDuration,
     required this.frequency,
   });
+  final List<int> peakUsageHours;
+  final List<String> mostUsedFeatures;
+  final int sessionDuration;
+  final int frequency;
 }
 
 class EngagementMetrics {
-  final int dailyActiveMinutes;
-  final double weeklyRetention;
-  final double featureAdoptionRate;
-  final double userSatisfactionScore;
   EngagementMetrics({
     required this.dailyActiveMinutes,
     required this.weeklyRetention,
     required this.featureAdoptionRate,
     required this.userSatisfactionScore,
   });
+  final int dailyActiveMinutes;
+  final double weeklyRetention;
+  final double featureAdoptionRate;
+  final double userSatisfactionScore;
 }
 
 class AccessibilityUsage {
-  final List<String> enabledFeatures;
-  final Map<String, int> usageFrequency;
-  final double effectiveness;
-  final List<String> recommendations;
   AccessibilityUsage({
     required this.enabledFeatures,
     required this.usageFrequency,
     required this.effectiveness,
     required this.recommendations,
   });
+  final List<String> enabledFeatures;
+  final Map<String, int> usageFrequency;
+  final double effectiveness;
+  final List<String> recommendations;
 }
 
 class FeatureAdoption {
-  final List<String> adoptedFeatures;
-  final List<String> pendingFeatures;
-  final double adoptionRate;
-  final Map<String, int> timeToAdoption;
   FeatureAdoption({
     required this.adoptedFeatures,
     required this.pendingFeatures,
     required this.adoptionRate,
     required this.timeToAdoption,
   });
+  final List<String> adoptedFeatures;
+  final List<String> pendingFeatures;
+  final double adoptionRate;
+  final Map<String, int> timeToAdoption;
 }

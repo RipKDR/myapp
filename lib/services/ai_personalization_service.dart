@@ -4,10 +4,10 @@ import 'dart:math' as math;
 
 /// AI-powered personalization service implementing 2025 adaptive UI trends
 class AIPersonalizationService {
-  static final AIPersonalizationService _instance =
-      AIPersonalizationService._internal();
   factory AIPersonalizationService() => _instance;
   AIPersonalizationService._internal();
+  static final AIPersonalizationService _instance =
+      AIPersonalizationService._internal();
 
   UserProfile _userProfile = UserProfile();
   List<UserBehavior> _behaviorHistory = [];
@@ -29,7 +29,7 @@ class AIPersonalizationService {
   Map<String, dynamic> get adaptiveSettings => _adaptiveSettings;
 
   /// Record user behavior
-  Future<void> recordBehavior(UserBehavior behavior) async {
+  Future<void> recordBehavior(final UserBehavior behavior) async {
     _behaviorHistory.add(behavior);
 
     // Keep only last 100 behaviors for performance
@@ -112,7 +112,7 @@ class AIPersonalizationService {
     // Accessibility recommendations
     if (preferences.accessibilityNeeds.isNotEmpty) {
       if (preferences.accessibilityNeeds.contains('high_contrast') &&
-          !_adaptiveSettings['high_contrast_enabled']) {
+          !(_adaptiveSettings['high_contrast_enabled'] as bool? ?? false)) {
         recommendations.add(PersonalizedRecommendation(
           title: 'Accessibility Enhancement',
           description: 'Enable high contrast mode for better visibility',
@@ -142,7 +142,7 @@ class AIPersonalizationService {
   }
 
   /// Get personalized content
-  PersonalizedContent getPersonalizedContent(String contentType) {
+  PersonalizedContent getPersonalizedContent(final String contentType) {
     final preferences = _analyzeUserPreferences();
 
     switch (contentType) {
@@ -179,7 +179,8 @@ class AIPersonalizationService {
     final prefs = await SharedPreferences.getInstance();
     final profileJson = prefs.getString('user_profile');
     if (profileJson != null) {
-      _userProfile = UserProfile.fromJson(jsonDecode(profileJson));
+      _userProfile =
+          UserProfile.fromJson(jsonDecode(profileJson) as Map<String, dynamic>);
     } else {
       _userProfile = UserProfile();
     }
@@ -194,16 +195,18 @@ class AIPersonalizationService {
     final prefs = await SharedPreferences.getInstance();
     final historyJson = prefs.getString('behavior_history');
     if (historyJson != null) {
-      final List<dynamic> historyList = jsonDecode(historyJson);
-      _behaviorHistory =
-          historyList.map((json) => UserBehavior.fromJson(json)).toList();
+      final List<dynamic> historyList =
+          jsonDecode(historyJson) as List<dynamic>;
+      _behaviorHistory = historyList
+          .map((final json) => UserBehavior.fromJson(json as Map<String, dynamic>))
+          .toList();
     }
   }
 
   Future<void> _saveBehaviorHistory() async {
     final prefs = await SharedPreferences.getInstance();
     final historyJson =
-        jsonEncode(_behaviorHistory.map((b) => b.toJson()).toList());
+        jsonEncode(_behaviorHistory.map((final b) => b.toJson()).toList());
     await prefs.setString('behavior_history', historyJson);
   }
 
@@ -211,7 +214,7 @@ class AIPersonalizationService {
     final prefs = await SharedPreferences.getInstance();
     final settingsJson = prefs.getString('adaptive_settings');
     if (settingsJson != null) {
-      _adaptiveSettings = jsonDecode(settingsJson);
+      _adaptiveSettings = jsonDecode(settingsJson) as Map<String, dynamic>;
     } else {
       _adaptiveSettings = {};
     }
@@ -226,21 +229,21 @@ class AIPersonalizationService {
     _activeRules = [
       PersonalizationRule(
         id: 'frequent_budget_user',
-        condition: (preferences) =>
+        condition: (final preferences) =>
             preferences.frequentlyUsedFeatures.contains('budget'),
-        action: (settings) => settings['budget_priority'] = 'high',
+        action: (final settings) => settings['budget_priority'] = 'high',
         confidence: 0.8,
       ),
       PersonalizationRule(
         id: 'morning_user',
-        condition: (preferences) => preferences.peakUsageHours.contains(8),
-        action: (settings) => settings['morning_optimization'] = true,
+        condition: (final preferences) => preferences.peakUsageHours.contains(8),
+        action: (final settings) => settings['morning_optimization'] = true,
         confidence: 0.7,
       ),
       PersonalizationRule(
         id: 'accessibility_needs',
-        condition: (preferences) => preferences.accessibilityNeeds.isNotEmpty,
-        action: (settings) => settings['accessibility_enhanced'] = true,
+        condition: (final preferences) => preferences.accessibilityNeeds.isNotEmpty,
+        action: (final settings) => settings['accessibility_enhanced'] = true,
         confidence: 0.9,
       ),
     ];
@@ -262,7 +265,7 @@ class AIPersonalizationService {
     final now = DateTime.now();
     final recentBehaviors = _behaviorHistory
         .where(
-          (b) => now.difference(b.timestamp).inDays <= 30,
+          (final b) => now.difference(b.timestamp).inDays <= 30,
         )
         .toList();
 
@@ -276,16 +279,16 @@ class AIPersonalizationService {
     }
 
     final frequentlyUsedFeatures = featureUsage.entries
-        .where((e) => e.value >= 5)
-        .map((e) => e.key)
+        .where((final e) => e.value >= 5)
+        .map((final e) => e.key)
         .toList();
 
     // Analyze usage patterns
-    final usageHours = recentBehaviors.map((b) => b.timestamp.hour).toList();
+    final usageHours = recentBehaviors.map((final b) => b.timestamp.hour).toList();
 
     final peakUsageHours = <int>{};
     for (int hour = 0; hour < 24; hour++) {
-      final count = usageHours.where((h) => h == hour).length;
+      final count = usageHours.where((final h) => h == hour).length;
       if (count >= usageHours.length * 0.1) {
         // 10% threshold
         peakUsageHours.add(hour);
@@ -307,7 +310,7 @@ class AIPersonalizationService {
     return UserPreferences(
       frequentlyUsedFeatures: frequentlyUsedFeatures,
       recentlyUsedFeatures:
-          recentBehaviors.take(10).map((b) => b.action).toList(),
+          recentBehaviors.take(10).map((final b) => b.action).toList(),
       peakUsageHours: peakUsageHours.toList(),
       accessibilityNeeds: accessibilityNeeds,
       usagePatterns: _analyzeUsagePatterns(recentBehaviors),
@@ -315,7 +318,7 @@ class AIPersonalizationService {
     );
   }
 
-  List<UsagePattern> _analyzeUsagePatterns(List<UserBehavior> behaviors) {
+  List<UsagePattern> _analyzeUsagePatterns(final List<UserBehavior> behaviors) {
     final patterns = <UsagePattern>[];
 
     // Daily usage pattern
@@ -351,7 +354,7 @@ class AIPersonalizationService {
     return patterns;
   }
 
-  List<String> _getPrimaryWidgets(UserPreferences preferences) {
+  List<String> _getPrimaryWidgets(final UserPreferences preferences) {
     final widgets = <String>[];
 
     // Add most frequently used features
@@ -373,7 +376,7 @@ class AIPersonalizationService {
     return widgets;
   }
 
-  List<String> _getSecondaryWidgets(UserPreferences preferences) {
+  List<String> _getSecondaryWidgets(final UserPreferences preferences) {
     final widgets = <String>[];
 
     // Add less frequently used features
@@ -393,7 +396,7 @@ class AIPersonalizationService {
     return widgets;
   }
 
-  LayoutStyle _getOptimalLayoutStyle(UserPreferences preferences) {
+  LayoutStyle _getOptimalLayoutStyle(final UserPreferences preferences) {
     if (preferences.accessibilityNeeds.contains('large_text')) {
       return LayoutStyle.spacious;
     } else if (preferences.frequentlyUsedFeatures.length > 5) {
@@ -403,7 +406,7 @@ class AIPersonalizationService {
     }
   }
 
-  ColorScheme _getPersonalizedColorScheme(UserPreferences preferences) {
+  ColorScheme _getPersonalizedColorScheme(final UserPreferences preferences) {
     if (preferences.accessibilityNeeds.contains('high_contrast')) {
       return ColorScheme.highContrast;
     } else if (preferences.peakUsageHours.contains(18) ||
@@ -414,7 +417,7 @@ class AIPersonalizationService {
     }
   }
 
-  Typography _getPersonalizedTypography(UserPreferences preferences) {
+  Typography _getPersonalizedTypography(final UserPreferences preferences) {
     if (preferences.accessibilityNeeds.contains('large_text')) {
       return Typography.large;
     } else if (preferences.accessibilityNeeds.contains('dyslexia_friendly')) {
@@ -424,8 +427,8 @@ class AIPersonalizationService {
     }
   }
 
-  double _calculateOptimalTextSize(UserPreferences preferences) {
-    double baseSize = 1.0;
+  double _calculateOptimalTextSize(final UserPreferences preferences) {
+    double baseSize = 1;
 
     if (preferences.accessibilityNeeds.contains('large_text')) {
       baseSize = 1.3;
@@ -436,17 +439,17 @@ class AIPersonalizationService {
     return baseSize.clamp(0.8, 2.0);
   }
 
-  double _calculateOptimalButtonSize(UserPreferences preferences) {
+  double _calculateOptimalButtonSize(final UserPreferences preferences) {
     if (preferences.accessibilityNeeds.contains('large_text')) {
       return 1.2;
     } else if (preferences.accessibilityNeeds.contains('motor_difficulties')) {
       return 1.3;
     } else {
-      return 1.0;
+      return 1;
     }
   }
 
-  double _calculateOptimalSpacing(UserPreferences preferences) {
+  double _calculateOptimalSpacing(final UserPreferences preferences) {
     if (preferences.accessibilityNeeds.contains('large_text')) {
       return 1.2;
     } else if (_userProfile.layoutDensityPreference == 'spacious') {
@@ -454,31 +457,31 @@ class AIPersonalizationService {
     } else if (_userProfile.layoutDensityPreference == 'compact') {
       return 0.8;
     } else {
-      return 1.0;
+      return 1;
     }
   }
 
-  double _calculateOptimalAnimationSpeed(UserPreferences preferences) {
+  double _calculateOptimalAnimationSpeed(final UserPreferences preferences) {
     if (preferences.accessibilityNeeds.contains('reduce_motion')) {
-      return 0.0; // No animations
+      return 0; // No animations
     } else if (preferences.accessibilityNeeds.contains('slow_animations')) {
       return 0.5;
     } else {
-      return 1.0;
+      return 1;
     }
   }
 
-  double _calculateOptimalColorContrast(UserPreferences preferences) {
+  double _calculateOptimalColorContrast(final UserPreferences preferences) {
     if (preferences.accessibilityNeeds.contains('high_contrast')) {
       return 1.5;
     } else if (preferences.accessibilityNeeds.contains('color_blindness')) {
       return 1.2;
     } else {
-      return 1.0;
+      return 1;
     }
   }
 
-  String _calculateOptimalLayoutDensity(UserPreferences preferences) {
+  String _calculateOptimalLayoutDensity(final UserPreferences preferences) {
     if (preferences.accessibilityNeeds.contains('large_text')) {
       return 'spacious';
     } else if (preferences.frequentlyUsedFeatures.length > 6) {
@@ -489,7 +492,7 @@ class AIPersonalizationService {
   }
 
   PersonalizedContent _getPersonalizedWelcomeMessage(
-      UserPreferences preferences) {
+      final UserPreferences preferences) {
     final hour = DateTime.now().hour;
     String greeting;
 
@@ -517,7 +520,7 @@ class AIPersonalizationService {
     );
   }
 
-  PersonalizedContent _getPersonalizedTips(UserPreferences preferences) {
+  PersonalizedContent _getPersonalizedTips(final UserPreferences preferences) {
     final tips = <String>[];
 
     if (preferences.frequentlyUsedFeatures.contains('budget')) {
@@ -544,7 +547,7 @@ class AIPersonalizationService {
   }
 
   PersonalizedContent _getPersonalizedNotifications(
-      UserPreferences preferences) {
+      final UserPreferences preferences) {
     final notifications = <String>[];
 
     if (preferences.frequentlyUsedFeatures.contains('budget')) {
@@ -570,15 +573,6 @@ class AIPersonalizationService {
 // Data models
 
 class UserProfile {
-  String userId;
-  List<String> preferredFeatures;
-  List<String> accessibilityNeeds;
-  List<UsagePattern> usagePatterns;
-  List<UserGoal> currentGoals;
-  double textSizePreference;
-  bool highContrastPreference;
-  bool reduceMotionPreference;
-  String layoutDensityPreference;
 
   UserProfile({
     this.userId = 'default_user',
@@ -592,41 +586,52 @@ class UserProfile {
     this.layoutDensityPreference = 'balanced',
   });
 
+  factory UserProfile.fromJson(final Map<String, dynamic> json) => UserProfile(
+        userId: (json['userId'] as String?) ?? 'default_user',
+        preferredFeatures: List<String>.from(
+            (json['preferredFeatures'] as List<dynamic>?) ?? []),
+        accessibilityNeeds: List<String>.from(
+            (json['accessibilityNeeds'] as List<dynamic>?) ?? []),
+        usagePatterns: (json['usagePatterns'] as List<dynamic>?)
+                ?.map((final p) => UsagePattern.fromJson(p as Map<String, dynamic>))
+                .toList() ??
+            [],
+        currentGoals: (json['currentGoals'] as List<dynamic>?)
+                ?.map((final g) => UserGoal.fromJson(g as Map<String, dynamic>))
+                .toList() ??
+            [],
+        textSizePreference: (json['textSizePreference'] as double?) ?? 1.0,
+        highContrastPreference:
+            (json['highContrastPreference'] as bool?) ?? false,
+        reduceMotionPreference:
+            (json['reduceMotionPreference'] as bool?) ?? false,
+        layoutDensityPreference:
+            (json['layoutDensityPreference'] as String?) ?? 'balanced',
+      );
+  String userId;
+  List<String> preferredFeatures;
+  List<String> accessibilityNeeds;
+  List<UsagePattern> usagePatterns;
+  List<UserGoal> currentGoals;
+  double textSizePreference;
+  bool highContrastPreference;
+  bool reduceMotionPreference;
+  String layoutDensityPreference;
+
   Map<String, dynamic> toJson() => {
         'userId': userId,
         'preferredFeatures': preferredFeatures,
         'accessibilityNeeds': accessibilityNeeds,
-        'usagePatterns': usagePatterns.map((p) => p.toJson()).toList(),
-        'currentGoals': currentGoals.map((g) => g.toJson()).toList(),
+        'usagePatterns': usagePatterns.map((final p) => p.toJson()).toList(),
+        'currentGoals': currentGoals.map((final g) => g.toJson()).toList(),
         'textSizePreference': textSizePreference,
         'highContrastPreference': highContrastPreference,
         'reduceMotionPreference': reduceMotionPreference,
         'layoutDensityPreference': layoutDensityPreference,
       };
-
-  factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
-        userId: json['userId'] ?? 'default_user',
-        preferredFeatures: List<String>.from(json['preferredFeatures'] ?? []),
-        accessibilityNeeds: List<String>.from(json['accessibilityNeeds'] ?? []),
-        usagePatterns: (json['usagePatterns'] as List<dynamic>?)
-                ?.map((p) => UsagePattern.fromJson(p))
-                .toList() ??
-            [],
-        currentGoals: (json['currentGoals'] as List<dynamic>?)
-                ?.map((g) => UserGoal.fromJson(g))
-                .toList() ??
-            [],
-        textSizePreference: json['textSizePreference'] ?? 1.0,
-        highContrastPreference: json['highContrastPreference'] ?? false,
-        reduceMotionPreference: json['reduceMotionPreference'] ?? false,
-        layoutDensityPreference: json['layoutDensityPreference'] ?? 'balanced',
-      );
 }
 
 class UserBehavior {
-  final String action;
-  final DateTime timestamp;
-  final Map<String, dynamic> context;
 
   UserBehavior({
     required this.action,
@@ -634,26 +639,24 @@ class UserBehavior {
     this.context = const {},
   });
 
+  factory UserBehavior.fromJson(final Map<String, dynamic> json) => UserBehavior(
+        action: json['action'] as String,
+        timestamp: DateTime.parse(json['timestamp'] as String),
+        context: Map<String, dynamic>.from(
+            (json['context'] as Map<dynamic, dynamic>?) ?? {}),
+      );
+  final String action;
+  final DateTime timestamp;
+  final Map<String, dynamic> context;
+
   Map<String, dynamic> toJson() => {
         'action': action,
         'timestamp': timestamp.toIso8601String(),
         'context': context,
       };
-
-  factory UserBehavior.fromJson(Map<String, dynamic> json) => UserBehavior(
-        action: json['action'],
-        timestamp: DateTime.parse(json['timestamp']),
-        context: Map<String, dynamic>.from(json['context'] ?? {}),
-      );
 }
 
 class UserPreferences {
-  final List<String> frequentlyUsedFeatures;
-  final List<String> recentlyUsedFeatures;
-  final List<int> peakUsageHours;
-  final List<String> accessibilityNeeds;
-  final List<UsagePattern> usagePatterns;
-  final List<UserGoal> currentGoals;
 
   UserPreferences({
     required this.frequentlyUsedFeatures,
@@ -663,12 +666,15 @@ class UserPreferences {
     required this.usagePatterns,
     required this.currentGoals,
   });
+  final List<String> frequentlyUsedFeatures;
+  final List<String> recentlyUsedFeatures;
+  final List<int> peakUsageHours;
+  final List<String> accessibilityNeeds;
+  final List<UsagePattern> usagePatterns;
+  final List<UserGoal> currentGoals;
 }
 
 class UsagePattern {
-  final String type;
-  final Map<int, int> data;
-  final double confidence;
 
   UsagePattern({
     required this.type,
@@ -676,24 +682,23 @@ class UsagePattern {
     required this.confidence,
   });
 
+  factory UsagePattern.fromJson(final Map<String, dynamic> json) => UsagePattern(
+        type: json['type'] as String,
+        data: Map<int, int>.from(json['data'] as Map<dynamic, dynamic>),
+        confidence: json['confidence'] as double,
+      );
+  final String type;
+  final Map<int, int> data;
+  final double confidence;
+
   Map<String, dynamic> toJson() => {
         'type': type,
         'data': data,
         'confidence': confidence,
       };
-
-  factory UsagePattern.fromJson(Map<String, dynamic> json) => UsagePattern(
-        type: json['type'],
-        data: Map<int, int>.from(json['data']),
-        confidence: json['confidence'],
-      );
 }
 
 class UserGoal {
-  final String id;
-  final String name;
-  final double progress;
-  final DateTime targetDate;
 
   UserGoal({
     required this.id,
@@ -702,26 +707,26 @@ class UserGoal {
     required this.targetDate,
   });
 
+  factory UserGoal.fromJson(final Map<String, dynamic> json) => UserGoal(
+        id: json['id'] as String,
+        name: json['name'] as String,
+        progress: json['progress'] as double,
+        targetDate: DateTime.parse(json['targetDate'] as String),
+      );
+  final String id;
+  final String name;
+  final double progress;
+  final DateTime targetDate;
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
         'progress': progress,
         'targetDate': targetDate.toIso8601String(),
       };
-
-  factory UserGoal.fromJson(Map<String, dynamic> json) => UserGoal(
-        id: json['id'],
-        name: json['name'],
-        progress: json['progress'],
-        targetDate: DateTime.parse(json['targetDate']),
-      );
 }
 
 class PersonalizationRule {
-  final String id;
-  final bool Function(UserPreferences) condition;
-  final void Function(Map<String, dynamic>) action;
-  final double confidence;
 
   PersonalizationRule({
     required this.id,
@@ -729,14 +734,13 @@ class PersonalizationRule {
     required this.action,
     required this.confidence,
   });
+  final String id;
+  final bool Function(UserPreferences) condition;
+  final void Function(Map<String, dynamic>) action;
+  final double confidence;
 }
 
 class DashboardLayout {
-  final List<String> primaryWidgets;
-  final List<String> secondaryWidgets;
-  final LayoutStyle layoutStyle;
-  final ColorScheme colorScheme;
-  final Typography typography;
 
   DashboardLayout({
     required this.primaryWidgets,
@@ -745,15 +749,14 @@ class DashboardLayout {
     required this.colorScheme,
     required this.typography,
   });
+  final List<String> primaryWidgets;
+  final List<String> secondaryWidgets;
+  final LayoutStyle layoutStyle;
+  final ColorScheme colorScheme;
+  final Typography typography;
 }
 
 class AdaptiveInterfaceSettings {
-  final double textSize;
-  final double buttonSize;
-  final double spacing;
-  final double animationSpeed;
-  final double colorContrast;
-  final String layoutDensity;
 
   AdaptiveInterfaceSettings({
     required this.textSize,
@@ -763,15 +766,15 @@ class AdaptiveInterfaceSettings {
     required this.colorContrast,
     required this.layoutDensity,
   });
+  final double textSize;
+  final double buttonSize;
+  final double spacing;
+  final double animationSpeed;
+  final double colorContrast;
+  final String layoutDensity;
 }
 
 class PersonalizedRecommendation {
-  final String title;
-  final String description;
-  final String action;
-  final RecommendationPriority priority;
-  final double confidence;
-  final String reasoning;
 
   PersonalizedRecommendation({
     required this.title,
@@ -781,18 +784,24 @@ class PersonalizedRecommendation {
     required this.confidence,
     required this.reasoning,
   });
+  final String title;
+  final String description;
+  final String action;
+  final RecommendationPriority priority;
+  final double confidence;
+  final String reasoning;
 }
 
 class PersonalizedContent {
-  final String title;
-  final String content;
-  final ContentStyle style;
 
   PersonalizedContent({
     required this.title,
     required this.content,
     required this.style,
   });
+  final String title;
+  final String content;
+  final ContentStyle style;
 }
 
 enum LayoutStyle { compact, balanced, spacious }

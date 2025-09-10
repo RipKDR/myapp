@@ -11,9 +11,9 @@ import 'analytics_service.dart';
 /// This service handles system monitoring, health checks,
 /// and performance tracking for the application.
 class MonitoringService {
-  static final MonitoringService _instance = MonitoringService._internal();
   factory MonitoringService() => _instance;
   MonitoringService._internal();
+  static final MonitoringService _instance = MonitoringService._internal();
 
   final AnalyticsService _analytics = AnalyticsService();
   Timer? _healthCheckTimer;
@@ -62,7 +62,7 @@ class MonitoringService {
 
   /// Monitor network connectivity
   void _monitorConnectivity() {
-    Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> results) {
+    Connectivity().onConnectivityChanged.listen((final results) {
       final result = results.isNotEmpty ? results.first : ConnectivityResult.none;
       _analytics.logEvent('connectivity_changed', parameters: {
         'status': result.name,
@@ -73,11 +73,11 @@ class MonitoringService {
 
   /// Set up crash reporting
   void _setupCrashReporting() {
-    FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.onError = (final details) {
       FirebaseCrashlytics.instance.recordFlutterFatalError(details);
     };
 
-    PlatformDispatcher.instance.onError = (error, stack) {
+    PlatformDispatcher.instance.onError = (final error, final stack) {
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
     };
@@ -239,9 +239,9 @@ class MonitoringService {
 
   /// Record feature usage
   Future<void> recordFeatureUsage({
-    required String feature,
-    required String action,
-    Map<String, Object>? additionalParams,
+    required final String feature,
+    required final String action,
+    final Map<String, Object>? additionalParams,
   }) async {
     await _analytics.logFeatureUsage(
       feature: feature,
@@ -252,9 +252,9 @@ class MonitoringService {
 
   /// Record user interaction
   Future<void> recordUserInteraction({
-    required String interaction,
-    required String screen,
-    Map<String, Object>? additionalParams,
+    required final String interaction,
+    required final String screen,
+    final Map<String, Object>? additionalParams,
   }) async {
       await _analytics.logEvent('user_interaction', parameters: {
         'interaction': interaction,
@@ -266,10 +266,10 @@ class MonitoringService {
 
   /// Record error
   Future<void> recordError({
-    required String error,
-    required String context,
-    StackTrace? stackTrace,
-    Map<String, Object>? additionalParams,
+    required final String error,
+    required final String context,
+    final StackTrace? stackTrace,
+    final Map<String, Object>? additionalParams,
   }) async {
     await _analytics.logError(
       error: error,
@@ -289,10 +289,10 @@ class MonitoringService {
 
   /// Record performance issue
   Future<void> recordPerformanceIssue({
-    required String issue,
-    required int duration,
-    required String unit,
-    Map<String, Object>? additionalParams,
+    required final String issue,
+    required final int duration,
+    required final String unit,
+    final Map<String, Object>? additionalParams,
   }) async {
     await _analytics.logPerformanceEvent(
       event: issue,
@@ -304,10 +304,10 @@ class MonitoringService {
 
   /// Record accessibility event
   Future<void> recordAccessibilityEvent({
-    required String event,
-    required String feature,
-    bool? enabled,
-    Map<String, Object>? additionalParams,
+    required final String event,
+    required final String feature,
+    final bool? enabled,
+    final Map<String, Object>? additionalParams,
   }) async {
     await _analytics.logAccessibilityEvent(
       event: event,
@@ -319,10 +319,10 @@ class MonitoringService {
 
   /// Record user feedback
   Future<void> recordUserFeedback({
-    required String feedbackType,
-    required String feedback,
-    int? rating,
-    Map<String, Object>? additionalParams,
+    required final String feedbackType,
+    required final String feedback,
+    final int? rating,
+    final Map<String, Object>? additionalParams,
   }) async {
     await _analytics.logUserFeedback(
       feedbackType: feedbackType,
@@ -333,15 +333,13 @@ class MonitoringService {
   }
 
   /// Get monitoring status
-  Map<String, dynamic> getMonitoringStatus() {
-    return {
+  Map<String, dynamic> getMonitoringStatus() => {
       'is_monitoring': _isMonitoring,
       'app_start_time': _appStartTime?.toIso8601String(),
       'session_duration': _sessionDuration,
       'health_check_active': _healthCheckTimer?.isActive ?? false,
       'performance_monitoring_active': _performanceTimer?.isActive ?? false,
     };
-  }
 
   /// Stop monitoring
   void stopMonitoring() {
