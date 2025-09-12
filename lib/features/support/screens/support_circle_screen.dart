@@ -101,7 +101,7 @@ class _SupportCircleScreenState extends State<SupportCircleScreen> {
               children: [
                 CircleAvatar(
                   radius: 28,
-                  backgroundColor: _getRoleColor(person['role']).withOpacity(0.1),
+                  backgroundColor: _getRoleColor(person['role']).withValues(alpha: 0.1),
                   child: Text(
                     person['name'].split(' ').map((final n) => n[0]).join(),
                     style: TextStyle(

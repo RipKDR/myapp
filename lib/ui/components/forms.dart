@@ -126,7 +126,7 @@ class FormFieldX extends StatelessWidget {
               vertical: NDISSpacing.lg,
             ),
             hintStyle: NDSTypography.bodyLarge.copyWith(
-              color: theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
+              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
             ),
             counterStyle: NDSTypography.bodySmall.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
@@ -211,7 +211,7 @@ class SearchField extends StatelessWidget {
           vertical: NDISSpacing.lg,
         ),
         hintStyle: NDSTypography.bodyLarge.copyWith(
-          color: theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
+          color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
         ),
       ),
     );
@@ -292,7 +292,7 @@ class DropdownFormFieldX<T> extends StatelessWidget {
               vertical: NDISSpacing.lg,
             ),
             hintStyle: NDSTypography.bodyLarge.copyWith(
-              color: theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
+              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
             ),
           ),
           items: items,
@@ -372,7 +372,7 @@ class DateFormField extends StatelessWidget {
                     style: NDSTypography.bodyLarge.copyWith(
                       color: selectedDate != null
                           ? theme.colorScheme.onSurface
-                          : theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
+                          : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                     ),
                   ),
                 ),

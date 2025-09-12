@@ -60,7 +60,7 @@ class _ParticipantDashboardScreenState
         gradient: LinearGradient(
           colors: [
             theme.colorScheme.primary,
-            theme.colorScheme.primary.withOpacity(0.8),
+            theme.colorScheme.primary.withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -81,7 +81,7 @@ class _ParticipantDashboardScreenState
           Text(
             'Here\'s your NDIS plan overview',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onPrimary.withOpacity(0.9),
+              color: theme.colorScheme.onPrimary.withValues(alpha: 0.9),
             ),
           ),
         ],

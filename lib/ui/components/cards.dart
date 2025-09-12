@@ -93,8 +93,8 @@ class BudgetProgressCard extends StatelessWidget {
                     vertical: NDISSpacing.xs,
                   ),
                   decoration: BoxDecoration(
-                    color: (color ?? theme.colorScheme.primary).withOpacity(
-                      0.1,
+                    color: (color ?? theme.colorScheme.primary).withValues(
+                      alpha: 0.1,
                     ),
                     borderRadius: BorderRadius.circular(NDSRadius.xs),
                   ),

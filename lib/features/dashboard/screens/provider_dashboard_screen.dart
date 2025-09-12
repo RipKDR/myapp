@@ -65,7 +65,7 @@ class _ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
         gradient: LinearGradient(
           colors: [
             theme.colorScheme.secondary,
-            theme.colorScheme.secondary.withOpacity(0.8),
+            theme.colorScheme.secondary.withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -86,7 +86,7 @@ class _ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
           Text(
             'You have 3 appointments today',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSecondary.withOpacity(0.9),
+              color: theme.colorScheme.onSecondary.withValues(alpha: 0.9),
             ),
           ),
         ],
@@ -390,7 +390,7 @@ class _StatCard extends StatelessWidget {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: color, size: 18),
@@ -523,7 +523,7 @@ class _MessageItem extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isUnread
-              ? theme.colorScheme.primaryContainer.withOpacity(0.3)
+              ? theme.colorScheme.primaryContainer.withValues(alpha: 0.3)
               : theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: theme.colorScheme.outline),

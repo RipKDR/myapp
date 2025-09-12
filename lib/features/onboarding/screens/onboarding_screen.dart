@@ -218,8 +218,8 @@ class _RoleSelectionCard extends StatelessWidget {
                     description,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: isSelected
-                          ? theme.colorScheme.onPrimaryContainer.withOpacity(
-                              0.8,
+                          ? theme.colorScheme.onPrimaryContainer.withValues(
+                              alpha: 0.8,
                             )
                           : theme.colorScheme.onSurfaceVariant,
                     ),

@@ -12,18 +12,18 @@ class NDISAppTheme {
   static ThemeData lightTheme({final bool highContrast = false}) {
     final colorScheme = ColorScheme.light(
       primary: NDISColors.getHighContrast(NDISColors.primary, highContrast),
-      primaryContainer: NDISColors.primaryLight.withOpacity(0.1),
+      primaryContainer: NDISColors.primaryLight.withValues(alpha: 0.1),
       onPrimaryContainer: NDISColors.primary,
       secondary: NDISColors.getHighContrast(NDISColors.secondary, highContrast),
       onSecondary: NDISColors.onSecondary,
-      secondaryContainer: NDISColors.secondaryLight.withOpacity(0.1),
+      secondaryContainer: NDISColors.secondaryLight.withValues(alpha: 0.1),
       onSecondaryContainer: NDISColors.secondary,
       tertiary: NDISColors.tertiary,
       onTertiary: NDISColors.onTertiary,
-      tertiaryContainer: NDISColors.tertiaryLight.withOpacity(0.1),
+      tertiaryContainer: NDISColors.tertiaryLight.withValues(alpha: 0.1),
       onTertiaryContainer: NDISColors.tertiary,
       error: NDISColors.getHighContrast(NDISColors.error, highContrast),
-      errorContainer: NDISColors.error.withOpacity(0.1),
+      errorContainer: NDISColors.error.withValues(alpha: 0.1),
       onErrorContainer: NDISColors.error,
       surface: NDISColors.getHighContrast(NDISColors.surface, highContrast),
       onSurface: NDISColors.getHighContrast(NDISColors.onSurface, highContrast),
@@ -32,7 +32,7 @@ class NDISAppTheme {
       outline: NDISColors.outline,
       outlineVariant: NDISColors.outlineVariant,
       shadow: NDISColors.shadow,
-      surfaceTint: NDISColors.primary.withOpacity(0.05),
+      surfaceTint: NDISColors.primary.withValues(alpha: 0.05),
     );
 
     return ThemeData(
@@ -177,7 +177,7 @@ class NDISAppTheme {
           color: colorScheme.onSurfaceVariant,
         ),
         hintStyle: NDSTypography.bodyMedium.copyWith(
-          color: colorScheme.onSurfaceVariant.withOpacity(0.6),
+          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
         ),
       ),
 
@@ -185,7 +185,7 @@ class NDISAppTheme {
       chipTheme: ChipThemeData(
         backgroundColor: colorScheme.surfaceContainerHighest,
         selectedColor: colorScheme.secondaryContainer,
-        disabledColor: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+        disabledColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         labelStyle: NDSTypography.labelMedium.copyWith(
           color: colorScheme.onSurface,
         ),
@@ -264,19 +264,19 @@ class NDISAppTheme {
         highContrast,
       ),
       onPrimary: Colors.white,
-      primaryContainer: NDISColors.primary.withOpacity(0.2),
+      primaryContainer: NDISColors.primary.withValues(alpha: 0.2),
       onPrimaryContainer: NDISColors.primaryLight,
       secondary: NDISColors.getHighContrast(NDISColors.secondary, highContrast),
       onSecondary: Colors.white,
-      secondaryContainer: NDISColors.secondary.withOpacity(0.2),
+      secondaryContainer: NDISColors.secondary.withValues(alpha: 0.2),
       onSecondaryContainer: NDISColors.secondary,
       tertiary: NDISColors.tertiary,
       onTertiary: Colors.black,
-      tertiaryContainer: NDISColors.tertiary.withOpacity(0.2),
+      tertiaryContainer: NDISColors.tertiary.withValues(alpha: 0.2),
       onTertiaryContainer: NDISColors.tertiary,
       error: NDISColors.getHighContrast(NDISColors.error, highContrast),
       onError: Colors.white,
-      errorContainer: NDISColors.error.withOpacity(0.2),
+      errorContainer: NDISColors.error.withValues(alpha: 0.2),
       onErrorContainer: NDISColors.error,
       surface: NDISColors.getHighContrast(NDISColors.darkSurface, highContrast),
       onSurface: NDISColors.getHighContrast(
@@ -286,9 +286,9 @@ class NDISAppTheme {
       surfaceContainerHighest: NDISColors.darkSurfaceContainer,
       onSurfaceVariant: NDISColors.darkOnSurfaceVariant,
       outline: NDISColors.darkOutline,
-      outlineVariant: NDISColors.darkOutline.withOpacity(0.5),
+      outlineVariant: NDISColors.darkOutline.withValues(alpha: 0.5),
       shadow: NDISColors.shadowDark,
-      surfaceTint: NDISColors.primary.withOpacity(0.1),
+      surfaceTint: NDISColors.primary.withValues(alpha: 0.1),
     );
 
     return lightTheme(highContrast: highContrast).copyWith(
