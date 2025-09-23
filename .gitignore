@@ -103,8 +103,6 @@ web/firebase-config.js
 
 # Keystore files
 android/app/*.keystore
-android/key.properties
-key.properties
 android/app/upload-keystore.jks
 android/app/debug.keystore
 
