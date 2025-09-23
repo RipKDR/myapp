@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">NDIS Connect</string>
+    <string name="app_description">Accessible companion for NDIS participants and providers</string>
+    
+    <!-- Accessibility -->
+    <string name="accessibility_hint">Double tap to activate</string>
+    <string name="accessibility_label">NDIS Connect App</string>
+    
+    <!-- Notifications -->
     <string name="notification_channel_name">NDIS Connect Notifications</string>
+    <string name="notification_channel_description">Important updates and reminders</string>
+    
+    <!-- Error messages -->
+    <string name="error_network">Network connection error</string>
+    <string name="error_generic">An unexpected error occurred</string>
+    <string name="error_permission">Permission required</string>
 </resources>
-

@@ -1,11 +1,4 @@
-class ProviderLocation {
-  final String id;
-  final String name;
-  final double lat;
-  final double lng;
-  final int waitMinutes;
-  final bool accessible;
-  final double rating; // 1.0-5.0
+class ProviderLocation { // 1.0-5.0
   ProviderLocation({
     required this.id,
     required this.name,
@@ -15,6 +8,13 @@ class ProviderLocation {
     required this.accessible,
     this.rating = 4.0,
   });
+  final String id;
+  final String name;
+  final double lat;
+  final double lng;
+  final int waitMinutes;
+  final bool accessible;
+  final double rating;
 
   Map<String, dynamic> toMap() => {
         'id': id,
@@ -25,7 +25,7 @@ class ProviderLocation {
         'accessible': accessible,
       };
 
-  static ProviderLocation fromMap(Map<String, dynamic> m) => ProviderLocation(
+  static ProviderLocation fromMap(final Map<String, dynamic> m) => ProviderLocation(
         id: m['id'] as String,
         name: m['name'] as String,
         lat: (m['lat'] as num).toDouble(),

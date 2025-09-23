@@ -1,13 +1,14 @@
 #!/usr/bin/env dart
 
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:path/path.dart' as path;
 
 /// Security Audit Script for NDIS Connect
 /// Runs comprehensive security audits and generates reports
-void main(List<String> arguments) async {
-  print('🔒 Starting NDIS Connect Security Audit...\n');
+void main(final List<String> arguments) async {
+  debugPrint('🔒 Starting NDIS Connect Security Audit...\n');
 
   try {
     // Parse command line arguments
@@ -20,17 +21,17 @@ void main(List<String> arguments) async {
     await _generateReports(results, options);
 
     // Print summary
-    _printSummary(results);
+    _debugPrintSummary(results);
 
-    print('\n✅ Security audit completed successfully!');
+    debugPrint('\n✅ Security audit completed successfully!');
   } catch (e) {
-    print('❌ Security audit failed: $e');
+    debugPrint('❌ Security audit failed: $e');
     exit(1);
   }
 }
 
 /// Parse command line arguments
-Map<String, dynamic> _parseArguments(List<String> arguments) {
+Map<String, dynamic> _parseArguments(final List<String> arguments) {
   final options = <String, dynamic>{
     'verbose': false,
     'outputDir': 'security_reports',
@@ -71,11 +72,11 @@ Map<String, dynamic> _parseArguments(List<String> arguments) {
         break;
       case '--help':
       case '-h':
-        _printHelp();
+        _debugPrintHelp();
         exit(0);
       default:
-        print('Unknown argument: $arg');
-        _printHelp();
+        debugPrint('Unknown argument: $arg');
+        _debugPrintHelp();
         exit(1);
     }
   }
@@ -84,8 +85,8 @@ Map<String, dynamic> _parseArguments(List<String> arguments) {
 }
 
 /// Print help information
-void _printHelp() {
-  print('''
+void _debugPrintHelp() {
+  debugPrint('''
 NDIS Connect Security Audit Script
 
 Usage: dart run_security_audit.dart [options]
@@ -108,7 +109,7 @@ Examples:
 
 /// Run security audit
 Future<Map<String, dynamic>> _runSecurityAudit(
-    Map<String, dynamic> options) async {
+    final Map<String, dynamic> options) async {
   final results = <String, dynamic>{
     'timestamp': DateTime.now().toIso8601String(),
     'auditLevel': options['auditLevel'],
@@ -116,32 +117,32 @@ Future<Map<String, dynamic>> _runSecurityAudit(
     'summary': <String, dynamic>{},
   };
 
-  print('🔍 Running security audits...');
+  debugPrint('🔍 Running security audits...');
 
   // Audit 1: Firestore Security Rules
-  print('  🔍 Auditing Firestore security rules...');
+  debugPrint('  🔍 Auditing Firestore security rules...');
   results['audits']['firestoreSecurity'] =
       await _auditFirestoreSecurity(options);
 
   // Audit 2: Authentication & Authorization
-  print('  🔍 Auditing authentication and authorization...');
+  debugPrint('  🔍 Auditing authentication and authorization...');
   results['audits']['authenticationSecurity'] =
       await _auditAuthenticationSecurity(options);
 
   // Audit 3: Data Encryption
-  print('  🔍 Auditing data encryption...');
+  debugPrint('  🔍 Auditing data encryption...');
   results['audits']['dataEncryption'] = await _auditDataEncryption(options);
 
   // Audit 4: API Security
-  print('  🔍 Auditing API security...');
+  debugPrint('  🔍 Auditing API security...');
   results['audits']['apiSecurity'] = await _auditAPISecurity(options);
 
   // Audit 5: Data Privacy
-  print('  🔍 Auditing data privacy...');
+  debugPrint('  🔍 Auditing data privacy...');
   results['audits']['dataPrivacy'] = await _auditDataPrivacy(options);
 
   // Audit 6: Vulnerability Assessment
-  print('  🔍 Running vulnerability assessment...');
+  debugPrint('  🔍 Running vulnerability assessment...');
   results['audits']['vulnerabilityAssessment'] =
       await _auditVulnerabilities(options);
 
@@ -153,7 +154,7 @@ Future<Map<String, dynamic>> _runSecurityAudit(
 
 /// Audit Firestore security rules
 Future<Map<String, dynamic>> _auditFirestoreSecurity(
-    Map<String, dynamic> options) async {
+    final Map<String, dynamic> options) async {
   final results = <String, dynamic>{
     'collectionAccess': true,
     'fieldValidation': true,
@@ -174,7 +175,7 @@ Future<Map<String, dynamic>> _auditFirestoreSecurity(
     results['dataValidation'],
     results['querySecurity'],
   ];
-  final passedTests = tests.where((v) => v).length;
+  final passedTests = tests.where((final v) => v as bool).length;
   results['overallScore'] = (passedTests / tests.length) * 100;
 
   return results;
@@ -182,7 +183,7 @@ Future<Map<String, dynamic>> _auditFirestoreSecurity(
 
 /// Audit authentication security
 Future<Map<String, dynamic>> _auditAuthenticationSecurity(
-    Map<String, dynamic> options) async {
+    final Map<String, dynamic> options) async {
   final results = <String, dynamic>{
     'multiFactorAuth': true,
     'passwordSecurity': true,
@@ -201,7 +202,7 @@ Future<Map<String, dynamic>> _auditAuthenticationSecurity(
     results['tokenSecurity'],
     results['biometricAuth'],
   ];
-  final passedTests = tests.where((v) => v).length;
+  final passedTests = tests.where((final v) => v as bool).length;
   results['overallScore'] = (passedTests / tests.length) * 100;
 
   return results;
@@ -209,7 +210,7 @@ Future<Map<String, dynamic>> _auditAuthenticationSecurity(
 
 /// Audit data encryption
 Future<Map<String, dynamic>> _auditDataEncryption(
-    Map<String, dynamic> options) async {
+    final Map<String, dynamic> options) async {
   final results = <String, dynamic>{
     'dataAtRest': true,
     'dataInTransit': true,
@@ -226,7 +227,7 @@ Future<Map<String, dynamic>> _auditDataEncryption(
     results['keyManagement'],
     results['encryptionAlgorithms'],
   ];
-  final passedTests = tests.where((v) => v).length;
+  final passedTests = tests.where((final v) => v as bool).length;
   results['overallScore'] = (passedTests / tests.length) * 100;
 
   return results;
@@ -234,7 +235,7 @@ Future<Map<String, dynamic>> _auditDataEncryption(
 
 /// Audit API security
 Future<Map<String, dynamic>> _auditAPISecurity(
-    Map<String, dynamic> options) async {
+    final Map<String, dynamic> options) async {
   final results = <String, dynamic>{
     'apiAuthentication': true,
     'apiAuthorization': true,
@@ -253,7 +254,7 @@ Future<Map<String, dynamic>> _auditAPISecurity(
     results['outputSanitization'],
     results['rateLimiting'],
   ];
-  final passedTests = tests.where((v) => v).length;
+  final passedTests = tests.where((final v) => v as bool).length;
   results['overallScore'] = (passedTests / tests.length) * 100;
 
   return results;
@@ -261,7 +262,7 @@ Future<Map<String, dynamic>> _auditAPISecurity(
 
 /// Audit data privacy
 Future<Map<String, dynamic>> _auditDataPrivacy(
-    Map<String, dynamic> options) async {
+    final Map<String, dynamic> options) async {
   final results = <String, dynamic>{
     'gdprCompliance': true,
     'ccpaCompliance': true,
@@ -278,7 +279,7 @@ Future<Map<String, dynamic>> _auditDataPrivacy(
     results['dataMinimization'],
     results['consentManagement'],
   ];
-  final passedTests = tests.where((v) => v).length;
+  final passedTests = tests.where((final v) => v as bool).length;
   results['overallScore'] = (passedTests / tests.length) * 100;
 
   return results;
@@ -286,7 +287,7 @@ Future<Map<String, dynamic>> _auditDataPrivacy(
 
 /// Audit vulnerabilities
 Future<Map<String, dynamic>> _auditVulnerabilities(
-    Map<String, dynamic> options) async {
+    final Map<String, dynamic> options) async {
   final results = <String, dynamic>{
     'commonVulnerabilities': true,
     'injectionVulnerabilities': true,
@@ -303,14 +304,14 @@ Future<Map<String, dynamic>> _auditVulnerabilities(
     results['authVulnerabilities'],
     results['dataExposureVulnerabilities'],
   ];
-  final passedTests = tests.where((v) => v).length;
+  final passedTests = tests.where((final v) => v as bool).length;
   results['overallScore'] = (passedTests / tests.length) * 100;
 
   return results;
 }
 
 /// Calculate summary statistics
-Map<String, dynamic> _calculateSummary(Map<String, dynamic> audits) {
+Map<String, dynamic> _calculateSummary(final Map<String, dynamic> audits) {
   final summary = <String, dynamic>{
     'overallScore': 0.0,
     'totalAudits': 0,
@@ -319,10 +320,10 @@ Map<String, dynamic> _calculateSummary(Map<String, dynamic> audits) {
     'categories': <String, dynamic>{},
   };
 
-  double totalScore = 0.0;
+  double totalScore = 0;
   int categoryCount = 0;
 
-  audits.forEach((category, results) {
+  audits.forEach((final category, final results) {
     if (results is Map<String, dynamic> &&
         results.containsKey('overallScore')) {
       final score = results['overallScore'] as double;
@@ -355,7 +356,7 @@ Map<String, dynamic> _calculateSummary(Map<String, dynamic> audits) {
 
 /// Generate reports
 Future<void> _generateReports(
-    Map<String, dynamic> results, Map<String, dynamic> options) async {
+    final Map<String, dynamic> results, final Map<String, dynamic> options) async {
   final outputDir = options['outputDir'] as String;
   final format = options['format'] as String;
 
@@ -365,7 +366,7 @@ Future<void> _generateReports(
     await dir.create(recursive: true);
   }
 
-  print('📄 Generating reports...');
+  debugPrint('📄 Generating reports...');
 
   // Generate JSON report
   if (format == 'json' || format == 'all') {
@@ -385,32 +386,32 @@ Future<void> _generateReports(
 
 /// Generate JSON report
 Future<void> _generateJSONReport(
-    Map<String, dynamic> results, String outputDir) async {
+    final Map<String, dynamic> results, final String outputDir) async {
   final file = File(path.join(outputDir, 'security_audit_report.json'));
   await file.writeAsString(jsonEncode(results));
-  print('  📄 JSON report generated: ${file.path}');
+  debugPrint('  📄 JSON report generated: ${file.path}');
 }
 
 /// Generate HTML report
 Future<void> _generateHTMLReport(
-    Map<String, dynamic> results, String outputDir) async {
+    final Map<String, dynamic> results, final String outputDir) async {
   final html = _generateHTMLContent(results);
   final file = File(path.join(outputDir, 'security_audit_report.html'));
   await file.writeAsString(html);
-  print('  📄 HTML report generated: ${file.path}');
+  debugPrint('  📄 HTML report generated: ${file.path}');
 }
 
 /// Generate Markdown report
 Future<void> _generateMarkdownReport(
-    Map<String, dynamic> results, String outputDir) async {
+    final Map<String, dynamic> results, final String outputDir) async {
   final markdown = _generateMarkdownContent(results);
   final file = File(path.join(outputDir, 'security_audit_report.md'));
   await file.writeAsString(markdown);
-  print('  📄 Markdown report generated: ${file.path}');
+  debugPrint('  📄 Markdown report generated: ${file.path}');
 }
 
 /// Generate HTML content
-String _generateHTMLContent(Map<String, dynamic> results) {
+String _generateHTMLContent(final Map<String, dynamic> results) {
   final summary = results['summary'] as Map<String, dynamic>;
   final overallScore = summary['overallScore'] as double;
 
@@ -451,10 +452,10 @@ String _generateHTMLContent(Map<String, dynamic> results) {
 }
 
 /// Generate category HTML
-String _generateCategoryHTML(Map<String, dynamic> audits) {
+String _generateCategoryHTML(final Map<String, dynamic> audits) {
   final buffer = StringBuffer();
 
-  audits.forEach((category, results) {
+  audits.forEach((final category, final results) {
     if (results is Map<String, dynamic> &&
         results.containsKey('overallScore')) {
       final score = results['overallScore'] as double;
@@ -483,7 +484,7 @@ String _generateCategoryHTML(Map<String, dynamic> audits) {
 }
 
 /// Generate Markdown content
-String _generateMarkdownContent(Map<String, dynamic> results) {
+String _generateMarkdownContent(final Map<String, dynamic> results) {
   final summary = results['summary'] as Map<String, dynamic>;
   final overallScore = summary['overallScore'] as double;
 
@@ -502,7 +503,7 @@ String _generateMarkdownContent(Map<String, dynamic> results) {
   buffer.writeln();
 
   final audits = results['audits'] as Map<String, dynamic>;
-  audits.forEach((category, results) {
+  audits.forEach((final category, final results) {
     if (results is Map<String, dynamic> &&
         results.containsKey('overallScore')) {
       final score = results['overallScore'] as double;
@@ -530,21 +531,21 @@ String _generateMarkdownContent(Map<String, dynamic> results) {
 }
 
 /// Print summary to console
-void _printSummary(Map<String, dynamic> results) {
+void _debugPrintSummary(final Map<String, dynamic> results) {
   final summary = results['summary'] as Map<String, dynamic>;
   final overallScore = summary['overallScore'] as double;
 
-  print('\n🔒 Security Audit Summary');
-  print('=' * 50);
-  print('Overall Score: ${overallScore.toStringAsFixed(1)}%');
-  print('Total Audits: ${summary['totalAudits']}');
-  print('Passed: ${summary['passedAudits']}');
-  print('Failed: ${summary['failedAudits']}');
-  print('');
+  debugPrint('\n🔒 Security Audit Summary');
+  debugPrint('=' * 50);
+  debugPrint('Overall Score: ${overallScore.toStringAsFixed(1)}%');
+  debugPrint('Total Audits: ${summary['totalAudits']}');
+  debugPrint('Passed: ${summary['passedAudits']}');
+  debugPrint('Failed: ${summary['failedAudits']}');
+  debugPrint('');
 
-  print('Category Results:');
+  debugPrint('Category Results:');
   final categories = summary['categories'] as Map<String, dynamic>;
-  categories.forEach((category, data) {
+  categories.forEach((final category, final data) {
     final score = data['score'] as double;
     final status = data['status'] as String;
     final emoji = status == 'PASS'
@@ -552,6 +553,6 @@ void _printSummary(Map<String, dynamic> results) {
         : status == 'WARNING'
             ? '⚠️'
             : '❌';
-    print('  $emoji $category: ${score.toStringAsFixed(1)}%');
+    debugPrint('  $emoji $category: ${score.toStringAsFixed(1)}%');
   });
 }

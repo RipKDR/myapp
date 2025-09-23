@@ -7,9 +7,9 @@ import 'package:flutter/foundation.dart';
 /// This service handles all analytics tracking, crash reporting,
 /// and performance monitoring for the application.
 class AnalyticsService {
-  static final AnalyticsService _instance = AnalyticsService._internal();
   factory AnalyticsService() => _instance;
   AnalyticsService._internal();
+  static final AnalyticsService _instance = AnalyticsService._internal();
 
   late FirebaseAnalytics _analytics;
   late FirebaseCrashlytics _crashlytics;
@@ -44,7 +44,7 @@ class AnalyticsService {
   }
 
   /// Log a custom event
-  Future<void> logEvent(String name, {Map<String, Object>? parameters}) async {
+  Future<void> logEvent(final String name, {final Map<String, Object>? parameters}) async {
     if (!_isInitialized) return;
 
     try {
@@ -58,7 +58,7 @@ class AnalyticsService {
   }
 
   /// Log user login event
-  Future<void> logLogin(String method, {String? userId}) async {
+  Future<void> logLogin(final String method, {final String? userId}) async {
     await _analytics.logLogin(loginMethod: method);
     if (userId != null) {
       await _analytics.setUserId(id: userId);
@@ -66,7 +66,7 @@ class AnalyticsService {
   }
 
   /// Log user registration event
-  Future<void> logSignUp(String method, {String? userId}) async {
+  Future<void> logSignUp(final String method, {final String? userId}) async {
     await _analytics.logSignUp(signUpMethod: method);
     if (userId != null) {
       await _analytics.setUserId(id: userId);
@@ -75,9 +75,9 @@ class AnalyticsService {
 
   /// Log appointment booking event
   Future<void> logAppointmentBooked({
-    required String providerId,
-    required String appointmentType,
-    required DateTime appointmentDate,
+    required final String providerId,
+    required final String appointmentType,
+    required final DateTime appointmentDate,
   }) async {
     await logEvent('appointment_booked', parameters: {
       'provider_id': providerId,
@@ -88,9 +88,9 @@ class AnalyticsService {
 
   /// Log budget tracking event
   Future<void> logBudgetViewed({
-    required String category,
-    required double amount,
-    required double remaining,
+    required final String category,
+    required final double amount,
+    required final double remaining,
   }) async {
     await logEvent('budget_viewed', parameters: {
       'category': category,
@@ -102,8 +102,8 @@ class AnalyticsService {
 
   /// Log accessibility feature usage
   Future<void> logAccessibilityFeatureUsed({
-    required String feature,
-    required bool enabled,
+    required final String feature,
+    required final bool enabled,
   }) async {
     await logEvent('accessibility_feature_used', parameters: {
       'feature': feature,
@@ -113,9 +113,9 @@ class AnalyticsService {
 
   /// Log support circle interaction
   Future<void> logSupportCircleInteraction({
-    required String action,
-    required String circleId,
-    required int memberCount,
+    required final String action,
+    required final String circleId,
+    required final int memberCount,
   }) async {
     await logEvent('support_circle_interaction', parameters: {
       'action': action,
@@ -126,9 +126,9 @@ class AnalyticsService {
 
   /// Log provider directory search
   Future<void> logProviderSearch({
-    required String searchTerm,
-    required String location,
-    required int resultCount,
+    required final String searchTerm,
+    required final String location,
+    required final int resultCount,
   }) async {
     await logEvent('provider_search', parameters: {
       'search_term': searchTerm,
@@ -139,9 +139,9 @@ class AnalyticsService {
 
   /// Log feature usage
   Future<void> logFeatureUsage({
-    required String feature,
-    required String action,
-    Map<String, Object>? additionalParams,
+    required final String feature,
+    required final String action,
+    final Map<String, Object>? additionalParams,
   }) async {
     final params = <String, Object>{
       'feature': feature,
@@ -153,9 +153,9 @@ class AnalyticsService {
 
   /// Log performance metrics
   Future<void> logPerformanceMetric({
-    required String metric,
-    required int value,
-    required String unit,
+    required final String metric,
+    required final int value,
+    required final String unit,
   }) async {
     await logEvent('performance_metric', parameters: {
       'metric': metric,
@@ -166,9 +166,9 @@ class AnalyticsService {
 
   /// Log error event
   Future<void> logError({
-    required String error,
-    required String context,
-    Map<String, Object>? additionalParams,
+    required final String error,
+    required final String context,
+    final Map<String, Object>? additionalParams,
   }) async {
     final params = <String, Object>{
       'error': error,
@@ -180,10 +180,10 @@ class AnalyticsService {
 
   /// Set user properties
   Future<void> setUserProperties({
-    String? userId,
-    String? userRole,
-    String? accessibilityLevel,
-    String? preferredLanguage,
+    final String? userId,
+    final String? userRole,
+    final String? accessibilityLevel,
+    final String? preferredLanguage,
   }) async {
     if (!_isInitialized) return;
 
@@ -212,8 +212,8 @@ class AnalyticsService {
 
   /// Record screen view
   Future<void> logScreenView({
-    required String screenName,
-    String? screenClass,
+    required final String screenName,
+    final String? screenClass,
   }) async {
     await _analytics.logScreenView(
       screenName: screenName,
@@ -223,9 +223,9 @@ class AnalyticsService {
 
   /// Record user engagement
   Future<void> logUserEngagement({
-    required String engagementType,
-    required int duration,
-    Map<String, Object>? additionalParams,
+    required final String engagementType,
+    required final int duration,
+    final Map<String, Object>? additionalParams,
   }) async {
     final params = <String, Object>{
       'engagement_type': engagementType,
@@ -237,10 +237,10 @@ class AnalyticsService {
 
   /// Record crash
   Future<void> recordCrash({
-    required String error,
-    required StackTrace stackTrace,
-    String? context,
-    Map<String, Object>? additionalParams,
+    required final String error,
+    required final StackTrace stackTrace,
+    final String? context,
+    final Map<String, Object>? additionalParams,
   }) async {
     try {
       await _crashlytics.recordError(
@@ -254,7 +254,7 @@ class AnalyticsService {
   }
 
   /// Set custom crash keys
-  Future<void> setCrashKey(String key, String value) async {
+  Future<void> setCrashKey(final String key, final String value) async {
     try {
       await _crashlytics.setCustomKey(key, value);
     } catch (e) {
@@ -263,7 +263,7 @@ class AnalyticsService {
   }
 
   /// Log breadcrumb for crash context
-  Future<void> logBreadcrumb(String message) async {
+  Future<void> logBreadcrumb(final String message) async {
     try {
       await _crashlytics.log(message);
     } catch (e) {
@@ -273,10 +273,10 @@ class AnalyticsService {
 
   /// Record user feedback
   Future<void> logUserFeedback({
-    required String feedbackType,
-    required String feedback,
-    int? rating,
-    Map<String, Object>? additionalParams,
+    required final String feedbackType,
+    required final String feedback,
+    final int? rating,
+    final Map<String, Object>? additionalParams,
   }) async {
     final params = <String, Object>{
       'feedback_type': feedbackType,
@@ -288,7 +288,7 @@ class AnalyticsService {
   }
 
   /// Record app lifecycle events
-  Future<void> logAppLifecycle(String event) async {
+  Future<void> logAppLifecycle(final String event) async {
     await logEvent('app_lifecycle', parameters: {
       'event': event,
       'timestamp': DateTime.now().toIso8601String(),
@@ -297,10 +297,10 @@ class AnalyticsService {
 
   /// Record accessibility events
   Future<void> logAccessibilityEvent({
-    required String event,
-    required String feature,
-    bool? enabled,
-    Map<String, Object>? additionalParams,
+    required final String event,
+    required final String feature,
+    final bool? enabled,
+    final Map<String, Object>? additionalParams,
   }) async {
     final params = <String, Object>{
       'event': event,
@@ -313,10 +313,10 @@ class AnalyticsService {
 
   /// Record performance events
   Future<void> logPerformanceEvent({
-    required String event,
-    required int duration,
-    required String unit,
-    Map<String, Object>? additionalParams,
+    required final String event,
+    required final int duration,
+    required final String unit,
+    final Map<String, Object>? additionalParams,
   }) async {
     final params = <String, Object>{
       'event': event,

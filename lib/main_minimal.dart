@@ -8,8 +8,7 @@ class NDISConnectApp extends StatelessWidget {
   const NDISConnectApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  Widget build(final BuildContext context) => MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'NDIS Connect',
       theme: ThemeData(
@@ -18,15 +17,13 @@ class NDISConnectApp extends StatelessWidget {
       ),
       home: const HomeScreen(),
     );
-  }
 }
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(final BuildContext context) => Scaffold(
       appBar: AppBar(
         title: const Text('NDIS Connect'),
         backgroundColor: Colors.blue,
@@ -90,5 +87,4 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
     );
-  }
 }

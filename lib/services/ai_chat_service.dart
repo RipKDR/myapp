@@ -10,11 +10,6 @@ import '../config/api_config.dart';
 /// Advanced AI Chat Service with Dialogflow integration, voice recognition,
 /// natural language processing, and intelligent NDIS assistance
 class AIChatService {
-  static const String _dialogflowEndpoint =
-      String.fromEnvironment('DIALOGFLOW_ENDPOINT');
-  static const String _dialogflowAuth =
-      String.fromEnvironment('DIALOGFLOW_AUTH');
-
   final SpeechToText _speechToText = SpeechToText();
   final FlutterTts _flutterTts = FlutterTts();
   // Language model manager placeholder - would be implemented based on specific AI service
@@ -34,8 +29,8 @@ class AIChatService {
 
   // Voice settings
   final double _speechRate = 0.5;
-  final double _speechPitch = 1.0;
-  final double _speechVolume = 1.0;
+  final double _speechPitch = 1;
+  final double _speechVolume = 1;
 
   /// Initialize the AI chat service
   Future<void> initialize() async {
@@ -63,7 +58,7 @@ class AIChatService {
         _isSpeaking = false;
       });
 
-      _flutterTts.setErrorHandler((msg) {
+      _flutterTts.setErrorHandler((final msg) {
         _isSpeaking = false;
         _analytics.logError(
             error: 'TTS Error: $msg', context: 'ai_chat_service');
@@ -98,8 +93,8 @@ class AIChatService {
   }
 
   /// Process a text message with AI intelligence
-  Future<ChatResponse> processMessage(String message,
-      {bool isVoice = false}) async {
+  Future<ChatResponse> processMessage(final String message,
+      {final bool isVoice = false}) async {
     if (!_isInitialized) await initialize();
 
     try {
@@ -132,7 +127,6 @@ class AIChatService {
         text: response.text,
         isUser: false,
         timestamp: DateTime.now(),
-        isVoice: false,
         intent: response.intent,
         confidence: response.confidence,
         suggestions: response.suggestions,
@@ -157,7 +151,7 @@ class AIChatService {
         text:
             "I'm sorry, I'm having trouble processing your request right now. Please try again or contact support if the issue persists.",
         intent: 'error',
-        confidence: 0.0,
+        confidence: 0,
         suggestions: ['Try again', 'Contact support', 'Browse help topics'],
       );
     }
@@ -178,7 +172,6 @@ class AIChatService {
         onResult: _onSpeechResult,
         listenFor: const Duration(seconds: 30),
         pauseFor: const Duration(seconds: 3),
-        partialResults: true,
         localeId: _currentLanguage,
         onSoundLevelChange: _onSoundLevelChange,
       );
@@ -211,7 +204,7 @@ class AIChatService {
   }
 
   /// Speak text using text-to-speech
-  Future<void> speak(String text) async {
+  Future<void> speak(final String text) async {
     if (!_isInitialized) await initialize();
     if (_isSpeaking) return;
 
@@ -257,10 +250,10 @@ class AIChatService {
   Future<List<String>> getSmartSuggestions() async {
     if (_conversationHistory.isEmpty) {
       return [
-        "How much funding do I have left?",
-        "Book an appointment",
-        "Find providers near me",
-        "Check my budget status",
+        'How much funding do I have left?',
+        'Book an appointment',
+        'Find providers near me',
+        'Check my budget status',
       ];
     }
 
@@ -270,7 +263,7 @@ class AIChatService {
         : _conversationHistory;
     final lastIntent = recentMessages
         .lastWhere(
-          (msg) => !msg.isUser,
+          (final msg) => !msg.isUser,
           orElse: () =>
               ChatMessage(text: '', isUser: false, timestamp: DateTime.now()),
         )
@@ -279,37 +272,37 @@ class AIChatService {
     switch (lastIntent) {
       case 'budget_query':
         return [
-          "Show budget breakdown",
-          "Set budget alerts",
-          "View spending history",
-          "Compare with last plan",
+          'Show budget breakdown',
+          'Set budget alerts',
+          'View spending history',
+          'Compare with last plan',
         ];
       case 'appointment_booking':
         return [
-          "View my appointments",
-          "Reschedule appointment",
-          "Find similar providers",
-          "Set appointment reminders",
+          'View my appointments',
+          'Reschedule appointment',
+          'Find similar providers',
+          'Set appointment reminders',
         ];
       case 'provider_search':
         return [
-          "Filter by accessibility",
-          "Check availability",
-          "Read reviews",
-          "Get directions",
+          'Filter by accessibility',
+          'Check availability',
+          'Read reviews',
+          'Get directions',
         ];
       default:
         return [
-          "What can you help me with?",
-          "Show my dashboard",
-          "Find support resources",
-          "Check notifications",
+          'What can you help me with?',
+          'Show my dashboard',
+          'Find support resources',
+          'Check notifications',
         ];
     }
   }
 
   /// Process message with Gemini AI
-  Future<ChatResponse> _processWithGemini(String message) async {
+  Future<ChatResponse> _processWithGemini(final String message) async {
     try {
       if (!ApiConfig.isAIEnabled()) {
         throw Exception('Gemini AI not enabled');
@@ -317,7 +310,7 @@ class AIChatService {
 
       final response = await http.post(
         Uri.parse(ApiConfig.geminiGenerateContentEndpoint),
-        headers: ApiConfig.geminiHeaders,
+        headers: ApiConfig.geminiHeaders(),
         body: jsonEncode({
           'contents': [
             {
@@ -393,12 +386,12 @@ class AIChatService {
         context: 'ai_chat_service',
       );
       // Fallback to local AI processing
-      return await _processWithLocalAI(message);
+      return _processWithLocalAI(message);
     }
   }
 
   /// Build context-aware prompt for Gemini
-  String _buildGeminiPrompt(String message) {
+  String _buildGeminiPrompt(final String message) {
     final context = _userContext.isNotEmpty
         ? 'User context: ${jsonEncode(_userContext)}\n'
         : '';
@@ -406,7 +399,7 @@ class AIChatService {
     final conversationHistory = _conversationHistory.length > 3
         ? _conversationHistory
             .sublist(_conversationHistory.length - 3)
-            .map((msg) => '${msg.isUser ? "User" : "Assistant"}: ${msg.text}')
+            .map((final msg) => '${msg.isUser ? "User" : "Assistant"}: ${msg.text}')
             .join('\n')
         : '';
 
@@ -433,13 +426,13 @@ Response:''';
 
   /// Generate suggestions based on AI response
   Future<List<String>> _generateSuggestionsFromResponse(
-      String response, String intent) async {
+      final String response, final String intent) async {
     // Use the existing smart suggestions logic
-    return await getSmartSuggestions();
+    return getSmartSuggestions();
   }
 
   /// Extract entities from user message
-  Map<String, dynamic> _extractEntitiesFromMessage(String message) {
+  Map<String, dynamic> _extractEntitiesFromMessage(final String message) {
     final query = message.toLowerCase();
 
     // Try to extract entities based on intent
@@ -457,7 +450,7 @@ Response:''';
   }
 
   /// Process message with local AI and knowledge base
-  Future<ChatResponse> _processWithLocalAI(String message) async {
+  Future<ChatResponse> _processWithLocalAI(final String message) async {
     final query = message.toLowerCase();
 
     // Intent classification using pattern matching
@@ -473,10 +466,10 @@ Response:''';
       case 'budget_query':
         responseText = await _handleBudgetQuery(query);
         suggestions = [
-          "Show detailed breakdown",
-          "Set budget alerts",
-          "View spending trends",
-          "Compare with previous plans",
+          'Show detailed breakdown',
+          'Set budget alerts',
+          'View spending trends',
+          'Compare with previous plans',
         ];
         entities = _extractBudgetEntities(query);
         break;
@@ -484,10 +477,10 @@ Response:''';
       case 'appointment_booking':
         responseText = await _handleAppointmentQuery(query);
         suggestions = [
-          "View my appointments",
-          "Find available times",
-          "Book new appointment",
-          "Set reminders",
+          'View my appointments',
+          'Find available times',
+          'Book new appointment',
+          'Set reminders',
         ];
         entities = _extractAppointmentEntities(query);
         break;
@@ -495,10 +488,10 @@ Response:''';
       case 'provider_search':
         responseText = await _handleProviderQuery(query);
         suggestions = [
-          "Filter by location",
-          "Check availability",
-          "Read reviews",
-          "Get contact info",
+          'Filter by location',
+          'Check availability',
+          'Read reviews',
+          'Get contact info',
         ];
         entities = _extractProviderEntities(query);
         break;
@@ -506,20 +499,20 @@ Response:''';
       case 'support_request':
         responseText = await _handleSupportQuery(query);
         suggestions = [
-          "Contact support coordinator",
-          "Browse help topics",
-          "Submit feedback",
-          "Emergency contacts",
+          'Contact support coordinator',
+          'Browse help topics',
+          'Submit feedback',
+          'Emergency contacts',
         ];
         break;
 
       case 'general_help':
         responseText = await _handleGeneralHelp(query);
         suggestions = [
-          "Budget tracking",
-          "Appointment booking",
-          "Provider directory",
-          "Support circle",
+          'Budget tracking',
+          'Appointment booking',
+          'Provider directory',
+          'Support circle',
         ];
         break;
 
@@ -527,10 +520,10 @@ Response:''';
         responseText =
             "I understand you're looking for help. I can assist you with budget tracking, appointment booking, finding providers, or connecting you with support. What would you like to do?";
         suggestions = [
-          "Budget help",
-          "Book appointment",
-          "Find providers",
-          "Get support",
+          'Budget help',
+          'Book appointment',
+          'Find providers',
+          'Get support',
         ];
     }
 
@@ -544,7 +537,7 @@ Response:''';
   }
 
   /// Classify user intent from message
-  String _classifyIntent(String query) {
+  String _classifyIntent(final String query) {
     // Budget-related queries
     if (query.contains(RegExp(
         r'\b(budget|funding|money|cost|price|spend|remaining|left)\b'))) {
@@ -578,15 +571,15 @@ Response:''';
   }
 
   /// Calculate confidence score for intent classification
-  double _calculateConfidence(String query, String intent) {
+  double _calculateConfidence(final String query, final String intent) {
     // Simple confidence calculation based on keyword matches
     final keywords = _getIntentKeywords(intent);
-    final matches = keywords.where((keyword) => query.contains(keyword)).length;
+    final matches = keywords.where(query.contains).length;
     return (matches / keywords.length).clamp(0.0, 1.0);
   }
 
   /// Get keywords for intent classification
-  List<String> _getIntentKeywords(String intent) {
+  List<String> _getIntentKeywords(final String intent) {
     switch (intent) {
       case 'budget_query':
         return ['budget', 'funding', 'money', 'cost', 'spend', 'remaining'];
@@ -602,63 +595,61 @@ Response:''';
   }
 
   /// Handle budget-related queries
-  Future<String> _handleBudgetQuery(String query) async {
+  Future<String> _handleBudgetQuery(final String query) async {
     // This would integrate with the actual budget service
     if (query.contains('remaining') || query.contains('left')) {
-      return "I can help you check your remaining NDIS funding. Let me open the Budget Tracker to show you the current status of your plan categories.";
+      return 'I can help you check your remaining NDIS funding. Let me open the Budget Tracker to show you the current status of your plan categories.';
     } else if (query.contains('spend') || query.contains('used')) {
       return "I'll show you your spending breakdown across all NDIS categories. You can see how much you've used and what's remaining in each area.";
     } else {
-      return "I can help you with your NDIS budget. I can show you remaining funding, spending history, set up alerts, or help you understand your plan categories.";
+      return 'I can help you with your NDIS budget. I can show you remaining funding, spending history, set up alerts, or help you understand your plan categories.';
     }
   }
 
   /// Handle appointment-related queries
-  Future<String> _handleAppointmentQuery(String query) async {
+  Future<String> _handleAppointmentQuery(final String query) async {
     if (query.contains('book') || query.contains('schedule')) {
-      return "I can help you book an appointment. Let me show you available times with your providers and help you schedule a session.";
+      return 'I can help you book an appointment. Let me show you available times with your providers and help you schedule a session.';
     } else if (query.contains('upcoming') || query.contains('next')) {
       return "I'll show you your upcoming appointments. You can view details, reschedule, or set reminders for your sessions.";
     } else {
-      return "I can help you with appointments - booking new ones, viewing your schedule, rescheduling, or setting reminders.";
+      return 'I can help you with appointments - booking new ones, viewing your schedule, rescheduling, or setting reminders.';
     }
   }
 
   /// Handle provider-related queries
-  Future<String> _handleProviderQuery(String query) async {
+  Future<String> _handleProviderQuery(final String query) async {
     if (query.contains('find') || query.contains('search')) {
       return "I can help you find NDIS providers in your area. I'll show you options based on your location, service needs, and accessibility requirements.";
     } else if (query.contains('near') || query.contains('location')) {
       return "Let me search for providers near your location. I'll filter by distance, availability, and accessibility features.";
     } else {
-      return "I can help you find and connect with NDIS providers. I can search by location, service type, availability, and accessibility features.";
+      return 'I can help you find and connect with NDIS providers. I can search by location, service type, availability, and accessibility features.';
     }
   }
 
   /// Handle support-related queries
-  Future<String> _handleSupportQuery(String query) async {
+  Future<String> _handleSupportQuery(final String query) async {
     if (query.contains('emergency')) {
-      return "For emergencies, please contact emergency services (000) or your support coordinator immediately. I can also help you find emergency contacts in your area.";
+      return 'For emergencies, please contact emergency services (000) or your support coordinator immediately. I can also help you find emergency contacts in your area.';
     } else if (query.contains('problem') || query.contains('issue')) {
       return "I'm here to help resolve any issues. I can connect you with your support coordinator, help you find resources, or guide you through common solutions.";
     } else {
-      return "I can help you get support in several ways - connecting with your support coordinator, finding resources, or helping you navigate NDIS processes.";
+      return 'I can help you get support in several ways - connecting with your support coordinator, finding resources, or helping you navigate NDIS processes.';
     }
   }
 
   /// Handle general help queries
-  Future<String> _handleGeneralHelp(String query) async {
-    return "I'm your NDIS Connect assistant! I can help you with:\n\n"
-        "• Budget tracking and funding management\n"
-        "• Booking and managing appointments\n"
-        "• Finding providers and services\n"
-        "• Support circle coordination\n"
-        "• Answering NDIS questions\n\n"
-        "What would you like help with today?";
-  }
+  Future<String> _handleGeneralHelp(final String query) async => "I'm your NDIS Connect assistant! I can help you with:\n\n"
+        '• Budget tracking and funding management\n'
+        '• Booking and managing appointments\n'
+        '• Finding providers and services\n'
+        '• Support circle coordination\n'
+        '• Answering NDIS questions\n\n'
+        'What would you like help with today?';
 
   /// Extract budget-related entities from query
-  Map<String, dynamic> _extractBudgetEntities(String query) {
+  Map<String, dynamic> _extractBudgetEntities(final String query) {
     final entities = <String, dynamic>{};
 
     // Extract amounts
@@ -681,7 +672,7 @@ Response:''';
   }
 
   /// Extract appointment-related entities from query
-  Map<String, dynamic> _extractAppointmentEntities(String query) {
+  Map<String, dynamic> _extractAppointmentEntities(final String query) {
     final entities = <String, dynamic>{};
 
     // Extract time references
@@ -703,7 +694,7 @@ Response:''';
   }
 
   /// Extract provider-related entities from query
-  Map<String, dynamic> _extractProviderEntities(String query) {
+  Map<String, dynamic> _extractProviderEntities(final String query) {
     final entities = <String, dynamic>{};
 
     // Extract provider types
@@ -775,7 +766,7 @@ Response:''';
   }
 
   /// Update user context based on conversation
-  Future<void> _updateUserContext(ChatResponse response) async {
+  Future<void> _updateUserContext(final ChatResponse response) async {
     // Update context based on detected entities and intent
     if (response.entities.isNotEmpty) {
       _userContext.addAll(response.entities);
@@ -790,7 +781,7 @@ Response:''';
   Future<void> _saveConversationHistory() async {
     final prefs = await SharedPreferences.getInstance();
     final historyJson =
-        _conversationHistory.map((msg) => msg.toJson()).toList();
+        _conversationHistory.map((final msg) => msg.toJson()).toList();
     await prefs.setString('conversation_history', jsonEncode(historyJson));
   }
 
@@ -802,7 +793,7 @@ Response:''';
       final history = jsonDecode(historyJson) as List;
       _conversationHistory.clear();
       _conversationHistory.addAll(
-        history.map((json) => ChatMessage.fromJson(json)).toList(),
+        history.map((final json) => ChatMessage.fromJson(json)).toList(),
       );
     }
   }
@@ -820,7 +811,7 @@ Response:''';
   }
 
   /// Speech recognition callbacks
-  void _onSpeechResult(dynamic result) {
+  void _onSpeechResult(final dynamic result) {
     try {
       final recognizedText = result.recognizedWords as String? ?? '';
       if (recognizedText.isNotEmpty) {
@@ -835,19 +826,19 @@ Response:''';
     }
   }
 
-  void _onSpeechError(dynamic error) {
+  void _onSpeechError(final dynamic error) {
     _analytics.logError(
       error: 'Speech recognition error: $error',
       context: 'ai_chat_service',
     );
   }
 
-  void _onSpeechStatus(dynamic status) {
+  void _onSpeechStatus(final dynamic status) {
     // Handle speech recognition status changes
     // Could log status changes for debugging
   }
 
-  void _onSoundLevelChange(dynamic level) {
+  void _onSoundLevelChange(final dynamic level) {
     // Handle sound level changes for visual feedback
     // Could update UI with sound level indicator
   }
@@ -862,13 +853,6 @@ Response:''';
 
 /// Chat message model
 class ChatMessage {
-  final String text;
-  final bool isUser;
-  final DateTime timestamp;
-  final bool isVoice;
-  final String? intent;
-  final double? confidence;
-  final List<String>? suggestions;
 
   ChatMessage({
     required this.text,
@@ -880,6 +864,23 @@ class ChatMessage {
     this.suggestions,
   });
 
+  factory ChatMessage.fromJson(final Map<String, dynamic> json) => ChatMessage(
+        text: json['text'],
+        isUser: json['isUser'],
+        timestamp: DateTime.parse(json['timestamp']),
+        isVoice: json['isVoice'] ?? false,
+        intent: json['intent'],
+        confidence: json['confidence']?.toDouble(),
+        suggestions: json['suggestions']?.cast<String>(),
+      );
+  final String text;
+  final bool isUser;
+  final DateTime timestamp;
+  final bool isVoice;
+  final String? intent;
+  final double? confidence;
+  final List<String>? suggestions;
+
   Map<String, dynamic> toJson() => {
         'text': text,
         'isUser': isUser,
@@ -889,25 +890,10 @@ class ChatMessage {
         'confidence': confidence,
         'suggestions': suggestions,
       };
-
-  factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
-        text: json['text'],
-        isUser: json['isUser'],
-        timestamp: DateTime.parse(json['timestamp']),
-        isVoice: json['isVoice'] ?? false,
-        intent: json['intent'],
-        confidence: json['confidence']?.toDouble(),
-        suggestions: json['suggestions']?.cast<String>(),
-      );
 }
 
 /// Chat response model
 class ChatResponse {
-  final String text;
-  final String intent;
-  final double confidence;
-  final List<String> suggestions;
-  final Map<String, dynamic> entities;
 
   ChatResponse({
     required this.text,
@@ -916,4 +902,9 @@ class ChatResponse {
     this.suggestions = const [],
     this.entities = const {},
   });
+  final String text;
+  final String intent;
+  final double confidence;
+  final List<String> suggestions;
+  final Map<String, dynamic> entities;
 }

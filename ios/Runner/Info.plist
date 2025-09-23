@@ -50,7 +50,7 @@
 	
 	<!-- Google Maps API Key -->
 	<key>GMSApiKey</key>
-	<string>AIzaSyBYEed3sy2-qp1KGeEhvzSP4JwzaRgAzTg</string>
+	<string>AIzaSyDwG_imrSuzCYuSBgU1v19XjoTyGfE6yds</string>
 	
 	<!-- Camera and Microphone permissions -->
 	<key>NSCameraUsageDescription</key>

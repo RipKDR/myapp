@@ -17,7 +17,7 @@ class _ProviderRosterScreenState extends State<ProviderRosterScreen> {
   @override
   void initState() {
     super.initState();
-    _sub = ShiftRepository.stream().listen((cloud) {
+    _sub = ShiftRepository.stream().listen((final cloud) {
       if (!mounted || cloud.isEmpty) return;
       setState(() {
         _shifts
@@ -34,14 +34,14 @@ class _ProviderRosterScreenState extends State<ProviderRosterScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final score = ComplianceService.score(_shifts);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Roster & Compliance'),
         actions: [
           Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(12),
             child: Center(child: Text('Compliance $score%')),
           )
         ],
@@ -81,7 +81,7 @@ class _ProviderRosterScreenState extends State<ProviderRosterScreen> {
     DateTime end = start.add(const Duration(hours: 1));
     final s = await showDialog<Shift>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (final context) => AlertDialog(
         title: const Text('New shift'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -177,10 +177,10 @@ class _ProviderRosterScreenState extends State<ProviderRosterScreen> {
 }
 
 class _ComplianceBar extends StatelessWidget {
-  final int score;
   const _ComplianceBar({required this.score});
+  final int score;
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final pct = score / 100;
     final color = score >= 90
         ? Colors.green
@@ -189,11 +189,11 @@ class _ComplianceBar extends StatelessWidget {
             : Colors.red;
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [const Icon(Icons.verified_user), const SizedBox(width: 8), const Text('Compliance')]),
+            const Row(children: [Icon(Icons.verified_user), SizedBox(width: 8), Text('Compliance')]),
             const SizedBox(height: 8),
             LinearProgressIndicator(value: pct, color: color),
             const SizedBox(height: 6),

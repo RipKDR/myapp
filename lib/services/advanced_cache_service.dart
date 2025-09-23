@@ -9,10 +9,10 @@ import 'analytics_service.dart';
 /// Advanced Multi-layer Caching Service with intelligent prefetching,
 /// offline-first architecture, and performance optimization
 class AdvancedCacheService {
-  static final AdvancedCacheService _instance =
-      AdvancedCacheService._internal();
   factory AdvancedCacheService() => _instance;
   AdvancedCacheService._internal();
+  static final AdvancedCacheService _instance =
+      AdvancedCacheService._internal();
 
   final AnalyticsService _analytics = AnalyticsService();
 
@@ -73,7 +73,7 @@ class AdvancedCacheService {
   }
 
   /// Get data with multi-layer cache lookup and intelligent prefetching
-  Future<T?> get<T>(String key, {T Function()? fetcher, Duration? ttl}) async {
+  Future<T?> get<T>(final String key, {final T Function()? fetcher, final Duration? ttl}) async {
     if (!_isInitialized) await initialize();
 
     final startTime = DateTime.now();
@@ -121,8 +121,8 @@ class AdvancedCacheService {
   }
 
   /// Set data in cache with intelligent layer selection
-  Future<void> set<T>(String key, T value,
-      {Duration? ttl, CachePriority priority = CachePriority.normal}) async {
+  Future<void> set<T>(final String key, final T value,
+      {final Duration? ttl, final CachePriority priority = CachePriority.normal}) async {
     if (!_isInitialized) await initialize();
 
     try {
@@ -135,7 +135,6 @@ class AdvancedCacheService {
         expiryTime: expiryTime,
         priority: priority,
         createdAt: DateTime.now(),
-        accessCount: 0,
       );
 
       // Store in appropriate cache layers based on priority
@@ -169,8 +168,8 @@ class AdvancedCacheService {
   }
 
   /// Prefetch data based on usage patterns and predictions
-  Future<void> prefetch<T>(String key, Future<T> Function() fetcher,
-      {Duration? ttl}) async {
+  Future<void> prefetch<T>(final String key, final Future<T> Function() fetcher,
+      {final Duration? ttl}) async {
     if (!_isInitialized) await initialize();
 
     try {
@@ -180,7 +179,7 @@ class AdvancedCacheService {
 
       // Fetch and cache
       final data = await fetcher();
-      await set(key, data, ttl: ttl, priority: CachePriority.normal);
+      await set(key, data, ttl: ttl);
 
       await _analytics.logEvent('cache_prefetch', parameters: {
         'key': key,
@@ -196,7 +195,7 @@ class AdvancedCacheService {
 
   /// Intelligent batch prefetching based on user patterns
   Future<void> intelligentPrefetch<T>(
-      List<String> keys, Future<Map<String, T>> Function() batchFetcher) async {
+      final List<String> keys, final Future<Map<String, T>> Function() batchFetcher) async {
     if (!_isInitialized) await initialize();
 
     try {
@@ -217,7 +216,7 @@ class AdvancedCacheService {
       // Cache all fetched data
       for (final entry in batchData.entries) {
         if (uncachedKeys.contains(entry.key)) {
-          await set(entry.key, entry.value, priority: CachePriority.normal);
+          await set(entry.key, entry.value);
         }
       }
 
@@ -235,7 +234,7 @@ class AdvancedCacheService {
   }
 
   /// Remove data from cache
-  Future<void> remove(String key) async {
+  Future<void> remove(final String key) async {
     if (!_isInitialized) await initialize();
 
     try {
@@ -287,9 +286,9 @@ class AdvancedCacheService {
 
     // Calculate hit rates
     final totalHits =
-        _cacheMetrics.values.fold<int>(0, (sum, metrics) => sum + metrics.hits);
+        _cacheMetrics.values.fold<int>(0, (final sum, final metrics) => sum + metrics.hits);
     final totalMisses = _cacheMetrics.values
-        .fold<int>(0, (sum, metrics) => sum + metrics.misses);
+        .fold<int>(0, (final sum, final metrics) => sum + metrics.misses);
     final totalRequests = totalHits + totalMisses;
 
     final hitRate = totalRequests > 0 ? (totalHits / totalRequests) * 100 : 0.0;
@@ -297,7 +296,7 @@ class AdvancedCacheService {
     // Calculate average response times
     final totalResponseTime = _cacheMetrics.values.fold<Duration>(
       Duration.zero,
-      (sum, metrics) => sum + metrics.totalResponseTime,
+      (final sum, final metrics) => sum + metrics.totalResponseTime,
     );
     final averageResponseTime = totalRequests > 0
         ? Duration(
@@ -317,7 +316,7 @@ class AdvancedCacheService {
   }
 
   /// Get data from memory cache
-  Future<T?> _getFromMemoryCache<T>(String key) async {
+  Future<T?> _getFromMemoryCache<T>(final String key) async {
     try {
       final entry = _memoryCache.get(key);
       if (entry == null) return null;
@@ -361,7 +360,7 @@ class AdvancedCacheService {
   }
 
   /// Get data from disk cache
-  Future<T?> _getFromDiskCache<T>(String key) async {
+  Future<T?> _getFromDiskCache<T>(final String key) async {
     try {
       final entry = _diskCache.get(key);
       if (entry == null) return null;
@@ -406,11 +405,11 @@ class AdvancedCacheService {
 
   /// Fetch data from network
   Future<T?> _fetchFromNetwork<T>(
-      String key, T Function() fetcher, Duration? ttl) async {
+      final String key, final T Function() fetcher, final Duration? ttl) async {
     try {
       final data = fetcher();
       if (data != null) {
-        await set(key, data, ttl: ttl, priority: CachePriority.normal);
+        await set(key, data, ttl: ttl);
       }
       return data;
     } catch (e) {
@@ -420,7 +419,7 @@ class AdvancedCacheService {
   }
 
   /// Set data in memory cache
-  Future<void> _setMemoryCache<T>(String key, T value, Duration ttl) async {
+  Future<void> _setMemoryCache<T>(final String key, final T value, final Duration ttl) async {
     try {
       final expiryTime = DateTime.now().add(ttl);
       final cacheEntry = CacheEntry<T>(
@@ -428,7 +427,6 @@ class AdvancedCacheService {
         expiryTime: expiryTime,
         priority: CachePriority.high,
         createdAt: DateTime.now(),
-        accessCount: 0,
       );
 
       await _memoryCache.put(key, cacheEntry.toJson());
@@ -443,7 +441,7 @@ class AdvancedCacheService {
   }
 
   /// Set data in disk cache
-  Future<void> _setDiskCache<T>(String key, T value, Duration ttl) async {
+  Future<void> _setDiskCache<T>(final String key, final T value, final Duration ttl) async {
     try {
       final expiryTime = DateTime.now().add(ttl);
       final cacheEntry = CacheEntry<T>(
@@ -451,7 +449,6 @@ class AdvancedCacheService {
         expiryTime: expiryTime,
         priority: CachePriority.normal,
         createdAt: DateTime.now(),
-        accessCount: 0,
       );
 
       await _diskCache.put(key, cacheEntry.toJson());
@@ -466,7 +463,7 @@ class AdvancedCacheService {
   }
 
   /// Update cache metadata
-  Future<void> _updateMetadata<T>(String key, CacheEntry<T> entry) async {
+  Future<void> _updateMetadata<T>(final String key, final CacheEntry<T> entry) async {
     try {
       final metadata = CacheMetadata(
         key: key,
@@ -488,7 +485,7 @@ class AdvancedCacheService {
     try {
       // Sort by last access time
       final sortedKeys = _lastAccess.entries.toList()
-        ..sort((a, b) => a.value.compareTo(b.value));
+        ..sort((final a, final b) => a.value.compareTo(b.value));
 
       // Remove oldest 10% of items
       final itemsToRemove = (sortedKeys.length * 0.1).ceil();
@@ -506,8 +503,8 @@ class AdvancedCacheService {
 
   /// Update cache metrics
   Future<void> _updateCacheMetrics(
-      String key, String hitType, Duration responseTime) async {
-    final metrics = _cacheMetrics.putIfAbsent(key, () => CacheMetrics());
+      final String key, final String hitType, final Duration responseTime) async {
+    final metrics = _cacheMetrics.putIfAbsent(key, CacheMetrics.new);
 
     switch (hitType) {
       case 'memory_hit':
@@ -533,7 +530,7 @@ class AdvancedCacheService {
     final connectivity = Connectivity();
 
     connectivity.onConnectivityChanged
-        .listen((List<ConnectivityResult> results) {
+        .listen((final results) {
       final result =
           results.isNotEmpty ? results.first : ConnectivityResult.none;
       _isOnline = result != ConnectivityResult.none;
@@ -560,7 +557,8 @@ class AdvancedCacheService {
       if (metricsJson != null) {
         final metricsMap = jsonDecode(metricsJson) as Map<String, dynamic>;
         for (final entry in metricsMap.entries) {
-          _cacheMetrics[entry.key] = CacheMetrics.fromJson(entry.value);
+          _cacheMetrics[entry.key] =
+              CacheMetrics.fromJson(entry.value as Map<String, dynamic>);
         }
       }
     } catch (e) {
@@ -601,9 +599,10 @@ class AdvancedCacheService {
       for (final key in _memoryCache.keys) {
         final entry = _memoryCache.get(key);
         if (entry != null) {
-          final cacheEntry = CacheEntry.fromJson(entry as Map<String, dynamic>);
+          final cacheEntry =
+              CacheEntry<String>.fromJson(entry as Map<String, dynamic>);
           if (now.isAfter(cacheEntry.expiryTime)) {
-            keysToRemove.add(key);
+            keysToRemove.add(key as String);
           }
         }
       }
@@ -612,9 +611,10 @@ class AdvancedCacheService {
       for (final key in _diskCache.keys) {
         final entry = _diskCache.get(key);
         if (entry != null) {
-          final cacheEntry = CacheEntry.fromJson(entry as Map<String, dynamic>);
+          final cacheEntry =
+              CacheEntry<String>.fromJson(entry as Map<String, dynamic>);
           if (now.isAfter(cacheEntry.expiryTime)) {
-            keysToRemove.add(key);
+            keysToRemove.add(key as String);
           }
         }
       }
@@ -646,7 +646,7 @@ class AdvancedCacheService {
   }
 
   /// Estimate size of cached value
-  int _estimateSize<T>(T value) {
+  int _estimateSize<T>(final T value) {
     try {
       if (value is String) {
         return value.length * 2; // UTF-16 encoding
@@ -669,11 +669,6 @@ class AdvancedCacheService {
 
 /// Cache entry model
 class CacheEntry<T> {
-  final T value;
-  final DateTime expiryTime;
-  final CachePriority priority;
-  final DateTime createdAt;
-  int accessCount;
 
   CacheEntry({
     required this.value,
@@ -683,21 +678,13 @@ class CacheEntry<T> {
     this.accessCount = 0,
   });
 
-  Map<String, dynamic> toJson() => {
-        'value': value,
-        'expiryTime': expiryTime.toIso8601String(),
-        'priority': priority.name,
-        'createdAt': createdAt.toIso8601String(),
-        'accessCount': accessCount,
-      };
-
-  factory CacheEntry.fromJson(Map<String, dynamic> json) {
+  factory CacheEntry.fromJson(final Map<String, dynamic> json) {
     try {
       return CacheEntry<T>(
         value: json['value'] as T,
         expiryTime: DateTime.parse(json['expiryTime'] as String),
         priority: CachePriority.values.firstWhere(
-          (p) => p.name == json['priority'],
+          (final p) => p.name == json['priority'],
           orElse: () => CachePriority.normal,
         ),
         createdAt: DateTime.parse(json['createdAt'] as String),
@@ -707,16 +694,23 @@ class CacheEntry<T> {
       throw ArgumentError('Invalid cache entry data: $e');
     }
   }
+  final T value;
+  final DateTime expiryTime;
+  final CachePriority priority;
+  final DateTime createdAt;
+  int accessCount;
+
+  Map<String, dynamic> toJson() => {
+        'value': value,
+        'expiryTime': expiryTime.toIso8601String(),
+        'priority': priority.name,
+        'createdAt': createdAt.toIso8601String(),
+        'accessCount': accessCount,
+      };
 }
 
 /// Cache metadata model
 class CacheMetadata {
-  final String key;
-  final CachePriority priority;
-  final DateTime createdAt;
-  final DateTime lastAccessed;
-  final int accessCount;
-  final int size;
 
   CacheMetadata({
     required this.key,
@@ -727,21 +721,12 @@ class CacheMetadata {
     required this.size,
   });
 
-  Map<String, dynamic> toJson() => {
-        'key': key,
-        'priority': priority.name,
-        'createdAt': createdAt.toIso8601String(),
-        'lastAccessed': lastAccessed.toIso8601String(),
-        'accessCount': accessCount,
-        'size': size,
-      };
-
-  factory CacheMetadata.fromJson(Map<String, dynamic> json) {
+  factory CacheMetadata.fromJson(final Map<String, dynamic> json) {
     try {
       return CacheMetadata(
         key: json['key'] as String,
         priority: CachePriority.values.firstWhere(
-          (p) => p.name == json['priority'],
+          (final p) => p.name == json['priority'],
           orElse: () => CachePriority.normal,
         ),
         createdAt: DateTime.parse(json['createdAt'] as String),
@@ -753,17 +738,47 @@ class CacheMetadata {
       throw ArgumentError('Invalid cache metadata: $e');
     }
   }
+  final String key;
+  final CachePriority priority;
+  final DateTime createdAt;
+  final DateTime lastAccessed;
+  final int accessCount;
+  final int size;
+
+  Map<String, dynamic> toJson() => {
+        'key': key,
+        'priority': priority.name,
+        'createdAt': createdAt.toIso8601String(),
+        'lastAccessed': lastAccessed.toIso8601String(),
+        'accessCount': accessCount,
+        'size': size,
+      };
 }
 
 /// Cache metrics model
 class CacheMetrics {
+
+  CacheMetrics();
+
+  factory CacheMetrics.fromJson(final Map<String, dynamic> json) {
+    try {
+      final metrics = CacheMetrics();
+      metrics.memoryHits = (json['memoryHits'] as int?) ?? 0;
+      metrics.diskHits = (json['diskHits'] as int?) ?? 0;
+      metrics.networkHits = (json['networkHits'] as int?) ?? 0;
+      metrics.misses = (json['misses'] as int?) ?? 0;
+      metrics.totalResponseTime =
+          Duration(microseconds: (json['totalResponseTime'] as int?) ?? 0);
+      return metrics;
+    } catch (e) {
+      throw ArgumentError('Invalid cache metrics data: $e');
+    }
+  }
   int memoryHits = 0;
   int diskHits = 0;
   int networkHits = 0;
   int misses = 0;
   Duration totalResponseTime = Duration.zero;
-
-  CacheMetrics();
 
   int get hits => memoryHits + diskHits + networkHits;
   int get totalRequests => hits + misses;
@@ -780,33 +795,10 @@ class CacheMetrics {
         'misses': misses,
         'totalResponseTime': totalResponseTime.inMicroseconds,
       };
-
-  factory CacheMetrics.fromJson(Map<String, dynamic> json) {
-    try {
-      final metrics = CacheMetrics();
-      metrics.memoryHits = (json['memoryHits'] as int?) ?? 0;
-      metrics.diskHits = (json['diskHits'] as int?) ?? 0;
-      metrics.networkHits = (json['networkHits'] as int?) ?? 0;
-      metrics.misses = (json['misses'] as int?) ?? 0;
-      metrics.totalResponseTime =
-          Duration(microseconds: (json['totalResponseTime'] as int?) ?? 0);
-      return metrics;
-    } catch (e) {
-      throw ArgumentError('Invalid cache metrics data: $e');
-    }
-  }
 }
 
 /// Cache statistics model
 class CacheStatistics {
-  final int memoryItems;
-  final int diskItems;
-  final int metadataItems;
-  final int totalItems;
-  final double hitRate;
-  final Duration averageResponseTime;
-  final int totalRequests;
-  final Map<String, CacheMetrics> cacheMetrics;
 
   CacheStatistics({
     required this.memoryItems,
@@ -818,6 +810,14 @@ class CacheStatistics {
     required this.totalRequests,
     required this.cacheMetrics,
   });
+  final int memoryItems;
+  final int diskItems;
+  final int metadataItems;
+  final int totalItems;
+  final double hitRate;
+  final Duration averageResponseTime;
+  final int totalRequests;
+  final Map<String, CacheMetrics> cacheMetrics;
 }
 
 /// Cache priority enum

@@ -26,7 +26,7 @@ class _ConfettiBannerState extends State<ConfettiBanner> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final g = context.watch<GamificationController>();
     final settings = context.watch<SettingsController>();
     final badge = g.lastBadge;
@@ -47,7 +47,6 @@ class _ConfettiBannerState extends State<ConfettiBanner> {
         confettiController: _controller,
         blastDirectionality: BlastDirectionality.explosive,
         numberOfParticles: 20,
-        shouldLoop: false,
       ),
     );
   }

@@ -1,44 +1,22 @@
 enum AppointmentStatus { scheduled, completed, cancelled }
 
 class Appointment {
-  final String id;
-  final DateTime start;
-  final DateTime end;
-  final String title;
-  final String providerName;
-  final String? providerId;
-  // participantId is the external-facing name used in tests; userId kept for backwards compatibility
-  final String? participantId;
-  final String? userId;
-  final bool confirmed;
-  final bool cancelled;
-  final String? description;
-  final String? location;
-  final String? notes;
-  final String? cancellationReason;
-  final DateTime? confirmedAt;
-  final DateTime? cancelledAt;
-  final DateTime? rescheduledAt;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-  // Preserve explicit status if provided (used by tests and copyWith)
-  final AppointmentStatus? _explicitStatus;
 
   // Accept both start/end and startTime/endTime for compatibility with tests.
   Appointment({
     required this.id,
-    DateTime? start,
-    DateTime? startTime,
-    DateTime? end,
-    DateTime? endTime,
+    final DateTime? start,
+    final DateTime? startTime,
+    final DateTime? end,
+    final DateTime? endTime,
     required this.title,
     this.providerName = '',
     this.providerId,
-    String? participantId,
-    String? userId,
-    bool confirmed = false,
-    bool cancelled = false,
-    AppointmentStatus? status,
+    final String? participantId,
+    final String? userId,
+    final bool confirmed = false,
+    final bool cancelled = false,
+    final AppointmentStatus? status,
     this.description,
     this.location,
     this.notes,
@@ -72,30 +50,51 @@ class Appointment {
       throw ArgumentError('start must be in the future');
     }
   }
+  final String id;
+  final DateTime start;
+  final DateTime end;
+  final String title;
+  final String providerName;
+  final String? providerId;
+  // participantId is the external-facing name used in tests; userId kept for backwards compatibility
+  final String? participantId;
+  final String? userId;
+  final bool confirmed;
+  final bool cancelled;
+  final String? description;
+  final String? location;
+  final String? notes;
+  final String? cancellationReason;
+  final DateTime? confirmedAt;
+  final DateTime? cancelledAt;
+  final DateTime? rescheduledAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  // Preserve explicit status if provided (used by tests and copyWith)
+  final AppointmentStatus? _explicitStatus;
 
   Appointment copyWith({
-    String? id,
-    DateTime? start,
-    DateTime? end,
-    String? title,
-    String? providerName,
-    String? providerId,
-    String? participantId,
-    String? userId,
-    bool? confirmed,
-    bool? cancelled,
-    String? description,
-    String? location,
-    String? notes,
-    AppointmentStatus? status,
-    String? cancellationReason,
-    DateTime? confirmedAt,
-    DateTime? cancelledAt,
-    DateTime? rescheduledAt,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
-    return Appointment(
+    final String? id,
+    final DateTime? start,
+    final DateTime? end,
+    final String? title,
+    final String? providerName,
+    final String? providerId,
+    final String? participantId,
+    final String? userId,
+    final bool? confirmed,
+    final bool? cancelled,
+    final String? description,
+    final String? location,
+    final String? notes,
+    final AppointmentStatus? status,
+    final String? cancellationReason,
+    final DateTime? confirmedAt,
+    final DateTime? cancelledAt,
+    final DateTime? rescheduledAt,
+    final DateTime? createdAt,
+    final DateTime? updatedAt,
+  }) => Appointment(
       id: id ?? this.id,
       start: start ?? this.start,
       end: end ?? this.end,
@@ -124,7 +123,6 @@ class Appointment {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
-  }
 
   Map<String, dynamic> toMap() => {
         'id': id,
@@ -150,7 +148,7 @@ class Appointment {
         'updatedAt': updatedAt?.toIso8601String(),
       };
 
-  static Appointment fromMap(Map<String, dynamic> m) {
+  static Appointment fromMap(final Map<String, dynamic> m) {
     try {
       return Appointment(
         id: m['id'] as String? ?? '',
@@ -209,7 +207,7 @@ class Appointment {
       'Appointment(id: $id, title: $title, start: $start, provider: $providerName)';
 
   @override
-  bool operator ==(Object other) =>
+  bool operator ==(final Object other) =>
       identical(this, other) ||
       other is Appointment &&
           runtimeType == other.runtimeType &&
@@ -219,7 +217,7 @@ class Appointment {
   int get hashCode => id.hashCode;
 }
 
-AppointmentStatus _parseAppointmentStatus(String? s) {
+AppointmentStatus _parseAppointmentStatus(final String? s) {
   switch (s) {
     case 'completed':
       return AppointmentStatus.completed;

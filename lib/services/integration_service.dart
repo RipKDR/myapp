@@ -8,9 +8,9 @@ import 'analytics_service.dart';
 /// Integration Service for third-party APIs, external systems,
 /// and comprehensive ecosystem connectivity
 class IntegrationService {
-  static final IntegrationService _instance = IntegrationService._internal();
   factory IntegrationService() => _instance;
   IntegrationService._internal();
+  static final IntegrationService _instance = IntegrationService._internal();
 
   final AnalyticsService _analytics = AnalyticsService();
   // Services kept for future use; prefix with underscore but ignore lints by referencing where meaningful
@@ -283,11 +283,11 @@ class IntegrationService {
         final statusJson = jsonDecode(statusData);
         _integrationStatus[integration.id] =
             IntegrationStatus.values.firstWhere(
-          (s) => s.name == statusJson['status'],
+          (final s) => s.name == statusJson['status'],
           orElse: () => IntegrationStatus.disconnected,
         );
         _lastSyncTimes[integration.id] =
-            DateTime.parse(statusJson['last_sync']);
+            DateTime.parse(statusJson['last_sync'] as String);
       }
     }
   }
@@ -297,7 +297,7 @@ class IntegrationService {
     // Monitor connectivity changes
     final connectivity = Connectivity();
     connectivity.onConnectivityChanged
-        .listen((List<ConnectivityResult> results) {
+        .listen((final results) {
       final result =
           results.isNotEmpty ? results.first : ConnectivityResult.none;
       if (result != ConnectivityResult.none) {
@@ -308,7 +308,7 @@ class IntegrationService {
 
   /// Connect to an integration
   Future<bool> connectIntegration(
-      String integrationId, Map<String, dynamic> credentials) async {
+      final String integrationId, final Map<String, dynamic> credentials) async {
     try {
       final integration = _integrations[integrationId];
       if (integration == null) {
@@ -358,7 +358,7 @@ class IntegrationService {
   }
 
   /// Disconnect from an integration
-  Future<bool> disconnectIntegration(String integrationId) async {
+  Future<bool> disconnectIntegration(final String integrationId) async {
     try {
       final integration = _integrations[integrationId];
       if (integration == null) {
@@ -394,7 +394,7 @@ class IntegrationService {
   }
 
   /// Sync data from an integration
-  Future<bool> syncIntegration(String integrationId) async {
+  Future<bool> syncIntegration(final String integrationId) async {
     try {
       final integration = _integrations[integrationId];
       if (integration == null ||
@@ -464,77 +464,77 @@ class IntegrationService {
   }
 
   /// Sync calendar data
-  Future<void> _syncCalendarData(String integrationId) async {
+  Future<void> _syncCalendarData(final String integrationId) async {
     // Implementation would sync calendar data
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future<void>.delayed(const Duration(milliseconds: 100));
   }
 
   /// Sync communication data
-  Future<void> _syncCommunicationData(String integrationId) async {
+  Future<void> _syncCommunicationData(final String integrationId) async {
     // Implementation would sync communication data
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future<void>.delayed(const Duration(milliseconds: 100));
   }
 
   /// Sync video conferencing data
-  Future<void> _syncVideoConferencingData(String integrationId) async {
+  Future<void> _syncVideoConferencingData(final String integrationId) async {
     // Implementation would sync video conferencing data
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future<void>.delayed(const Duration(milliseconds: 100));
   }
 
   /// Sync government data
-  Future<void> _syncGovernmentData(String integrationId) async {
+  Future<void> _syncGovernmentData(final String integrationId) async {
     // Implementation would sync government data
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future<void>.delayed(const Duration(milliseconds: 100));
   }
 
   /// Sync healthcare data
-  Future<void> _syncHealthcareData(String integrationId) async {
+  Future<void> _syncHealthcareData(final String integrationId) async {
     // Implementation would sync healthcare data
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future<void>.delayed(const Duration(milliseconds: 100));
   }
 
   /// Sync IoT data
-  Future<void> _syncIoTData(String integrationId) async {
+  Future<void> _syncIoTData(final String integrationId) async {
     // Implementation would sync IoT data
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future<void>.delayed(const Duration(milliseconds: 100));
   }
 
   /// Validate credentials for an integration
   Future<bool> _validateCredentials(
-      String integrationId, Map<String, dynamic> credentials) async {
+      final String integrationId, final Map<String, dynamic> credentials) async {
     // Implementation would validate credentials
     return true;
   }
 
   /// Store credentials securely
   Future<void> _storeCredentials(
-      String integrationId, Map<String, dynamic> credentials) async {
+      final String integrationId, final Map<String, dynamic> credentials) async {
     // Implementation would store credentials securely
   }
 
   /// Clear credentials
-  Future<void> _clearCredentials(String integrationId) async {
+  Future<void> _clearCredentials(final String integrationId) async {
     // Implementation would clear credentials
   }
 
   /// Test connection to an integration
-  Future<bool> _testConnection(String integrationId) async {
+  Future<bool> _testConnection(final String integrationId) async {
     // Implementation would test connection
     return true;
   }
 
   /// Start sync for an integration
-  Future<void> _startSync(String integrationId) async {
+  Future<void> _startSync(final String integrationId) async {
     // Implementation would start sync
   }
 
   /// Stop sync for an integration
-  Future<void> _stopSync(String integrationId) async {
+  Future<void> _stopSync(final String integrationId) async {
     // Implementation would stop sync
   }
 
   /// Save integration status
-  Future<void> _saveIntegrationStatus(String integrationId) async {
+  Future<void> _saveIntegrationStatus(final String integrationId) async {
     final prefs = await SharedPreferences.getInstance();
     final statusData = {
       'status': _integrationStatus[integrationId]?.name ?? 'disconnected',
@@ -546,7 +546,7 @@ class IntegrationService {
 
   /// Record integration error
   Future<void> _recordIntegrationError(
-      String integrationId, String error) async {
+      final String integrationId, final String error) async {
     final errorRecord = IntegrationError(
       integrationId: integrationId,
       error: error,
@@ -563,12 +563,12 @@ class IntegrationService {
 
   /// Make API request with rate limiting and error handling
   Future<ApiResponse> makeApiRequest(
-    String integrationId,
-    String endpoint, {
-    HttpMethod method = HttpMethod.get,
-    Map<String, dynamic>? body,
-    Map<String, String>? headers,
-    Duration? timeout,
+    final String integrationId,
+    final String endpoint, {
+    final HttpMethod method = HttpMethod.get,
+    final Map<String, dynamic>? body,
+    final Map<String, String>? headers,
+    final Duration? timeout,
   }) async {
     try {
       final config = _apiConfigurations[integrationId];
@@ -660,7 +660,7 @@ class IntegrationService {
   }
 
   /// Check rate limit for an integration
-  Future<bool> _checkRateLimit(String integrationId) async {
+  Future<bool> _checkRateLimit(final String integrationId) async {
     final config = _apiConfigurations[integrationId];
     if (config == null) return true;
 
@@ -688,7 +688,7 @@ class IntegrationService {
   }
 
   /// Update rate limit for an integration
-  void _updateRateLimit(String integrationId) {
+  void _updateRateLimit(final String integrationId) {
     final rateLimit = _rateLimits[integrationId];
     if (rateLimit != null) {
       rateLimit.minuteRequests++;
@@ -698,39 +698,31 @@ class IntegrationService {
 
   /// Add authentication headers
   Future<void> _addAuthHeaders(
-      String integrationId, Map<String, String> headers) async {
+      final String integrationId, final Map<String, String> headers) async {
     // Implementation would add authentication headers
   }
 
   /// Get integration status
-  IntegrationStatus? getIntegrationStatus(String integrationId) {
-    return _integrationStatus[integrationId];
-  }
+  IntegrationStatus? getIntegrationStatus(final String integrationId) => _integrationStatus[integrationId];
 
   /// Get all integrations
-  Map<String, IntegrationProvider> getIntegrations() {
-    return Map.unmodifiable(_integrations);
-  }
+  Map<String, IntegrationProvider> getIntegrations() => Map.unmodifiable(_integrations);
 
   /// Get connected integrations
-  List<IntegrationProvider> getConnectedIntegrations() {
-    return _integrations.values
+  List<IntegrationProvider> getConnectedIntegrations() => _integrations.values
         .where(
-            (integration) => integration.status == IntegrationStatus.connected)
+            (final integration) => integration.status == IntegrationStatus.connected)
         .toList();
-  }
 
   /// Get integration errors
-  List<IntegrationError> getIntegrationErrors(String integrationId) {
-    return _integrationErrors[integrationId] ?? [];
-  }
+  List<IntegrationError> getIntegrationErrors(final String integrationId) => _integrationErrors[integrationId] ?? [];
 
   /// Get integration statistics
   Map<String, dynamic> getIntegrationStatistics() {
     final total = _integrations.length;
     final connected = _integrations.values
         .where(
-            (integration) => integration.status == IntegrationStatus.connected)
+            (final integration) => integration.status == IntegrationStatus.connected)
         .length;
     final disconnected = total - connected;
 
@@ -741,7 +733,7 @@ class IntegrationService {
       'connection_rate': total > 0 ? (connected / total) * 100 : 0,
       'last_sync_times': _lastSyncTimes,
       'error_counts': _integrationErrors.map(
-        (key, value) => MapEntry(key, value.length),
+        (final key, final value) => MapEntry(key, value.length),
       ),
     };
   }
@@ -755,11 +747,6 @@ class IntegrationService {
 
 /// API configuration model
 class ApiConfiguration {
-  final String name;
-  final String baseUrl;
-  final AuthType authType;
-  final RateLimit rateLimit;
-  final Duration timeout;
 
   ApiConfiguration({
     required this.name,
@@ -768,6 +755,11 @@ class ApiConfiguration {
     required this.rateLimit,
     required this.timeout,
   });
+  final String name;
+  final String baseUrl;
+  final AuthType authType;
+  final RateLimit rateLimit;
+  final Duration timeout;
 }
 
 /// Authentication type enum
@@ -781,24 +773,19 @@ enum AuthType {
 
 /// Rate limit model
 class RateLimit {
-  final int requestsPerMinute;
-  final int requestsPerDay;
-  int minuteRequests = 0;
-  int dayRequests = 0;
 
   RateLimit({
     required this.requestsPerMinute,
     required this.requestsPerDay,
   });
+  final int requestsPerMinute;
+  final int requestsPerDay;
+  int minuteRequests = 0;
+  int dayRequests = 0;
 }
 
 /// Integration provider model
 class IntegrationProvider {
-  final String id;
-  final String name;
-  final IntegrationType type;
-  IntegrationStatus status;
-  final List<String> capabilities;
 
   IntegrationProvider({
     required this.id,
@@ -807,6 +794,11 @@ class IntegrationProvider {
     required this.status,
     required this.capabilities,
   });
+  final String id;
+  final String name;
+  final IntegrationType type;
+  IntegrationStatus status;
+  final List<String> capabilities;
 }
 
 /// Integration type enum
@@ -832,12 +824,6 @@ enum IntegrationStatus {
 
 /// Webhook configuration model
 class WebhookConfiguration {
-  final String id;
-  final String name;
-  final String url;
-  final List<String> events;
-  final String secret;
-  final bool enabled;
 
   WebhookConfiguration({
     required this.id,
@@ -847,27 +833,29 @@ class WebhookConfiguration {
     required this.secret,
     required this.enabled,
   });
+  final String id;
+  final String name;
+  final String url;
+  final List<String> events;
+  final String secret;
+  final bool enabled;
 }
 
 /// Integration error model
 class IntegrationError {
-  final String integrationId;
-  final String error;
-  final DateTime timestamp;
 
   IntegrationError({
     required this.integrationId,
     required this.error,
     required this.timestamp,
   });
+  final String integrationId;
+  final String error;
+  final DateTime timestamp;
 }
 
 /// API response model
 class ApiResponse {
-  final int statusCode;
-  final dynamic body;
-  final Map<String, String> headers;
-  final bool success;
 
   ApiResponse({
     required this.statusCode,
@@ -875,6 +863,10 @@ class ApiResponse {
     required this.headers,
     required this.success,
   });
+  final int statusCode;
+  final dynamic body;
+  final Map<String, String> headers;
+  final bool success;
 }
 
 /// HTTP method enum

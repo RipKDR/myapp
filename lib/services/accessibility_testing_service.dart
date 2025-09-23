@@ -4,10 +4,10 @@ import 'dart:developer' as developer;
 /// Comprehensive Accessibility Testing Service
 /// Provides automated accessibility testing and validation
 class AccessibilityTestingService {
-  static final AccessibilityTestingService _instance =
-      AccessibilityTestingService._internal();
   factory AccessibilityTestingService() => _instance;
   AccessibilityTestingService._internal();
+  static final AccessibilityTestingService _instance =
+      AccessibilityTestingService._internal();
 
   // Testing results
   final Map<String, List<AccessibilityIssue>> _testResults = {};
@@ -15,10 +15,10 @@ class AccessibilityTestingService {
 
   // Configuration
   static const double _minContrastRatio = 4.5;
-  static const double _minLargeTextContrastRatio = 3.0;
-  static const double _minUIElementContrastRatio = 3.0;
-  static const double _maxTextScaling = 2.0;
-  static const double _minTouchTargetSize = 44.0; // iOS/Android minimum
+  static const double _minLargeTextContrastRatio = 3;
+  static const double _minUIElementContrastRatio = 3;
+  static const double _maxTextScaling = 2;
+  static const double _minTouchTargetSize = 44; // iOS/Android minimum
 
   /// Initialize the accessibility testing service
   Future<void> initialize() async {
@@ -605,8 +605,8 @@ class AccessibilityTestingService {
   Future<bool> _testCustomDevices() async => true;
 
   /// Calculate overall accessibility score
-  double _calculateOverallScore(AccessibilityTestResults results) {
-    double score = 0.0;
+  double _calculateOverallScore(final AccessibilityTestResults results) {
+    double score = 0;
     int totalTests = 0;
 
     // WCAG compliance (40% weight)
@@ -655,18 +655,18 @@ class AccessibilityTestingService {
   }
 
   /// Calculate WCAG compliance score
-  double _calculateWCAGCompliance(WCAGComplianceResults results) {
+  double _calculateWCAGCompliance(final WCAGComplianceResults results) {
     int totalCriteria = 0;
     int passedCriteria = 0;
 
     // Count Level A criteria
-    results.levelACompliance.forEach((criterion, passed) {
+    results.levelACompliance.forEach((final criterion, final passed) {
       totalCriteria++;
       if (passed) passedCriteria++;
     });
 
     // Count Level AA criteria
-    results.levelAACompliance.forEach((criterion, passed) {
+    results.levelAACompliance.forEach((final criterion, final passed) {
       totalCriteria++;
       if (passed) passedCriteria++;
     });
@@ -675,9 +675,7 @@ class AccessibilityTestingService {
   }
 
   /// Get accessibility metrics
-  Map<String, AccessibilityMetrics> getMetrics() {
-    return _metrics;
-  }
+  Map<String, AccessibilityMetrics> getMetrics() => _metrics;
 
   /// Clear test results
   void clearResults() {
@@ -764,11 +762,6 @@ class AssistiveTechnologySupportResults {
 }
 
 class AccessibilityIssue {
-  final String id;
-  final String description;
-  final String severity;
-  final String category;
-  final String? recommendation;
 
   AccessibilityIssue({
     required this.id,
@@ -777,13 +770,14 @@ class AccessibilityIssue {
     required this.category,
     this.recommendation,
   });
+  final String id;
+  final String description;
+  final String severity;
+  final String category;
+  final String? recommendation;
 }
 
 class AccessibilityMetrics {
-  final String name;
-  final double value;
-  final String unit;
-  final DateTime timestamp;
 
   AccessibilityMetrics({
     required this.name,
@@ -791,4 +785,8 @@ class AccessibilityMetrics {
     required this.unit,
     required this.timestamp,
   });
+  final String name;
+  final double value;
+  final String unit;
+  final DateTime timestamp;
 }

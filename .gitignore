@@ -1,58 +1,10 @@
-# NDIS Connect - Git Ignore File
+# =============================================================================
+# NDIS Connect App - Comprehensive .gitignore
+# =============================================================================
 
-# Flutter/Dart
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
-.pub-cache/
-.pub/
-build/
-flutter_*.png
-linked_*.ds
-unlinked.ds
-unlinked_spec.ds
-
-# Android
-android/app/debug
-android/app/profile
-android/app/release
-android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
-android/key.properties
-android/app/*.keystore
-android/app/*.jks
-android/app/upload-keystore.jks
-android/app/ndis-connect-release.keystore
-
-# iOS
-ios/Flutter/Generated.xcconfig
-ios/Flutter/flutter_export_environment.sh
-ios/ServiceDefinitions.json
-ios/Runner/GeneratedPluginRegistrant.*
-
-# Firebase
-.firebase/
-firebase-debug.log
-firebase-debug.*.log
-.firebaserc
-firebase.json
-android/app/google-services.json
-ios/Runner/GoogleService-Info.plist
-
-# Environment variables
-.env
-.env.local
-.env.production
-.env.staging
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
+# =============================================================================
+# OS-Generated Files
+# =============================================================================
 .DS_Store
 .DS_Store?
 ._*
@@ -60,100 +12,249 @@ ios/Runner/GoogleService-Info.plist
 .Trashes
 ehthumbs.db
 Thumbs.db
+desktop.ini
+*.tmp
+*.temp
 
-# Logs
-*.log
-logs/
+# =============================================================================
+# IDE and Editor Files
+# =============================================================================
+# IntelliJ IDEA
+*.iml
+*.ipr
+*.iws
+.idea/
+out/
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+# Visual Studio Code
+.vscode/
+*.code-workspace
 
-# Coverage directory used by tools like istanbul
-coverage/
-
-# nyc test coverage
-.nyc_output
-
-# Dependency directories
-node_modules/
-
-# Optional npm cache directory
-.npm
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# dotenv environment variables file
-.env
-
-# Build artifacts
-builds/
-dist/
-*.apk
-*.aab
-*.ipa
-
-# Temporary files
-tmp/
-temp/
-
-# Security
-*.pem
-*.key
-*.crt
-*.p12
-*.mobileprovision
-
-# App signing
-android/app/key.properties
-android/app/*.keystore
-android/app/*.jks
-ios/Runner/GoogleService-Info.plist
-ios/Runner/GoogleService-Info-Debug.plist
-ios/Runner/GoogleService-Info-Release.plist
-
-# Local configuration
+# Android Studio
+.gradle/
 local.properties
-android/local.properties
+*.hprof
 
-# Generated files
-# lib/firebase_options.dart is committed so new devs can run the app
-lib/generated_plugin_registrant.dart
+# Xcode
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcuserstate
+project.xcworkspace/
 
-# Test files
-test_driver/
-integration_test/
+# =============================================================================
+# Flutter/Dart Specific
+# =============================================================================
+# Build outputs
+/build/
+/android/app/debug/
+/android/app/profile/
+/android/app/release/
+/ios/Flutter/App.framework
+/ios/Flutter/Flutter.framework
+/ios/Flutter/Flutter.podspec
+/ios/Flutter/Generated.xcconfig
+/ios/Flutter/ephemeral/
+/ios/Flutter/app.flx
+/ios/Flutter/app.zip
+/ios/Flutter/flutter_assets/
+/ios/Flutter/flutter_export_environment.sh
+/ios/ServiceDefinitions.json
+/ios/Runner/GeneratedPluginRegistrant.*
 
-# Documentation
-docs/build/
+# Dart/Flutter tooling
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
 
-# Backup files
-*.bak
-*.backup
+# Coverage reports
+/coverage/
+lcov.info
+
+# =============================================================================
+# Dependencies and Package Management
+# =============================================================================
+# Node.js (if using any JS tooling)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =============================================================================
+# Security and Sensitive Files
+# =============================================================================
+# Firebase configuration
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+web/firebase-config.js
+
+# API Keys and secrets
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+*.env
+
+# Keystore files
+android/app/*.keystore
+android/key.properties
+key.properties
+android/app/upload-keystore.jks
+android/app/debug.keystore
+
+# Certificates
+*.p12
+*.pem
+*.crt
+*.key
+
+# =============================================================================
+# Logs and Debugging
+# =============================================================================
+*.log
+*.log.*
+logs/
+log/
+
+# Crash reports
+crashlytics-build.properties
+crashlytics.properties
+
+# =============================================================================
+# Testing and Quality Assurance
+# =============================================================================
+# Test coverage
+coverage/
+test_coverage/
+*.lcov
+
+# Performance profiling
+*.hprof
+*.trace
+
+# =============================================================================
+# Documentation and Reports
+# =============================================================================
+# Generated documentation
+**/doc/api/
+docs/api/
+
+# Analysis reports
+analysis_options.yaml.bak
+dart_code_metrics_*
+
+# =============================================================================
+# Temporary and Cache Files
+# =============================================================================
+# General temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
 *~
 
-# Archive files
-*.zip
-*.tar.gz
-*.rar
+# Flutter specific caches
+.flutter-plugins-dependencies
+.flutter-plugins
 
-# Database
-*.db
-*.sqlite
-*.sqlite3
+# =============================================================================
+# Platform Specific
+# =============================================================================
+# Android
+android/app/src/main/res/values/strings.xml.bak
+android/gradle.properties.bak
 
-# Cache
-.cache/
-*.cache
+# iOS
+ios/Podfile.lock
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
 
-# Profiling
-*.prof
+# Web
+web/favicon.png
+web/icons/
+web/manifest.json.bak
+
+# Windows
+windows/flutter/generated_plugin_registrant.cc
+windows/flutter/generated_plugin_registrant.h
+windows/flutter/generated_plugins.cmake
+
+# Linux
+linux/flutter/generated_plugin_registrant.cc
+linux/flutter/generated_plugin_registrant.h
+linux/flutter/generated_plugins.cmake
+
+# macOS
+macos/Flutter/GeneratedPluginRegistrant.swift
+macos/Flutter/ephemeral/
+
+# =============================================================================
+# Version Control
+# =============================================================================
+# Git
+.git/
+.gitignore.bak
+
+# SVN
+.svn/
+
+# =============================================================================
+# Backup Files
+# =============================================================================
+*.bak
+*.backup
+*.old
+*.orig
+
+# =============================================================================
+# Custom App Specific
+# =============================================================================
+# User data and preferences (if stored locally)
+user_data/
+preferences/
+cache/
+
+# Generated assets
+generated_assets/
+auto_generated/
+
+# Script outputs
+script_outputs/
+validation_reports/
+
+# =============================================================================
+# Development and Debugging
+# =============================================================================
+# Debug symbols
+app.*.symbols
+app.*.map.json
+
+# Obfuscation
+mapping.txt
+symbols/
+
+# =============================================================================
+# CI/CD and Deployment
+# =============================================================================
+# Codemagic
+codemagic.yaml.bak
+
+# GitHub Actions
+.github/workflows/*.yml.bak
+
+# =============================================================================
+# Third-party Tools
+# =============================================================================
+# FVM (Flutter Version Management)
+.fvm/
+
+# Melos
+.melos_tool/

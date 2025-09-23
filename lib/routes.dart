@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'screens/participant_dashboard.dart';
 import 'screens/provider_dashboard.dart';
 import 'screens/calendar_screen.dart';
-import 'screens/budget_screen.dart';
+import 'screens/budget_screen_fixed.dart';
 import 'controllers/auth_controller.dart';
 import 'screens/chat_screen.dart';
 import 'screens/service_map_screen.dart';
@@ -12,7 +12,7 @@ import 'screens/snapshot_screen.dart';
 import 'screens/support_circle_screen.dart';
 import 'screens/auth_screen.dart';
 import 'screens/provider_roster_screen.dart';
-import 'screens/analytics_dashboard_screen.dart';
+import 'screens/privacy_dashboard_screen.dart';
 
 class Routes {
   static const bootstrap = '/';
@@ -27,22 +27,22 @@ class Routes {
   static const circle = '/circle';
   static const auth = '/auth';
   static const roster = '/roster';
-  static const analytics = '/analytics';
+  static const privacy = '/privacy';
 
   static Map<String, WidgetBuilder> get routes => {
-        bootstrap: (context) => const _BootstrapScreen(),
-        participantDashboard: (context) => const ParticipantDashboardScreen(),
-        providerDashboard: (context) => const ProviderDashboardScreen(),
-        calendar: (context) => const CalendarScreen(),
-        budget: (context) => const BudgetScreen(),
-        chat: (context) => const ChatScreen(),
-        map: (context) => const ServiceMapScreen(),
-        checklist: (context) => const ChecklistScreen(),
-        snapshot: (context) => const SnapshotScreen(),
-        circle: (context) => const SupportCircleScreen(),
-        auth: (context) => const AuthScreen(),
-        roster: (context) => const ProviderRosterScreen(),
-        analytics: (context) => const AnalyticsDashboardScreen(),
+        bootstrap: (final context) => const _BootstrapScreen(),
+        participantDashboard: (final context) => const ParticipantDashboardScreen(),
+        providerDashboard: (final context) => const ProviderDashboardScreen(),
+        calendar: (final context) => const CalendarScreen(),
+        budget: (final context) => const BudgetScreen(),
+        chat: (final context) => const ChatScreen(),
+        map: (final context) => const ServiceMapScreen(),
+        checklist: (final context) => const ChecklistScreen(),
+        snapshot: (final context) => const SnapshotScreen(),
+        circle: (final context) => const SupportCircleScreen(),
+        auth: (final context) => const AuthScreen(),
+        roster: (final context) => const ProviderRosterScreen(),
+        privacy: (final context) => const PrivacyDashboardScreen(),
       };
 }
 
@@ -50,7 +50,7 @@ class _BootstrapScreen extends StatelessWidget {
   const _BootstrapScreen();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     // Decide where to go based on role selection.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final auth = AuthController.of(context);
@@ -72,12 +72,12 @@ class _BootstrapScreen extends StatelessWidget {
     );
   }
 
-  void _showRolePicker(BuildContext context) async {
+  Future<void> _showRolePicker(final BuildContext context) async {
     final auth = AuthController.of(context);
     final choice = await showDialog<UserRole>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
+      builder: (final context) => AlertDialog(
         title: const Text('Choose your role'),
         content: const Text('Select how you want to use NDIS Connect.'),
         actions: [

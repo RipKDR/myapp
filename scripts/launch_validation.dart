@@ -7,8 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 /// This script validates that the app is ready for production launch
 /// by running comprehensive tests and checks.
 void main() async {
-  print('🚀 NDIS Connect - Launch Validation Script');
-  print('==========================================');
+  debugPrint('🚀 NDIS Connect - Launch Validation Script');
+  debugPrint('==========================================');
 
   await runValidationChecks();
 }
@@ -16,60 +16,60 @@ void main() async {
 Future<void> runValidationChecks() async {
   final results = <String, bool>{};
 
-  print('\n📋 Running Launch Validation Checks...\n');
+  debugPrint('\n📋 Running Launch Validation Checks...\n');
 
   // 1. Code Quality Checks
-  print('1️⃣ Code Quality & Linting...');
+  debugPrint('1️⃣ Code Quality & Linting...');
   results['code_quality'] = await checkCodeQuality();
 
   // 2. Dependencies Check
-  print('2️⃣ Dependencies & Security...');
+  debugPrint('2️⃣ Dependencies & Security...');
   results['dependencies'] = await checkDependencies();
 
   // 3. Configuration Check
-  print('3️⃣ Configuration & Environment...');
+  debugPrint('3️⃣ Configuration & Environment...');
   results['configuration'] = await checkConfiguration();
 
   // 4. Accessibility Check
-  print('4️⃣ Accessibility Compliance...');
+  debugPrint('4️⃣ Accessibility Compliance...');
   results['accessibility'] = await checkAccessibility();
 
   // 5. Performance Check
-  print('5️⃣ Performance & Optimization...');
+  debugPrint('5️⃣ Performance & Optimization...');
   results['performance'] = await checkPerformance();
 
   // 6. Security Check
-  print('6️⃣ Security & Privacy...');
+  debugPrint('6️⃣ Security & Privacy...');
   results['security'] = await checkSecurity();
 
   // 7. Build Check
-  print('7️⃣ Build & Deployment...');
+  debugPrint('7️⃣ Build & Deployment...');
   results['build'] = await checkBuild();
 
   // 8. Store Readiness
-  print('8️⃣ Store Readiness...');
+  debugPrint('8️⃣ Store Readiness...');
   results['store_readiness'] = await checkStoreReadiness();
 
   // Print Results
-  print('\n📊 Validation Results:');
-  print('======================');
+  debugPrint('\n📊 Validation Results:');
+  debugPrint('======================');
 
   bool allPassed = true;
   for (final entry in results.entries) {
     final status = entry.value ? '✅ PASS' : '❌ FAIL';
-    print('${entry.key}: $status');
+    debugPrint('${entry.key}: $status');
     if (!entry.value) allPassed = false;
   }
 
-  print(
+  debugPrint(
     '\n🎯 Overall Status: ${allPassed ? '✅ READY FOR LAUNCH' : '❌ NOT READY'}',
   );
 
   if (!allPassed) {
-    print('\n⚠️  Please address the failing checks before launching.');
+    debugPrint('\n⚠️  Please address the failing checks before launching.');
     exit(1);
   } else {
-    print('\n🎉 Congratulations! Your app is ready for launch!');
+    debugPrint('\n🎉 Congratulations! Your app is ready for launch!');
     exit(0);
   }
 }
@@ -79,7 +79,7 @@ Future<bool> checkCodeQuality() async {
     // Run flutter analyze
     final result = await Process.run('flutter', ['analyze']);
     if (result.exitCode != 0) {
-      print('   ❌ Flutter analyze failed: ${result.stderr}');
+      debugPrint('   ❌ Flutter analyze failed: ${result.stderr}');
       return false;
     }
 
@@ -88,21 +88,21 @@ Future<bool> checkCodeQuality() async {
       try {
         final todoResult = await Process.run('grep', [
           '-r',
-          'TODO\\|FIXME',
+          r'TODO\|FIXME',
           'lib/',
         ]);
         if (todoResult.exitCode == 0) {
-          print('   ⚠️  Found TODO/FIXME comments in code');
+          debugPrint('   ⚠️  Found TODO/FIXME comments in code');
         }
       } catch (e) {
         // Ignore grep errors on some systems
       }
     }
 
-    print('   ✅ Code quality checks passed');
+    debugPrint('   ✅ Code quality checks passed');
     return true;
   } catch (e) {
-    print('   ❌ Code quality check failed: $e');
+    debugPrint('   ❌ Code quality check failed: $e');
     return false;
   }
 }
@@ -112,20 +112,20 @@ Future<bool> checkDependencies() async {
     // Check for outdated dependencies
     final result = await Process.run('flutter', ['pub', 'outdated']);
     if (result.exitCode != 0) {
-      print('   ❌ Failed to check dependencies: ${result.stderr}');
+      debugPrint('   ❌ Failed to check dependencies: ${result.stderr}');
       return false;
     }
 
     // Check for security vulnerabilities
     final auditResult = await Process.run('flutter', ['pub', 'audit']);
     if (auditResult.exitCode != 0) {
-      print('   ⚠️  Security vulnerabilities found');
+      debugPrint('   ⚠️  Security vulnerabilities found');
     }
 
-    print('   ✅ Dependencies check passed');
+    debugPrint('   ✅ Dependencies check passed');
     return true;
   } catch (e) {
-    print('   ❌ Dependencies check failed: $e');
+    debugPrint('   ❌ Dependencies check failed: $e');
     return false;
   }
 }
@@ -135,34 +135,34 @@ Future<bool> checkConfiguration() async {
     // Check if Firebase is configured
     final firebaseFile = File('lib/firebase_options.dart');
     if (!firebaseFile.existsSync()) {
-      print('   ❌ Firebase configuration file missing');
+      debugPrint('   ❌ Firebase configuration file missing');
       return false;
     }
 
     final content = await firebaseFile.readAsString();
     if (content.contains('REPLACE_ME')) {
-      print('   ❌ Firebase configuration not completed');
+      debugPrint('   ❌ Firebase configuration not completed');
       return false;
     }
 
     // Check Android manifest
     final androidManifest = File('android/app/src/main/AndroidManifest.xml');
     if (!androidManifest.existsSync()) {
-      print('   ❌ Android manifest missing');
+      debugPrint('   ❌ Android manifest missing');
       return false;
     }
 
     // Check iOS Info.plist
     final iosInfoPlist = File('ios/Runner/Info.plist');
     if (!iosInfoPlist.existsSync()) {
-      print('   ❌ iOS Info.plist missing');
+      debugPrint('   ❌ iOS Info.plist missing');
       return false;
     }
 
-    print('   ✅ Configuration check passed');
+    debugPrint('   ✅ Configuration check passed');
     return true;
   } catch (e) {
-    print('   ❌ Configuration check failed: $e');
+    debugPrint('   ❌ Configuration check failed: $e');
     return false;
   }
 }
@@ -191,14 +191,14 @@ Future<bool> checkAccessibility() async {
     }
 
     if (!hasAccessibilityFeatures) {
-      print('   ❌ Accessibility features not found');
+      debugPrint('   ❌ Accessibility features not found');
       return false;
     }
 
-    print('   ✅ Accessibility check passed');
+    debugPrint('   ✅ Accessibility check passed');
     return true;
   } catch (e) {
-    print('   ❌ Accessibility check failed: $e');
+    debugPrint('   ❌ Accessibility check failed: $e');
     return false;
   }
 }
@@ -226,14 +226,14 @@ Future<bool> checkPerformance() async {
     }
 
     if (!hasPerformanceFeatures) {
-      print('   ❌ Performance optimizations not found');
+      debugPrint('   ❌ Performance optimizations not found');
       return false;
     }
 
-    print('   ✅ Performance check passed');
+    debugPrint('   ✅ Performance check passed');
     return true;
   } catch (e) {
-    print('   ❌ Performance check failed: $e');
+    debugPrint('   ❌ Performance check failed: $e');
     return false;
   }
 }
@@ -262,14 +262,14 @@ Future<bool> checkSecurity() async {
     }
 
     if (!hasSecurityFeatures) {
-      print('   ❌ Security features not found');
+      debugPrint('   ❌ Security features not found');
       return false;
     }
 
-    print('   ✅ Security check passed');
+    debugPrint('   ✅ Security check passed');
     return true;
   } catch (e) {
-    print('   ❌ Security check failed: $e');
+    debugPrint('   ❌ Security check failed: $e');
     return false;
   }
 }
@@ -277,20 +277,20 @@ Future<bool> checkSecurity() async {
 Future<bool> checkBuild() async {
   try {
     // Test Android build
-    print('   Testing Android build...');
+    debugPrint('   Testing Android build...');
     final androidResult = await Process.run('flutter', [
       'build',
       'apk',
       '--debug',
     ]);
     if (androidResult.exitCode != 0) {
-      print('   ❌ Android build failed: ${androidResult.stderr}');
+      debugPrint('   ❌ Android build failed: ${androidResult.stderr}');
       return false;
     }
 
     // Test iOS build (if on macOS)
     if (Platform.isMacOS) {
-      print('   Testing iOS build...');
+      debugPrint('   Testing iOS build...');
       try {
         final iosResult = await Process.run('flutter', [
           'build',
@@ -299,19 +299,19 @@ Future<bool> checkBuild() async {
           '--no-codesign',
         ]);
         if (iosResult.exitCode != 0) {
-          print('   ❌ iOS build failed: ${iosResult.stderr}');
+          debugPrint('   ❌ iOS build failed: ${iosResult.stderr}');
           return false;
         }
       } catch (e) {
-        print('   ⚠️  iOS build test skipped: $e');
+        debugPrint('   ⚠️  iOS build test skipped: $e');
         // Don't fail the entire check for iOS build issues
       }
     }
 
-    print('   ✅ Build check passed');
+    debugPrint('   ✅ Build check passed');
     return true;
   } catch (e) {
-    print('   ❌ Build check failed: $e');
+    debugPrint('   ❌ Build check failed: $e');
     return false;
   }
 }
@@ -324,7 +324,7 @@ Future<bool> checkStoreReadiness() async {
     for (final asset in requiredAssets) {
       final file = File(asset);
       if (!file.existsSync()) {
-        print('   ❌ Required asset missing: $asset');
+        debugPrint('   ❌ Required asset missing: $asset');
         return false;
       }
     }
@@ -334,15 +334,15 @@ Future<bool> checkStoreReadiness() async {
     if (pubspecFile.existsSync()) {
       final content = await pubspecFile.readAsString();
       if (!content.contains('version:') || content.contains('version: 0.0.0')) {
-        print('   ❌ Version not properly set in pubspec.yaml');
+        debugPrint('   ❌ Version not properly set in pubspec.yaml');
         return false;
       }
     }
 
-    print('   ✅ Store readiness check passed');
+    debugPrint('   ✅ Store readiness check passed');
     return true;
   } catch (e) {
-    print('   ❌ Store readiness check failed: $e');
+    debugPrint('   ❌ Store readiness check failed: $e');
     return false;
   }
 }
@@ -352,8 +352,7 @@ class LaunchValidationTest extends StatelessWidget {
   const LaunchValidationTest({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  Widget build(final BuildContext context) => MaterialApp(
       title: 'NDIS Connect Launch Validation',
       home: Scaffold(
         appBar: AppBar(title: const Text('Launch Validation')),
@@ -377,5 +376,4 @@ class LaunchValidationTest extends StatelessWidget {
         ),
       ),
     );
-  }
 }

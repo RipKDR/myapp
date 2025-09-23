@@ -5,12 +5,12 @@ class BudgetRepository {
   static const _col = 'budgets';
 
   // Save budget overview for user
-  static Future<bool> saveOverview(String userId, BudgetOverview budget) async {
+  static Future<bool> saveOverview(final String userId, final BudgetOverview budget) async {
     final data = {
       'userId': userId,
       'buckets': budget.buckets
           .map(
-            (bucket) => {
+            (final bucket) => {
               'name': bucket.name,
               'allocated': bucket.allocated,
               'spent': bucket.spent,
@@ -22,18 +22,18 @@ class BudgetRepository {
       'totalSpent': budget.totalSpent,
       'updatedAt': DateTime.now().toIso8601String(),
     };
-    return await FirestoreService.save(_col, userId, data);
+    return FirestoreService.save(_col, userId, data);
   }
 
   // Get budget overview for user
-  static Future<BudgetOverview?> getOverview(String userId) async {
+  static Future<BudgetOverview?> getOverview(final String userId) async {
     final data = await FirestoreService.get(_col, userId);
     if (data == null) return null;
 
     try {
       final buckets = (data['buckets'] as List)
           .map(
-            (bucket) => BudgetBucket(
+            (final bucket) => BudgetBucket(
               name: bucket['name'] as String,
               allocated: (bucket['allocated'] as num).toDouble(),
               spent: (bucket['spent'] as num).toDouble(),
@@ -48,9 +48,8 @@ class BudgetRepository {
   }
 
   // Stream budget overview for user
-  static Stream<BudgetOverview?> streamForUser(String userId) {
-    return FirestoreService.query(_col, field: 'userId', value: userId).map((
-      list,
+  static Stream<BudgetOverview?> streamForUser(final String userId) => FirestoreService.query(_col, field: 'userId', value: userId).map((
+      final list,
     ) {
       if (list.isEmpty) return null;
 
@@ -58,7 +57,7 @@ class BudgetRepository {
         final data = list.first;
         final buckets = (data['buckets'] as List)
             .map(
-              (bucket) => BudgetBucket(
+              (final bucket) => BudgetBucket(
                 name: bucket['name'] as String,
                 allocated: (bucket['allocated'] as num).toDouble(),
                 spent: (bucket['spent'] as num).toDouble(),
@@ -71,20 +70,19 @@ class BudgetRepository {
         return null;
       }
     });
-  }
 
   // Add expense to budget
   static Future<bool> addExpense(
-    String userId,
-    String category,
-    double amount,
-    String description,
+    final String userId,
+    final String category,
+    final double amount,
+    final String description,
   ) async {
     final budget = await getOverview(userId);
     if (budget == null) return false;
 
     // Find the bucket and update spent amount
-    final updatedBuckets = budget.buckets.map((bucket) {
+    final updatedBuckets = budget.buckets.map((final bucket) {
       if (bucket.name.toLowerCase() == category.toLowerCase()) {
         return BudgetBucket(
           name: bucket.name,
@@ -96,19 +94,19 @@ class BudgetRepository {
     }).toList();
 
     final updatedBudget = BudgetOverview(updatedBuckets);
-    return await saveOverview(userId, updatedBudget);
+    return saveOverview(userId, updatedBudget);
   }
 
   // Update budget allocation
   static Future<bool> updateAllocation(
-    String userId,
-    String category,
-    double newAllocation,
+    final String userId,
+    final String category,
+    final double newAllocation,
   ) async {
     final budget = await getOverview(userId);
     if (budget == null) return false;
 
-    final updatedBuckets = budget.buckets.map((bucket) {
+    final updatedBuckets = budget.buckets.map((final bucket) {
       if (bucket.name.toLowerCase() == category.toLowerCase()) {
         return BudgetBucket(
           name: bucket.name,
@@ -120,11 +118,11 @@ class BudgetRepository {
     }).toList();
 
     final updatedBudget = BudgetOverview(updatedBuckets);
-    return await saveOverview(userId, updatedBudget);
+    return saveOverview(userId, updatedBudget);
   }
 
   // Get budget statistics
-  static Future<Map<String, dynamic>> getStats(String userId) async {
+  static Future<Map<String, dynamic>> getStats(final String userId) async {
     final budget = await getOverview(userId);
     if (budget == null) {
       return {
@@ -138,7 +136,7 @@ class BudgetRepository {
 
     final buckets = budget.buckets
         .map(
-          (bucket) => {
+          (final bucket) => {
             'name': bucket.name,
             'allocated': bucket.allocated,
             'spent': bucket.spent,
@@ -163,8 +161,8 @@ class BudgetRepository {
 
   // Check if budget is over 80% utilized (for alerts)
   static Future<bool> isOverUtilized(
-    String userId, {
-    double threshold = 0.8,
+    final String userId, {
+    final double threshold = 0.8,
   }) async {
     final budget = await getOverview(userId);
     if (budget == null) return false;
@@ -174,7 +172,7 @@ class BudgetRepository {
   }
 
   // Get budget alerts
-  static Future<List<String>> getAlerts(String userId) async {
+  static Future<List<String>> getAlerts(final String userId) async {
     final budget = await getOverview(userId);
     if (budget == null) return [];
 

@@ -38,7 +38,7 @@ class NDISConnectApp extends StatelessWidget {
   const NDISConnectApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final settings = context.watch<SettingsController>();
 
     return MaterialApp(
@@ -47,7 +47,7 @@ class NDISConnectApp extends StatelessWidget {
       theme: AppTheme.lightTheme(highContrast: settings.highContrast),
       darkTheme: AppTheme.darkTheme(highContrast: settings.highContrast),
       themeMode: settings.themeMode,
-      builder: (context, child) {
+      builder: (final context, final child) {
         // Apply user-selected text scale and reduced motion globally.
         final media = MediaQuery.of(context);
         return MediaQuery(

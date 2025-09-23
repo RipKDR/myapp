@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../services/local_auth_service.dart';
 
 enum UserRole { participant, provider, unknown }
@@ -28,7 +27,7 @@ class AuthController extends ChangeNotifier {
   bool get isAuthenticated => signedIn;
   UserRole? get userRole => _role == UserRole.unknown ? null : _role;
 
-  static AuthController of(BuildContext context) =>
+  static AuthController of(final BuildContext context) =>
       Provider.of<AuthController>(context, listen: false);
 
   Future<void> load() async {
@@ -38,10 +37,10 @@ class AuthController extends ChangeNotifier {
       if (isLoggedIn) {
         final user = await _authService.getCurrentUser();
         if (user != null) {
-          _userId = user['id'];
-          _userEmail = user['email'];
-          _userName = user['name'];
-          _role = _parseRole(user['role']);
+          _userId = user['id'] as String?;
+          _userEmail = user['email'] as String?;
+          _userName = user['name'] as String?;
+          _role = _parseRole(user['role'] as String? ?? '');
           _signedIn = true;
         }
       }
@@ -52,18 +51,18 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  Future<bool> signIn(String email, String password) async {
+  Future<bool> signIn(final String email, final String password) async {
     _setLoading(true);
     _clearError();
 
     try {
       final result = await _authService.login(email: email, password: password);
 
-      if (result['success']) {
-        final user = result['user'];
-        _userId = user['id'];
-        _userEmail = user['email'];
-        _userName = user['name'];
+      if (result['success'] == true) {
+        final user = result['user'] as Map<String, dynamic>;
+        _userId = user['id'] as String?;
+        _userEmail = user['email'] as String?;
+        _userName = user['name'] as String?;
         _role = _parseRole(user['role']);
         _signedIn = true;
         notifyListeners();
@@ -81,10 +80,10 @@ class AuthController extends ChangeNotifier {
   }
 
   Future<bool> signUp({
-    required String email,
-    required String password,
-    required String name,
-    required UserRole role,
+    required final String email,
+    required final String password,
+    required final String name,
+    required final UserRole role,
   }) async {
     _setLoading(true);
     _clearError();
@@ -139,12 +138,12 @@ class AuthController extends ChangeNotifier {
     _userName = null;
   }
 
-  void _setLoading(bool loading) {
+  void _setLoading(final bool loading) {
     _isLoading = loading;
     notifyListeners();
   }
 
-  void _setError(String error) {
+  void _setError(final String error) {
     _errorMessage = error;
     notifyListeners();
   }
@@ -154,7 +153,7 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
   }
 
-  UserRole _parseRole(String roleString) {
+  UserRole _parseRole(final String roleString) {
     switch (roleString.toLowerCase()) {
       case 'participant':
         return UserRole.participant;

@@ -3,9 +3,9 @@ import '../core/feature_flags.dart';
 import '../services/purchase_service.dart';
 
 class FeatureGuard extends StatefulWidget {
+  const FeatureGuard({super.key, required this.tier, required this.child});
   final FeatureTier tier;
   final Widget child;
-  const FeatureGuard({super.key, required this.tier, required this.child});
 
   @override
   State<FeatureGuard> createState() => _FeatureGuardState();
@@ -15,19 +15,16 @@ class _FeatureGuardState extends State<FeatureGuard> {
   late bool _unlocked = FeatureFlags.allow(widget.tier);
 
   @override
-  Widget build(BuildContext context) {
-    return _unlocked ? widget.child : _Paywall(onUnlocked: () => setState(() => _unlocked = true));
-  }
+  Widget build(final BuildContext context) => _unlocked ? widget.child : _Paywall(onUnlocked: () => setState(() => _unlocked = true));
 }
 
 class _Paywall extends StatelessWidget {
-  final VoidCallback onUnlocked;
   const _Paywall({required this.onUnlocked});
+  final VoidCallback onUnlocked;
   @override
-  Widget build(BuildContext context) {
-    return Center(
+  Widget build(final BuildContext context) => Center(
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -41,7 +38,7 @@ class _Paywall extends StatelessWidget {
               onPressed: () async {
                 final ok = await showDialog<bool>(
                   context: context,
-                  builder: (context) => AlertDialog(
+                  builder: (final context) => AlertDialog(
                     title: const Text('Upgrade'),
                     content: const Text('Enable premium locally for demo?'),
                     actions: [
@@ -50,7 +47,7 @@ class _Paywall extends StatelessWidget {
                     ],
                   ),
                 );
-                if (ok == true) {
+                if (ok ?? false) {
                   await PurchaseService.unlockForDemo();
                   // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Premium unlocked (demo)')));
@@ -72,5 +69,4 @@ class _Paywall extends StatelessWidget {
         ),
       ),
     );
-  }
 }

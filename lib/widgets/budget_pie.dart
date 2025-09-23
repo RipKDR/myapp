@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import '../models/budget.dart';
 
 class BudgetPieChart extends StatelessWidget {
-  final BudgetOverview data;
   const BudgetPieChart({super.key, required this.data});
+  final BudgetOverview data;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final colors = [
       Colors.indigo,
       Colors.teal,
@@ -39,12 +39,11 @@ class BudgetPieChart extends StatelessWidget {
 }
 
 class _Legend extends StatelessWidget {
+  const _Legend({required this.color, required this.label});
   final Color color;
   final String label;
-  const _Legend({required this.color, required this.label});
   @override
-  Widget build(BuildContext context) {
-    return Row(
+  Widget build(final BuildContext context) => Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(width: 12, height: 12, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
@@ -52,16 +51,15 @@ class _Legend extends StatelessWidget {
         Text(label),
       ],
     );
-  }
 }
 
 class _PiePainter extends CustomPainter {
+  _PiePainter(this.data, this.colors);
   final BudgetOverview data;
   final List<Color> colors;
-  _PiePainter(this.data, this.colors);
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(final Canvas canvas, final Size size) {
     final total = data.totalAllocated == 0 ? 1.0 : data.totalAllocated;
     final rect = Offset.zero & size;
     final center = rect.center;
@@ -78,5 +76,5 @@ class _PiePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _PiePainter oldDelegate) => oldDelegate.data != data;
+  bool shouldRepaint(covariant final _PiePainter oldDelegate) => oldDelegate.data != data;
 }

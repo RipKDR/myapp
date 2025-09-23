@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../config/api_config.dart';
 
@@ -7,6 +8,9 @@ class ApiTestService {
   /// Test Google Maps API key
   static Future<bool> testGoogleMapsApi() async {
     try {
+      if (!ApiConfig.isMapsEnabled()) {
+        return false;
+      }
       // Test with a simple geocoding request
       final response = await http.get(
         Uri.parse(
@@ -19,7 +23,7 @@ class ApiTestService {
       }
       return false;
     } catch (e) {
-      print('Google Maps API test failed: $e');
+      debugPrint('Google Maps API test failed: $e');
       return false;
     }
   }
@@ -33,7 +37,7 @@ class ApiTestService {
 
       final response = await http.post(
         Uri.parse(ApiConfig.geminiGenerateContentEndpoint),
-        headers: ApiConfig.geminiHeaders,
+        headers: ApiConfig.geminiHeaders(),
         body: jsonEncode({
           'contents': [
             {
@@ -59,7 +63,7 @@ class ApiTestService {
       }
       return false;
     } catch (e) {
-      print('Gemini API test failed: $e');
+      debugPrint('Gemini API test failed: $e');
       return false;
     }
   }
@@ -85,15 +89,16 @@ class ApiTestService {
     summary.writeln('API Configuration Status:');
     summary.writeln('========================');
 
-    results.forEach((api, isWorking) {
-      final status = isWorking ? '✅ WORKING' : '❌ FAILED';
+    results.forEach((final api, final isWorking) {
+      final status = isWorking ? '[OK]' : '[FAILED]';
       summary.writeln('$api: $status');
     });
 
-    final allWorking = results.values.every((working) => working);
+    final allWorking = results.values.every((final working) => working);
     summary.writeln(
-        '\nOverall Status: ${allWorking ? '✅ ALL APIS WORKING' : '❌ SOME APIS FAILED'}');
+        '\nOverall Status: ${allWorking ? '[OK] ALL APIS WORKING' : '[WARN] SOME APIS FAILED'}');
 
     return summary.toString();
   }
 }
+

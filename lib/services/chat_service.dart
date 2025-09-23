@@ -3,12 +3,22 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'gemini_service.dart';
 
 class ChatService {
   static const String _endpoint = String.fromEnvironment('DIALOGFLOW_ENDPOINT');
   static const String _auth = String.fromEnvironment('DIALOGFLOW_AUTH');
 
-  Future<String> ask(String query) async {
+  Future<String> ask(final String query) async {
+    // 1) Try Gemini if key is provided
+    if (GeminiService.isEnabled) {
+      final ai = await GeminiService.ask(query);
+      if (ai != null && ai.isNotEmpty) {
+        return ai;
+      }
+    }
+
+    // 2) Try external endpoint if configured
     if (_endpoint.isNotEmpty) {
       try {
         final res = await http.post(
@@ -27,7 +37,8 @@ class ChatService {
         // fall through to offline
       }
     }
-    // Offline quick answers to common NDIS questions.
+
+    // 3) Offline quick answers to common NDIS questions.
     final q = query.toLowerCase();
     if (q.contains('budget') || q.contains('core')) {
       return 'To track your NDIS budget, open Budget Tracker. We will alert you if buckets reach 80%. You can also upload invoices or compare rates.';

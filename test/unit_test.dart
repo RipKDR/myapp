@@ -13,8 +13,8 @@ void main() {
           id: 'test-1',
           title: 'Physiotherapy Session',
           description: 'Weekly physio session',
-          startTime: DateTime(2024, 1, 15, 10, 0),
-          endTime: DateTime(2024, 1, 15, 11, 0),
+          startTime: DateTime(2024, 1, 15, 10),
+          endTime: DateTime(2024, 1, 15, 11),
           providerId: 'provider-1',
           participantId: 'participant-1',
           status: AppointmentStatus.scheduled,
@@ -65,23 +65,23 @@ void main() {
         final budget = Budget(
           id: 'budget-1',
           participantId: 'participant-1',
-          totalAmount: 10000.0,
-          usedAmount: 2500.0,
+          totalAmount: 10000,
+          usedAmount: 2500,
           categories: {
-            'Core': BudgetCategory(
+            'Core': const BudgetCategory(
               name: 'Core',
-              allocatedAmount: 5000.0,
-              usedAmount: 1500.0,
+              allocatedAmount: 5000,
+              usedAmount: 1500,
             ),
-            'Capital': BudgetCategory(
+            'Capital': const BudgetCategory(
               name: 'Capital',
-              allocatedAmount: 3000.0,
-              usedAmount: 800.0,
+              allocatedAmount: 3000,
+              usedAmount: 800,
             ),
-            'Capacity Building': BudgetCategory(
+            'Capacity Building': const BudgetCategory(
               name: 'Capacity Building',
-              allocatedAmount: 2000.0,
-              usedAmount: 200.0,
+              allocatedAmount: 2000,
+              usedAmount: 200,
             ),
           },
         );
@@ -101,8 +101,8 @@ void main() {
         final budget = Budget(
           id: 'budget-2',
           participantId: 'participant-1',
-          totalAmount: 10000.0,
-          usedAmount: 8500.0, // 85% used
+          totalAmount: 10000,
+          usedAmount: 8500, // 85% used
           categories: {},
         );
 
@@ -111,7 +111,7 @@ void main() {
         expect(budget.isOverLimit, false);
 
         // Test over limit
-        final overLimitBudget = budget.copyWith(usedAmount: 10500.0);
+        final overLimitBudget = budget.copyWith(usedAmount: 10500);
         expect(overLimitBudget.isOverLimit, true);
       });
     });
@@ -146,13 +146,13 @@ void main() {
       });
 
       test('Task priority levels', () {
-        final highPriorityTask = PlanTask(
+        const highPriorityTask = PlanTask(
           id: 'task-2',
           title: 'High Priority Task',
           priority: 1,
         );
 
-        final lowPriorityTask = PlanTask(
+        const lowPriorityTask = PlanTask(
           id: 'task-3',
           title: 'Low Priority Task',
           priority: 3,
@@ -166,7 +166,7 @@ void main() {
 
     group('Circle Model Tests', () {
       test('Support circle creation', () {
-        final circle = SupportCircle(
+        const circle = SupportCircle(
           id: 'circle-1',
           name: 'Family Support Circle',
           description: 'Main family support network',
@@ -197,17 +197,16 @@ void main() {
       });
 
       test('Circle member management', () {
-        final circle = SupportCircle(
+        const circle = SupportCircle(
           id: 'circle-2',
           name: 'Test Circle',
           participantId: 'participant-1',
-          members: [],
         );
 
         expect(circle.members.length, 0);
 
         // Test adding member
-        final newMember = CircleMember(
+        const newMember = CircleMember(
           id: 'member-3',
           name: 'New Member',
           role: 'Friend',
@@ -228,8 +227,8 @@ void main() {
         final shift = Shift(
           id: 'shift-1',
           providerId: 'provider-1',
-          startTime: DateTime(2024, 1, 15, 9, 0),
-          endTime: DateTime(2024, 1, 15, 17, 0),
+          startTime: DateTime(2024, 1, 15, 9),
+          endTime: DateTime(2024, 1, 15, 17),
           location: 'Health Center',
           status: ShiftStatus.available,
           maxParticipants: 5,

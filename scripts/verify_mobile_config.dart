@@ -11,7 +11,7 @@ import 'dart:io';
 /// Usage:
 ///   dart scripts/verify_mobile_config.dart [--soft]
 ///   --soft: treat missing Maps key as warning (useful in CI where secrets are absent)
-void main(List<String> args) {
+void main(final List<String> args) {
   final soft = args.contains('--soft');
   final issues = <String>[];
   final warnings = <String>[];
@@ -44,13 +44,13 @@ void main(List<String> args) {
     if (!manifest.contains('com.google.android.geo.API_KEY')) {
       warnings.add('AndroidManifest.xml missing Google Maps API_KEY meta-data');
     } else if (!manifest.contains(r'${AIzaSyDwG_imrSuzCYuSBgU1v19XjoTyGfE6yds}')) {
-      warnings.add('AndroidManifest.xml Maps meta-data not using placeholder \${AIzaSyDwG_imrSuzCYuSBgU1v19XjoTyGfE6yds}');
+      warnings.add(r'AndroidManifest.xml Maps meta-data not using placeholder ${AIzaSyDwG_imrSuzCYuSBgU1v19XjoTyGfE6yds}');
     }
   }
 
   final mapsEnv = Platform.environment['AIzaSyDwG_imrSuzCYuSBgU1v19XjoTyGfE6yds'];
   if (mapsEnv == null || mapsEnv.trim().isEmpty) {
-    final msg = 'Environment variable GOOGLE_MAPS_API_KEY not set';
+    const msg = 'Environment variable GOOGLE_MAPS_API_KEY not set';
     if (soft) {
       warnings.add(msg);
     } else {
@@ -80,7 +80,7 @@ void main(List<String> args) {
     for (final w in warnings) {
       stdout.writeln('  - $w');
     }
-    stdout.writeln('');
+    stdout.writeln();
   }
 
   if (issues.isNotEmpty) {
@@ -88,7 +88,7 @@ void main(List<String> args) {
     for (final i in issues) {
       stdout.writeln('  - $i');
     }
-    stdout.writeln('');
+    stdout.writeln();
   }
 
   final ok = issues.isEmpty;

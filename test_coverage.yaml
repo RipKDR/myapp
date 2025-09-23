@@ -1,0 +1,131 @@
+# Test Coverage Configuration for NDIS Connect Flutter App
+
+# Coverage thresholds
+coverage:
+  # Overall coverage threshold
+  overall: 80
+  
+  # Coverage thresholds by file type
+  files:
+    # Controllers must have high coverage
+    controllers: 90
+    
+    # Services must have high coverage
+    services: 85
+    
+    # Models must have complete coverage
+    models: 95
+    
+    # Widgets should have good coverage
+    widgets: 75
+    
+    # Utils should have high coverage
+    utils: 90
+
+# Files to include in coverage
+include:
+  - lib/controllers/**
+  - lib/services/**
+  - lib/models/**
+  - lib/widgets/**
+  - lib/utils/**
+  - lib/repositories/**
+
+# Files to exclude from coverage
+exclude:
+  - lib/main.dart
+  - lib/firebase_options.dart
+  - lib/firebase_bg.dart
+  - lib/routes.dart
+  - lib/theme/**
+  - lib/config/**
+
+# Test configuration
+test:
+  # Unit test configuration
+  unit:
+    timeout: 30s
+    concurrency: 4
+    
+  # Widget test configuration
+  widget:
+    timeout: 60s
+    concurrency: 2
+    
+  # Integration test configuration
+  integration:
+    timeout: 300s
+    concurrency: 1
+
+# Coverage report configuration
+reports:
+  # Generate HTML report
+  html: true
+  
+  # Generate LCOV report for CI/CD
+  lcov: true
+  
+  # Generate JSON report
+  json: true
+  
+  # Coverage badge
+  badge: true
+
+# CI/CD configuration
+ci:
+  # Fail build if coverage is below threshold
+  fail_on_low_coverage: true
+  
+  # Upload coverage to codecov
+  upload_to_codecov: true
+  
+  # Generate coverage comment on PR
+  pr_comment: true
+
+# Test categories
+categories:
+  unit:
+    description: "Unit tests for business logic"
+    files:
+      - test/controllers/**
+      - test/services/**
+      - test/models/**
+      - test/repositories/**
+    
+  widget:
+    description: "Widget tests for UI components"
+    files:
+      - test/widgets/**
+    
+  integration:
+    description: "Integration tests for complete user flows"
+    files:
+      - integration_test/**
+
+# Performance benchmarks
+benchmarks:
+  # Performance test thresholds
+  startup_time: 3s
+  navigation_time: 1s
+  api_response_time: 2s
+  
+  # Memory usage thresholds
+  memory_usage: 100MB
+  
+  # Battery usage thresholds
+  battery_usage: 5%
+
+# Quality gates
+quality_gates:
+  # Code quality checks
+  linting: true
+  formatting: true
+  
+  # Security checks
+  security_scan: true
+  
+  # Dependency checks
+  dependency_check: true
+  
+  # License checks
+  license_check: true

@@ -4,21 +4,6 @@ import 'package:shimmer/shimmer.dart';
 
 /// Optimized image widget with caching, compression, and performance improvements
 class OptimizedImage extends StatelessWidget {
-  final String imageUrl;
-  final double? width;
-  final double? height;
-  final BoxFit fit;
-  final Widget? placeholder;
-  final Widget? errorWidget;
-  final BorderRadius? borderRadius;
-  final bool enableMemoryCache;
-  final bool enableDiskCache;
-  final int? memCacheWidth;
-  final int? memCacheHeight;
-  final int? maxWidthDiskCache;
-  final int? maxHeightDiskCache;
-  final Duration fadeInDuration;
-  final Duration placeholderFadeInDuration;
 
   const OptimizedImage({
     super.key,
@@ -38,10 +23,24 @@ class OptimizedImage extends StatelessWidget {
     this.fadeInDuration = const Duration(milliseconds: 300),
     this.placeholderFadeInDuration = const Duration(milliseconds: 200),
   });
+  final String imageUrl;
+  final double? width;
+  final double? height;
+  final BoxFit fit;
+  final Widget? placeholder;
+  final Widget? errorWidget;
+  final BorderRadius? borderRadius;
+  final bool enableMemoryCache;
+  final bool enableDiskCache;
+  final int? memCacheWidth;
+  final int? memCacheHeight;
+  final int? maxWidthDiskCache;
+  final int? maxHeightDiskCache;
+  final Duration fadeInDuration;
+  final Duration placeholderFadeInDuration;
 
   @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
+  Widget build(final BuildContext context) => ClipRRect(
       borderRadius: borderRadius ?? BorderRadius.zero,
       child: CachedNetworkImage(
         imageUrl: imageUrl,
@@ -54,9 +53,9 @@ class OptimizedImage extends StatelessWidget {
         memCacheHeight: memCacheHeight ?? height?.toInt(),
         maxWidthDiskCache: maxWidthDiskCache ?? 800,
         maxHeightDiskCache: maxHeightDiskCache ?? 600,
-        placeholder: (context, url) =>
+        placeholder: (final context, final url) =>
             placeholder ?? _buildDefaultPlaceholder(),
-        errorWidget: (context, url, error) =>
+        errorWidget: (final context, final url, final error) =>
             errorWidget ?? _buildDefaultErrorWidget(),
         // Performance optimizations
         useOldImageOnUrlChange: true,
@@ -66,11 +65,9 @@ class OptimizedImage extends StatelessWidget {
         },
       ),
     );
-  }
 
   /// Build default shimmer placeholder
-  Widget _buildDefaultPlaceholder() {
-    return Shimmer.fromColors(
+  Widget _buildDefaultPlaceholder() => Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
       highlightColor: Colors.grey[100]!,
       child: Container(
@@ -82,11 +79,9 @@ class OptimizedImage extends StatelessWidget {
         ),
       ),
     );
-  }
 
   /// Build default error widget
-  Widget _buildDefaultErrorWidget() {
-    return Container(
+  Widget _buildDefaultErrorWidget() => Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
@@ -101,17 +96,10 @@ class OptimizedImage extends StatelessWidget {
             : 24,
       ),
     );
-  }
 }
 
 /// Optimized avatar widget for profile images
 class OptimizedAvatar extends StatelessWidget {
-  final String? imageUrl;
-  final String? name;
-  final double radius;
-  final Color? backgroundColor;
-  final Color? foregroundColor;
-  final TextStyle? textStyle;
 
   const OptimizedAvatar({
     super.key,
@@ -122,9 +110,15 @@ class OptimizedAvatar extends StatelessWidget {
     this.foregroundColor,
     this.textStyle,
   });
+  final String? imageUrl;
+  final String? name;
+  final double radius;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final TextStyle? textStyle;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     if (imageUrl != null && imageUrl!.isNotEmpty) {
       return CircleAvatar(
         radius: radius,
@@ -133,7 +127,6 @@ class OptimizedAvatar extends StatelessWidget {
           imageUrl: imageUrl!,
           width: radius * 2,
           height: radius * 2,
-          fit: BoxFit.cover,
           borderRadius: BorderRadius.circular(radius),
           memCacheWidth: (radius * 2).toInt(),
           memCacheHeight: (radius * 2).toInt(),
@@ -164,7 +157,7 @@ class OptimizedAvatar extends StatelessWidget {
     );
   }
 
-  String _getInitials(String name) {
+  String _getInitials(final String name) {
     final words = name.trim().split(' ');
     if (words.isEmpty) return '';
 
@@ -178,13 +171,6 @@ class OptimizedAvatar extends StatelessWidget {
 
 /// Optimized image gallery widget for multiple images
 class OptimizedImageGallery extends StatelessWidget {
-  final List<String> imageUrls;
-  final double? width;
-  final double? height;
-  final BoxFit fit;
-  final int maxImages;
-  final VoidCallback? onTap;
-  final bool showOverlay;
 
   const OptimizedImageGallery({
     super.key,
@@ -196,9 +182,16 @@ class OptimizedImageGallery extends StatelessWidget {
     this.onTap,
     this.showOverlay = true,
   });
+  final List<String> imageUrls;
+  final double? width;
+  final double? height;
+  final BoxFit fit;
+  final int maxImages;
+  final VoidCallback? onTap;
+  final bool showOverlay;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     if (imageUrls.isEmpty) {
       return _buildEmptyState();
     }
@@ -216,8 +209,7 @@ class OptimizedImageGallery extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
-    return Container(
+  Widget _buildEmptyState() => Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
@@ -230,9 +222,8 @@ class OptimizedImageGallery extends StatelessWidget {
         size: 24,
       ),
     );
-  }
 
-  Widget _buildImageGrid(List<String> images, int remainingCount) {
+  Widget _buildImageGrid(final List<String> images, final int remainingCount) {
     if (images.length == 1) {
       return OptimizedImage(
         imageUrl: images[0],
@@ -340,7 +331,7 @@ class OptimizedImageGallery extends StatelessWidget {
                       fit: fit,
                     ),
                     if (remainingCount > 0 && showOverlay)
-                      Container(
+                      ColoredBox(
                         color: Colors.black54,
                         child: Center(
                           child: Text(
@@ -369,20 +360,20 @@ class ImagePerformanceMonitor {
   static final Map<String, List<Duration>> _loadTimes = {};
   static final Map<String, int> _errorCounts = {};
 
-  static void recordLoadTime(String imageUrl, Duration loadTime) {
+  static void recordLoadTime(final String imageUrl, final Duration loadTime) {
     _loadTimes.putIfAbsent(imageUrl, () => []).add(loadTime);
   }
 
-  static void recordError(String imageUrl) {
+  static void recordError(final String imageUrl) {
     _errorCounts[imageUrl] = (_errorCounts[imageUrl] ?? 0) + 1;
   }
 
   static Map<String, dynamic> getStats() {
     final avgLoadTimes = <String, Duration>{};
-    _loadTimes.forEach((url, times) {
+    _loadTimes.forEach((final url, final times) {
       final total = times.fold<Duration>(
         Duration.zero,
-        (sum, time) => sum + time,
+        (final sum, final time) => sum + time,
       );
       avgLoadTimes[url] = Duration(
         microseconds: total.inMicroseconds ~/ times.length,
@@ -393,7 +384,7 @@ class ImagePerformanceMonitor {
       'averageLoadTimes': avgLoadTimes,
       'errorCounts': _errorCounts,
       'totalImages': _loadTimes.length,
-      'totalErrors': _errorCounts.values.fold(0, (sum, count) => sum + count),
+      'totalErrors': _errorCounts.values.fold(0, (final sum, final count) => sum + count),
     };
   }
 

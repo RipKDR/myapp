@@ -5,7 +5,7 @@ class CircleRepository {
   static const _goalsCol = 'goals';
   static const _messagesCol = 'messages';
 
-  static Future<void> saveGoal(String boardId, GoalCard g) async {
+  static Future<void> saveGoal(final String boardId, final GoalCard g) async {
     await FirestoreService.save('circles/$boardId/$_goalsCol', g.id, {
       'id': g.id,
       'title': g.title,
@@ -13,7 +13,7 @@ class CircleRepository {
     });
   }
 
-  static Future<void> saveMessage(String boardId, CircleMessage m) async {
+  static Future<void> saveMessage(final String boardId, final CircleMessage m) async {
     await FirestoreService.save('circles/$boardId/$_messagesCol', m.id, {
       'id': m.id,
       'authorId': m.authorId,
@@ -22,7 +22,7 @@ class CircleRepository {
     });
   }
 
-  static Future<void> saveEncryptedMessage(String boardId, CircleMessage m, Map<String, String> payload) async {
+  static Future<void> saveEncryptedMessage(final String boardId, final CircleMessage m, final Map<String, String> payload) async {
     await FirestoreService.save('circles/$boardId/$_messagesCol', m.id, {
       'id': m.id,
       'authorId': m.authorId,
@@ -32,14 +32,14 @@ class CircleRepository {
     });
   }
 
-  static Stream<List<GoalCard>> streamGoals(String boardId) => FirestoreService
+  static Stream<List<GoalCard>> streamGoals(final String boardId) => FirestoreService
       .stream('circles/$boardId/$_goalsCol')
-      .map((e) => e.map((m) => GoalCard(id: m['id'], title: m['title'], status: m['status'])).toList());
+      .map((final e) => e.map((final m) => GoalCard(id: m['id'], title: m['title'], status: m['status'])).toList());
 
-  static Stream<List<CircleMessage>> streamMessages(String boardId) => FirestoreService
+  static Stream<List<CircleMessage>> streamMessages(final String boardId) => FirestoreService
       .stream('circles/$boardId/$_messagesCol')
-      .map((e) => e
-          .map((m) => CircleMessage(
+      .map((final e) => e
+          .map((final m) => CircleMessage(
                 id: m['id'],
                 authorId: m['authorId'],
                 text: (m['text'] ?? '') as String,

@@ -7,10 +7,10 @@ import 'package:workmanager/workmanager.dart';
 /// Advanced Performance Optimization Service
 /// Provides comprehensive performance monitoring, optimization, and management
 class PerformanceOptimizationServiceV2 {
-  static final PerformanceOptimizationServiceV2 _instance =
-      PerformanceOptimizationServiceV2._internal();
   factory PerformanceOptimizationServiceV2() => _instance;
   PerformanceOptimizationServiceV2._internal();
+  static final PerformanceOptimizationServiceV2 _instance =
+      PerformanceOptimizationServiceV2._internal();
 
   // Performance metrics
   final Map<String, List<Duration>> _operationTimes = {};
@@ -70,7 +70,7 @@ class PerformanceOptimizationServiceV2 {
 
       // Listen for connectivity changes
       connectivity.onConnectivityChanged
-          .listen((List<ConnectivityResult> results) {
+          .listen((final results) {
         final newStatus =
             results.isNotEmpty ? results.first : ConnectivityResult.none;
         if (newStatus != _connectivityStatus) {
@@ -111,8 +111,6 @@ class PerformanceOptimizationServiceV2 {
       'cacheCleanup',
       frequency: const Duration(hours: 1),
       constraints: Constraints(
-        networkType:
-            null, // Network type detection not required for this operation
         requiresBatteryNotLow: false,
       ),
     );
@@ -145,7 +143,7 @@ class PerformanceOptimizationServiceV2 {
   }
 
   /// Handle connectivity changes
-  void _onConnectivityChanged(ConnectivityResult status) {
+  void _onConnectivityChanged(final ConnectivityResult status) {
     switch (status) {
       case ConnectivityResult.wifi:
       case ConnectivityResult.mobile:
@@ -172,12 +170,12 @@ class PerformanceOptimizationServiceV2 {
   }
 
   /// Start timing an operation
-  void startTimer(String operation) {
+  void startTimer(final String operation) {
     _startTimes[operation] = DateTime.now();
   }
 
   /// End timing an operation
-  void endTimer(String operation) {
+  void endTimer(final String operation) {
     final startTime = _startTimes[operation];
     if (startTime != null) {
       final duration = DateTime.now().difference(startTime);
@@ -187,7 +185,7 @@ class PerformanceOptimizationServiceV2 {
   }
 
   /// Record operation time
-  void _recordOperationTime(String operation, Duration duration) {
+  void _recordOperationTime(final String operation, final Duration duration) {
     _operationTimes.putIfAbsent(operation, () => []).add(duration);
     _operationCounts[operation] = (_operationCounts[operation] ?? 0) + 1;
 
@@ -198,13 +196,13 @@ class PerformanceOptimizationServiceV2 {
   }
 
   /// Get average time for an operation
-  Duration? getAverageTime(String operation) {
+  Duration? getAverageTime(final String operation) {
     final times = _operationTimes[operation];
     if (times == null || times.isEmpty) return null;
 
     final total = times.fold<Duration>(
       Duration.zero,
-      (sum, time) => sum + time,
+      (final sum, final time) => sum + time,
     );
 
     return Duration(
@@ -213,7 +211,7 @@ class PerformanceOptimizationServiceV2 {
   }
 
   /// Get operation statistics
-  Map<String, dynamic> getOperationStats(String operation) {
+  Map<String, dynamic> getOperationStats(final String operation) {
     final times = _operationTimes[operation] ?? [];
     final count = _operationCounts[operation] ?? 0;
 
@@ -230,11 +228,11 @@ class PerformanceOptimizationServiceV2 {
 
     final total = times.fold<Duration>(
       Duration.zero,
-      (sum, time) => sum + time,
+      (final sum, final time) => sum + time,
     );
 
-    final min = times.reduce((a, b) => a < b ? a : b);
-    final max = times.reduce((a, b) => a > b ? a : b);
+    final min = times.reduce((final a, final b) => a < b ? a : b);
+    final max = times.reduce((final a, final b) => a > b ? a : b);
     final average = Duration(
       microseconds: total.inMicroseconds ~/ times.length,
     );
@@ -252,7 +250,7 @@ class PerformanceOptimizationServiceV2 {
   /// Get all performance metrics
   Map<String, dynamic> getAllMetrics() {
     final operationStats = <String, Map<String, dynamic>>{};
-    for (var operation in _operationTimes.keys) {
+    for (final operation in _operationTimes.keys) {
       operationStats[operation] = getOperationStats(operation);
     }
 
@@ -266,7 +264,7 @@ class PerformanceOptimizationServiceV2 {
   }
 
   /// Cache data with expiration
-  void cacheData<T>(String key, T data, {Duration? expiry}) {
+  void cacheData<T>(final String key, final T data, {final Duration? expiry}) {
     _cache[key] = data;
     _cacheTimestamps[key] = DateTime.now();
 
@@ -277,13 +275,13 @@ class PerformanceOptimizationServiceV2 {
   }
 
   /// Get cached data
-  T? getCachedData<T>(String key) {
+  T? getCachedData<T>(final String key) {
     if (!_cache.containsKey(key)) return null;
 
     final timestamp = _cacheTimestamps[key];
     if (timestamp == null) return null;
 
-    final expiry = _defaultCacheExpiry;
+    const expiry = _defaultCacheExpiry;
     if (DateTime.now().difference(timestamp) > expiry) {
       _cache.remove(key);
       _cacheTimestamps.remove(key);
@@ -300,9 +298,9 @@ class PerformanceOptimizationServiceV2 {
   }
 
   /// Clear cache for specific pattern
-  void clearCachePattern(String pattern) {
+  void clearCachePattern(final String pattern) {
     final keysToRemove =
-        _cache.keys.where((key) => key.contains(pattern)).toList();
+        _cache.keys.where((final key) => key.contains(pattern)).toList();
 
     for (final key in keysToRemove) {
       _cache.remove(key);
@@ -315,7 +313,7 @@ class PerformanceOptimizationServiceV2 {
     final now = DateTime.now();
     final keysToRemove = <String>[];
 
-    _cacheTimestamps.forEach((key, timestamp) {
+    _cacheTimestamps.forEach((final key, final timestamp) {
       if (now.difference(timestamp) > _defaultCacheExpiry) {
         keysToRemove.add(key);
       }
@@ -329,7 +327,7 @@ class PerformanceOptimizationServiceV2 {
 
   /// Cleanup old metrics
   void _cleanupOldMetrics() {
-    _operationTimes.forEach((operation, times) {
+    _operationTimes.forEach((final operation, final times) {
       // Keep only recent times (this is a simplified approach)
       if (times.length > _maxOperationHistory) {
         _operationTimes[operation] =
@@ -345,7 +343,7 @@ class PerformanceOptimizationServiceV2 {
     String? oldestKey;
     DateTime? oldestTime;
 
-    _cacheTimestamps.forEach((key, time) {
+    _cacheTimestamps.forEach((final key, final time) {
       if (oldestTime == null || time.isBefore(oldestTime!)) {
         oldestTime = time;
         oldestKey = key;
@@ -395,7 +393,7 @@ class PerformanceOptimizationServiceV2 {
 /// Background task callback dispatcher
 @pragma('vm:entry-point')
 void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) async {
+  Workmanager().executeTask((final task, final inputData) async {
     switch (task) {
       case 'cacheCleanup':
         await _performCacheCleanup();
@@ -429,8 +427,8 @@ mixin PerformanceMonitoring {
 
   /// Monitor operation performance
   Future<T> monitorOperation<T>(
-    String operationName,
-    Future<T> Function() operation,
+    final String operationName,
+    final Future<T> Function() operation,
   ) async {
     _performanceService.startTimer(operationName);
     try {
@@ -443,8 +441,8 @@ mixin PerformanceMonitoring {
 
   /// Monitor synchronous operation performance
   T monitorSyncOperation<T>(
-    String operationName,
-    T Function() operation,
+    final String operationName,
+    final T Function() operation,
   ) {
     _performanceService.startTimer(operationName);
     try {
@@ -456,12 +454,10 @@ mixin PerformanceMonitoring {
   }
 
   /// Cache data with performance monitoring
-  void cacheWithMonitoring<T>(String key, T data, {Duration? expiry}) {
+  void cacheWithMonitoring<T>(final String key, final T data, {final Duration? expiry}) {
     _performanceService.cacheData(key, data, expiry: expiry);
   }
 
   /// Get cached data with performance monitoring
-  T? getCachedWithMonitoring<T>(String key) {
-    return _performanceService.getCachedData<T>(key);
-  }
+  T? getCachedWithMonitoring<T>(final String key) => _performanceService.getCachedData<T>(key);
 }

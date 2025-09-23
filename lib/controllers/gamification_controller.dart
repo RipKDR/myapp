@@ -12,7 +12,7 @@ class GamificationController extends ChangeNotifier {
   int _streakDays = 0;
   int _totalPointsEarned = 0;
   int _level = 1;
-  double _experiencePoints = 0.0;
+  double _experiencePoints = 0;
   
   // Badges and achievements
   Set<String> _badges = {};
@@ -84,7 +84,7 @@ class GamificationController extends ChangeNotifier {
   }
 
   /// Add points with category tracking and advanced analytics
-  Future<void> addPoints(int value, {String? category, String? action, Map<String, dynamic>? context}) async {
+  Future<void> addPoints(final int value, {final String? category, final String? action, final Map<String, dynamic>? context}) async {
     _points += value;
     _totalPointsEarned += value;
     
@@ -163,7 +163,7 @@ class GamificationController extends ChangeNotifier {
   Future<void> incrementStreak() => bumpStreak();
 
   /// Grant badge with advanced badge system
-  Future<void> grantBadge(String badge, {String? category, String? description}) async {
+  Future<void> grantBadge(final String badge, {final String? category, final String? description}) async {
     if (_badges.add(badge)) {
       _lastBadge = badge;
       
@@ -187,7 +187,7 @@ class GamificationController extends ChangeNotifier {
   }
 
   /// Grant achievement with advanced achievement system
-  Future<void> grantAchievement(String achievement, {String? category, String? description, int? points}) async {
+  Future<void> grantAchievement(final String achievement, {final String? category, final String? description, final int? points}) async {
     if (_achievements.add(achievement)) {
       _lastAchievement = achievement;
       
@@ -212,8 +212,8 @@ class GamificationController extends ChangeNotifier {
   }
 
   /// Create or join a social challenge
-  Future<void> joinChallenge(SocialChallenge challenge) async {
-    if (!_activeChallenges.any((c) => c.id == challenge.id)) {
+  Future<void> joinChallenge(final SocialChallenge challenge) async {
+    if (!_activeChallenges.any((final c) => c.id == challenge.id)) {
       _activeChallenges.add(challenge);
       
       await _analytics.logEvent('challenge_joined', parameters: {
@@ -228,9 +228,9 @@ class GamificationController extends ChangeNotifier {
   }
 
   /// Complete a social challenge
-  Future<void> completeChallenge(String challengeId) async {
+  Future<void> completeChallenge(final String challengeId) async {
     final challenge = _activeChallenges.firstWhere(
-      (c) => c.id == challengeId,
+      (final c) => c.id == challengeId,
       orElse: () => throw Exception('Challenge not found'),
     );
     
@@ -253,7 +253,7 @@ class GamificationController extends ChangeNotifier {
   }
 
   /// Set weekly goal
-  Future<void> setWeeklyGoal(String category, int target) async {
+  Future<void> setWeeklyGoal(final String category, final int target) async {
     _weeklyGoals[category] = target;
     
     await _analytics.logEvent('weekly_goal_set', parameters: {
@@ -266,7 +266,7 @@ class GamificationController extends ChangeNotifier {
   }
 
   /// Set monthly goal
-  Future<void> setMonthlyGoal(String category, int target) async {
+  Future<void> setMonthlyGoal(final String category, final int target) async {
     _monthlyGoals[category] = target;
     
     await _analytics.logEvent('monthly_goal_set', parameters: {
@@ -279,7 +279,7 @@ class GamificationController extends ChangeNotifier {
   }
 
   /// Add habit for behavioral psychology
-  Future<void> addHabit(Habit habit) async {
+  Future<void> addHabit(final Habit habit) async {
     _habits.add(habit);
     
     await _analytics.logEvent('habit_added', parameters: {
@@ -293,9 +293,9 @@ class GamificationController extends ChangeNotifier {
   }
 
   /// Complete habit
-  Future<void> completeHabit(String habitId) async {
+  Future<void> completeHabit(final String habitId) async {
     final habit = _habits.firstWhere(
-      (h) => h.id == habitId,
+      (final h) => h.id == habitId,
       orElse: () => throw Exception('Habit not found'),
     );
     
@@ -315,7 +315,7 @@ class GamificationController extends ChangeNotifier {
   }
 
   /// Add milestone
-  Future<void> addMilestone(Milestone milestone) async {
+  Future<void> addMilestone(final Milestone milestone) async {
     _milestones.add(milestone);
     
     await _analytics.logEvent('milestone_added', parameters: {
@@ -329,9 +329,9 @@ class GamificationController extends ChangeNotifier {
   }
 
   /// Update milestone progress
-  Future<void> updateMilestoneProgress(String milestoneId, int progress) async {
+  Future<void> updateMilestoneProgress(final String milestoneId, final int progress) async {
     final milestone = _milestones.firstWhere(
-      (m) => m.id == milestoneId,
+      (final m) => m.id == milestoneId,
       orElse: () => throw Exception('Milestone not found'),
     );
     
@@ -353,8 +353,8 @@ class GamificationController extends ChangeNotifier {
   }
 
   /// Earn reward
-  Future<void> earnReward(Reward reward) async {
-    if (!_earnedRewards.any((r) => r.id == reward.id)) {
+  Future<void> earnReward(final Reward reward) async {
+    if (!_earnedRewards.any((final r) => r.id == reward.id)) {
       _earnedRewards.add(reward);
       
       await _analytics.logEvent('reward_earned', parameters: {
@@ -370,9 +370,9 @@ class GamificationController extends ChangeNotifier {
   }
 
   /// Redeem reward
-  Future<void> redeemReward(String rewardId) async {
+  Future<void> redeemReward(final String rewardId) async {
     final reward = _earnedRewards.firstWhere(
-      (r) => r.id == rewardId,
+      (final r) => r.id == rewardId,
       orElse: () => throw Exception('Reward not found'),
     );
     
@@ -416,7 +416,7 @@ class GamificationController extends ChangeNotifier {
     
     // Suggest challenges based on user interests
     final topCategory = _categoryPoints.entries.isNotEmpty 
-        ? _categoryPoints.entries.reduce((a, b) => a.value > b.value ? a : b).key
+        ? _categoryPoints.entries.reduce((final a, final b) => a.value > b.value ? a : b).key
         : 'general';
     
     recommendations.add(GamificationRecommendation(
@@ -440,9 +440,7 @@ class GamificationController extends ChangeNotifier {
   }
 
   /// Calculate level from experience points
-  int _calculateLevel() {
-    return (_experiencePoints / 100).floor() + 1;
-  }
+  int _calculateLevel() => (_experiencePoints / 100).floor() + 1;
 
   /// Calculate experience needed for next level
   double _calculateExperienceToNextLevel() {
@@ -464,7 +462,7 @@ class GamificationController extends ChangeNotifier {
   }
 
   /// Unlock rewards for reaching a level
-  Future<void> _unlockLevelRewards(int level) async {
+  Future<void> _unlockLevelRewards(final int level) async {
     final rewards = _getLevelRewards(level);
     for (final reward in rewards) {
       _availableRewards.add(reward);
@@ -472,7 +470,7 @@ class GamificationController extends ChangeNotifier {
   }
 
   /// Get rewards for a specific level
-  List<Reward> _getLevelRewards(int level) {
+  List<Reward> _getLevelRewards(final int level) {
     switch (level) {
       case 2:
         return [Reward(id: 'level_2_badge', name: 'Level 2 Badge', type: 'badge', value: 1)];
@@ -486,7 +484,7 @@ class GamificationController extends ChangeNotifier {
   }
 
   /// Get badge points
-  int _getBadgePoints(String badge) {
+  int _getBadgePoints(final String badge) {
     switch (badge) {
       case 'Smart Spender': return 25;
       case 'NDIS Champion': return 50;
@@ -497,7 +495,7 @@ class GamificationController extends ChangeNotifier {
   }
 
   /// Get achievement points
-  int _getAchievementPoints(String achievement) {
+  int _getAchievementPoints(final String achievement) {
     if (achievement.startsWith('Level ')) {
       final level = int.tryParse(achievement.split(' ')[1]) ?? 1;
       return level * 10;
@@ -651,18 +649,30 @@ class GamificationController extends ChangeNotifier {
     // Load goals
     final weeklyGoalsJson = prefs.getString('weeklyGoals');
     if (weeklyGoalsJson != null) {
-      _weeklyGoals = Map<String, int>.from(jsonDecode(weeklyGoalsJson));
+      _weeklyGoals = Map<String, int>.from(
+        (jsonDecode(weeklyGoalsJson) as Map).map(
+          (final key, final value) => MapEntry(key.toString(), value as int),
+        ),
+      );
     }
-    
+
     final monthlyGoalsJson = prefs.getString('monthlyGoals');
     if (monthlyGoalsJson != null) {
-      _monthlyGoals = Map<String, int>.from(jsonDecode(monthlyGoalsJson));
+      _monthlyGoals = Map<String, int>.from(
+        (jsonDecode(monthlyGoalsJson) as Map).map(
+          (final key, final value) => MapEntry(key.toString(), value as int),
+        ),
+      );
     }
     
     // Load social stats
     final socialStatsJson = prefs.getString('socialStats');
     if (socialStatsJson != null) {
-      _socialStats = Map<String, int>.from(jsonDecode(socialStatsJson));
+      _socialStats = Map<String, int>.from(
+        (jsonDecode(socialStatsJson) as Map).map(
+          (final key, final value) => MapEntry(key.toString(), value as int),
+        ),
+      );
     }
     
     notifyListeners();
@@ -692,14 +702,6 @@ class GamificationController extends ChangeNotifier {
 
 /// Social challenge model
 class SocialChallenge {
-  final String id;
-  final String name;
-  final String description;
-  final String type; // daily, weekly, monthly
-  final int target;
-  int current;
-  final int rewardPoints;
-  final DateTime endDate;
 
   SocialChallenge({
     required this.id,
@@ -711,6 +713,14 @@ class SocialChallenge {
     required this.rewardPoints,
     required this.endDate,
   });
+  final String id;
+  final String name;
+  final String description;
+  final String type; // daily, weekly, monthly
+  final int target;
+  int current;
+  final int rewardPoints;
+  final DateTime endDate;
 
   double get progress => current / target;
   bool get isCompleted => current >= target;
@@ -719,10 +729,6 @@ class SocialChallenge {
 
 /// Leaderboard entry model
 class LeaderboardEntry {
-  final String userId;
-  final String username;
-  final int points;
-  final int rank;
 
   LeaderboardEntry({
     required this.userId,
@@ -730,17 +736,14 @@ class LeaderboardEntry {
     required this.points,
     required this.rank,
   });
+  final String userId;
+  final String username;
+  final int points;
+  final int rank;
 }
 
 /// Habit model for behavioral psychology
 class Habit {
-  final String id;
-  final String name;
-  final String category;
-  final int pointsPerCompletion;
-  int currentStreak;
-  int longestStreak;
-  final List<DateTime> completionDates;
 
   Habit({
     required this.id,
@@ -751,6 +754,13 @@ class Habit {
     this.longestStreak = 0,
     this.completionDates = const [],
   });
+  final String id;
+  final String name;
+  final String category;
+  final int pointsPerCompletion;
+  int currentStreak;
+  int longestStreak;
+  final List<DateTime> completionDates;
 
   void complete() {
     final today = DateTime.now();
@@ -776,14 +786,6 @@ class Habit {
 
 /// Milestone model
 class Milestone {
-  final String id;
-  final String name;
-  final String description;
-  final int target;
-  int current;
-  final int rewardPoints;
-  bool isCompleted;
-  bool isAwarded;
 
   Milestone({
     required this.id,
@@ -795,10 +797,18 @@ class Milestone {
     this.isCompleted = false,
     this.isAwarded = false,
   });
+  final String id;
+  final String name;
+  final String description;
+  final int target;
+  int current;
+  final int rewardPoints;
+  bool isCompleted;
+  bool isAwarded;
 
   double get progress => current / target;
 
-  void updateProgress(int progress) {
+  void updateProgress(final int progress) {
     current = progress;
     isCompleted = current >= target;
   }
@@ -810,12 +820,6 @@ class Milestone {
 
 /// Reward model
 class Reward {
-  final String id;
-  final String name;
-  final String type; // badge, theme, avatar, discount, etc.
-  final int value;
-  final String? description;
-  final String? imageUrl;
 
   Reward({
     required this.id,
@@ -825,15 +829,16 @@ class Reward {
     this.description,
     this.imageUrl,
   });
+  final String id;
+  final String name;
+  final String type; // badge, theme, avatar, discount, etc.
+  final int value;
+  final String? description;
+  final String? imageUrl;
 }
 
 /// Gamification recommendation model
 class GamificationRecommendation {
-  final String type;
-  final String title;
-  final String description;
-  final String action;
-  final double priority;
 
   GamificationRecommendation({
     required this.type,
@@ -842,4 +847,9 @@ class GamificationRecommendation {
     required this.action,
     required this.priority,
   });
+  final String type;
+  final String title;
+  final String description;
+  final String action;
+  final double priority;
 }
